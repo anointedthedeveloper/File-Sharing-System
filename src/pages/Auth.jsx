@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Mail, Lock, User, Loader2, ArrowRight, ShieldAlert } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, User, Loader2, ArrowRight, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
@@ -38,6 +38,8 @@ export default function Auth() {
     checkUser();
   }, [navigate]);
 
+  const [confirmed, setConfirmed] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password || (!isLogin && !fullName)) {
@@ -48,17 +50,24 @@ export default function Auth() {
     setLoading(true);
     try {
       if (isLogin) {
-        // Sign In Action
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password
         });
-        if (error) throw error;
-        
+
+        if (error) {
+          // Provide a friendlier message for the email confirmation case
+          if (error.message?.toLowerCase().includes('email not confirmed')) {
+            showToast('Please confirm your email address before signing in. Check your inbox.', 'error');
+          } else {
+            throw error;
+          }
+          return;
+        }
+
         showToast('Welcome back to Sharing It!', 'success');
         navigate('/dashboard');
       } else {
-        // Sign Up Action
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -68,13 +77,19 @@ export default function Auth() {
             }
           }
         });
+
         if (error) throw error;
 
-        showToast('Account successfully provisioned!', 'success');
-        navigate('/dashboard');
+        // If session is immediately available, email confirmation is disabled — go straight to dashboard
+        if (data.session) {
+          showToast('Account successfully provisioned!', 'success');
+          navigate('/dashboard');
+        } else {
+          // Email confirmation is required — show confirmation notice
+          setConfirmed(true);
+        }
       }
     } catch (e) {
-      console.error(e);
       showToast(e.message || 'Authentication error occurred.', 'error');
     } finally {
       setLoading(false);
@@ -82,16 +97,42 @@ export default function Auth() {
   };
 
   return (
-    <LayoutContainer 
-      title={isLogin ? "Sign In - Sharing It" : "Create Free Account - Sharing It"}
+    <LayoutContainer
+      title={isLogin ? 'Sign In - Sharing It' : 'Create Free Account - Sharing It'}
       description="Access your Sharing It dashboard to review download metrics, expiry parameters and shared histories."
     >
       <div className="max-w-md mx-auto px-4 py-16 sm:py-24 flex flex-col justify-center min-h-[80vh]">
-        
 
-        {/* Card Frame */}
+        {/* Email confirmation success card */}
+        {confirmed ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-6 sm:p-10 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center space-y-5"
+          >
+            <div className="flex justify-center">
+              <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <CheckCircle2 className="w-8 h-8 text-green-500" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-2xl font-extrabold font-display text-slate-900 dark:text-white">Check Your Email</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                We sent a confirmation link to <span className="font-semibold text-slate-700 dark:text-slate-300">{email}</span>.
+                Click the link in the email to activate your account and sign in.
+              </p>
+            </div>
+            <button
+              onClick={() => { setConfirmed(false); setIsLogin(true); navigate('/auth?tab=login'); }}
+              className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-glow"
+            >
+              Back to Sign In
+            </button>
+          </motion.div>
+        ) : (
+        /* Card Frame */
         <div className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center relative overflow-hidden">
-          
+
           {/* Header titles */}
           <div className="space-y-2 mb-8">
             <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 dark:text-white leading-tight">
@@ -201,6 +242,7 @@ export default function Auth() {
           </div>
 
         </div>
+        )}
 
       </div>
     </LayoutContainer>
