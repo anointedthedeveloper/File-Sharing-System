@@ -12,4 +12,4 @@ Allow: /auth
 Disallow: /share/
 Disallow: /dashboard
 
-Sitemap: https://anobyte.online/sitemap.xml
+Sitemap: https://sharingit.anobyte.online/sitemap.xml

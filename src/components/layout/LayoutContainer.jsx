@@ -8,7 +8,7 @@ export default function LayoutContainer({
   title = 'Sharing It - Secure File Sharing, Instantly',
   description = 'Sharing It is a secure, blazing-fast, and auto-expiring file-sharing platform. Share files instantly with anyone, anywhere.',
   ogType = 'website',
-  ogImage = 'https://sharingit.app/og-image.jpg'
+  ogImage = 'https://sharingit.anobyte.online/og-image.jpg'
 }) {
   
   // Dynamic SEO Page Meta Tag Updates

@@ -4,12 +4,12 @@ import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check,
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
-import { supabase, isMocked } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function UploadPage() {
   const { showToast } = useToast();
-  
+
   // App states
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
@@ -21,7 +21,7 @@ export default function UploadPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [shareData, setShareData] = useState(null); // stores success metadata
-  
+
   const fileInputRef = useRef(null);
 
   // Auto-fill mock credentials when guest uploads
@@ -49,7 +49,7 @@ export default function UploadPage() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       processFile(e.dataTransfer.files[0]);
     }
@@ -68,19 +68,8 @@ export default function UploadPage() {
       showToast(`File is too large. Limit is ${userId ? '1GB' : '50MB'} for ${userId ? 'registered users' : 'anonymous guest uploads'}.`, 'error');
       return;
     }
-    
+
     setFile(selectedFile);
-    
-    // For small files (under 1.5MB), read as base64 to store in mockDb for high-fidelity shared previews!
-    if (selectedFile.size < 1.5 * 1024 * 1024) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setFileBase64(reader.result);
-      };
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setFileBase64(null); // Too large for localStorage
-    }
   };
 
   const triggerFileInput = () => {
@@ -89,7 +78,6 @@ export default function UploadPage() {
 
   const removeFile = () => {
     setFile(null);
-    setFileBase64(null);
     setProgress(0);
   };
 
@@ -120,18 +108,16 @@ export default function UploadPage() {
 
       const slug = Math.random().toString(36).substr(2, 6);
       const expiresAt = calculateExpiryTimestamp();
-      
-      let storagePath = `uploads/${slug}/${file.name}`;
-      
-      // 2. Suppress error-out, direct query or storage upload
-      if (!isMocked) {
-        const { data, error } = await supabase.storage
-          .from('anobyte-files')
-          .upload(storagePath, file);
-        if (error) throw error;
-      }
 
-      // 3. Register Database Record inside profiles files tables
+      let storagePath = `uploads/${slug}/${file.name}`;
+
+      // 2. Direct storage upload to real Supabase bucket
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('sharing-it-files')
+        .upload(storagePath, file);
+      if (uploadError) throw uploadError;
+
+      // 3. Register Database Record inside files table
       const newFileData = {
         user_id: userId,
         name: file.name,
@@ -140,22 +126,19 @@ export default function UploadPage() {
         storage_path: storagePath,
         slug,
         password: passwordProtect && password ? password : null,
-        expires_at: expiresAt,
-        file_data: fileBase64 // local mock preview support
+        expires_at: expiresAt
       };
 
       const { data: dbRecords, error: dbError } = await supabase
         .from('files')
         .insert(newFileData);
-      
-      if (dbError) throw dbError;
 
-      const savedRecord = Array.isArray(dbRecords) ? dbRecords[0] : dbRecords;
+      if (dbError) throw dbError;
 
       // 4. Wrap uploads in success triggers
       setProgress(100);
       setUploading(false);
-      
+
       const generatedLink = `${window.location.origin}/share/${slug}`;
       setShareData({
         link: generatedLink,
@@ -165,7 +148,7 @@ export default function UploadPage() {
         type: file.type,
         expiresAt
       });
-      
+
       // Trigger canvas confetti celebration!
       confetti({
         particleCount: 120,
@@ -175,7 +158,7 @@ export default function UploadPage() {
       });
 
       showToast('File shared successfully!', 'success');
-      
+
     } catch (e) {
       console.error(e);
       setUploading(false);
@@ -204,12 +187,12 @@ export default function UploadPage() {
   };
 
   return (
-    <LayoutContainer 
+    <LayoutContainer
       title="Upload and Share Files - Sharing It"
       description="Drag and drop files to generate premium secure, password-locked auto-expiring links instantly."
     >
       <div className="max-w-4xl mx-auto px-4 py-12 sm:py-20">
-        
+
         {/* Title */}
         <div className="text-center space-y-3 mb-12 sm:mb-16">
           <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white font-display">
@@ -221,11 +204,11 @@ export default function UploadPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-          
+
           {/* Main Upload Box Card (Lefthand Column) */}
           <div className="col-span-1 md:col-span-7 space-y-6">
             <div className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center relative overflow-hidden">
-              
+
               <AnimatePresence mode="wait">
                 {!shareData ? (
                   <motion.div
@@ -243,11 +226,10 @@ export default function UploadPage() {
                         onDragOver={handleDrag}
                         onDrop={handleDrop}
                         onClick={triggerFileInput}
-                        className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 cursor-pointer transition-all duration-300 flex flex-col items-center gap-3 relative select-none ${
-                          dragActive 
-                            ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[0.99]' 
+                        className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 cursor-pointer transition-all duration-300 flex flex-col items-center gap-3 relative select-none ${dragActive
+                            ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[0.99]'
                             : 'border-slate-200 dark:border-slate-800 hover:border-blue-500/50 hover:bg-slate-50 dark:hover:bg-slate-900/40'
-                        }`}
+                          }`}
                       >
                         <input
                           ref={fileInputRef}
@@ -255,7 +237,7 @@ export default function UploadPage() {
                           className="hidden"
                           onChange={handleFileChange}
                         />
-                        
+
                         <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center border border-blue-100/30 dark:border-blue-900/30 text-blue-600 dark:text-blue-400">
                           <Upload className="w-7 h-7" />
                         </div>
@@ -287,7 +269,7 @@ export default function UploadPage() {
                             </p>
                           </div>
                         </div>
-                        
+
                         <button
                           onClick={removeFile}
                           disabled={uploading}
@@ -302,7 +284,7 @@ export default function UploadPage() {
                     {/* Expiry and Password properties */}
                     <div className="space-y-4 pt-2">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        
+
                         {/* Expiry Option */}
                         <div className="space-y-1.5 text-left">
                           <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
@@ -331,11 +313,10 @@ export default function UploadPage() {
                           <button
                             type="button"
                             onClick={() => !uploading && setPasswordProtect(!passwordProtect)}
-                            className={`w-full min-h-[48px] flex items-center justify-between px-4 border rounded-xl transition-all text-sm font-semibold ${
-                              passwordProtect 
-                                ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-500/50 text-blue-600 dark:text-blue-400' 
+                            className={`w-full min-h-[48px] flex items-center justify-between px-4 border rounded-xl transition-all text-sm font-semibold ${passwordProtect
+                                ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-500/50 text-blue-600 dark:text-blue-400'
                                 : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
-                            }`}
+                              }`}
                           >
                             <span>Password Lock</span>
                             <Lock className={`w-4 h-4 ${passwordProtect ? 'text-blue-500' : 'text-slate-400'}`} />
@@ -423,7 +404,7 @@ export default function UploadPage() {
 
                   </motion.div>
                 ) : (
-                  
+
                   /* 3. POST-UPLOAD SHARE SUCCESS OVERLAY (Glassmorphic Slide Card) */
                   <motion.div
                     key="upload-success"
@@ -494,23 +475,12 @@ export default function UploadPage() {
 
           {/* Guidelines Sidebar Panel (Righthand Column) */}
           <div className="col-span-1 md:col-span-5 space-y-6 text-left">
-            
-            {/* Sandbox mode info panel if isMocked */}
-            {isMocked && (
-              <div className="p-6 rounded-3xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 space-y-3">
-                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-                  <ShieldAlert className="w-5 h-5 flex-shrink-0" />
-                  <h4 className="font-bold text-sm font-display">Sandbox Uploader Active</h4>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  You are testing Sharing It in local Sandbox mode. File shares, passwords, history logs, and download gates simulate exactly like live systems, stored locally inside your browser cache. Zero keys or backend servers required.
-                </p>
-              </div>
-            )}
+
+
 
             <div className="p-6.5 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 space-y-6">
               <h3 className="text-xl font-bold font-display text-slate-900 dark:text-white">Sharing Paradigms</h3>
-              
+
               <ul className="space-y-4">
                 {[
                   {

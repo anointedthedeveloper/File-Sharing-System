@@ -8,14 +8,6 @@ import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function Share() {
   const { slug } = useParams();
-  const { showToast } = () => {
-    try {
-      return useToast();
-    } catch(e) {
-      return { showToast: (msg, type) => console.log(msg) };
-    }
-  };
-  
   const toast = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -50,7 +42,7 @@ export default function Share() {
       setFileData(file);
       
       // Determine password lock requirements
-      if (file.password_hash) {
+      if (file.password || file.password_hash) {
         setPasswordGate(true);
       } else {
         setUnlocked(true);
@@ -74,8 +66,8 @@ export default function Share() {
     await new Promise(r => setTimeout(r, 700));
     setVerifying(false);
 
-    // Verify hashed password matching (simple direct matching in mockDB sandbox)
-    if (fileData.password_hash === passwordAttempt) {
+    const correctPassword = fileData.password || fileData.password_hash;
+    if (correctPassword === passwordAttempt) {
       setUnlocked(true);
       setPasswordGate(false);
       toast.showToast('Access gate successfully unlocked!', 'success');
@@ -89,31 +81,42 @@ export default function Share() {
     if (!fileData) return;
     try {
       // 1. Increment database download count metrics
-      await supabase.from('files').eq('id', fileData.id); // Triggers update inside mockDb
+      await supabase
+        .from('files')
+        .update({ downloads_count: (fileData.downloads_count || 0) + 1 })
+        .eq('id', fileData.id);
       
-      // If mock file data payload base64 exists, trigger direct browser stream download
-      if (fileData.file_data) {
-        const link = document.createElement('a');
-        link.href = fileData.file_data;
-        link.download = fileData.name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.showToast('Download initialized!', 'success');
+      // 2. Fetch secure signed URL from storage bucket
+      const { data, error } = await supabase.storage
+        .from('sharing-it-files')
+        .createSignedUrl(fileData.storage_path, 60);
+      
+      if (error) throw error;
+      
+      if (data?.signedUrl) {
+        try {
+          const res = await fetch(data.signedUrl);
+          if (!res.ok) throw new Error();
+          const blob = await res.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = fileData.name;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          toast.showToast('Download initialized!', 'success');
+        } catch (err) {
+          // Graceful fallback to opening in new window if fetch is blocked by CORS/network
+          window.open(data.signedUrl, '_blank');
+          toast.showToast('Download opened in new window!', 'success');
+        }
       } else {
-        // Fallback for mock downloads: generate direct simulated save
-        const dummyContent = `Mock raw bytes download sequence for file: ${fileData.name}\nSize: ${fileData.size} Bytes.`;
-        const blob = new Blob([dummyContent], { type: fileData.type || 'text/plain' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = fileData.name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.showToast('Download initialized!', 'success');
+        throw new Error('Could not generate download URL');
       }
     } catch (e) {
-      toast.showToast('Failed to trigger download file stream.', 'error');
+      toast.showToast(e.message || 'Failed to trigger download file stream.', 'error');
     }
   };
 
@@ -363,7 +366,7 @@ export default function Share() {
                 </button>
                 
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed max-w-xs mx-auto">
-                  Files downloads are verified secure using encrypted temporary link tokens. Powered by <a href="https://sharingit.app" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-blue-500">Sharing It</a>.
+                  Files downloads are verified secure using encrypted temporary link tokens. Powered by <a href="https://sharingit.anobyte.online" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-blue-500">Sharing It</a>.
                 </p>
               </div>
 

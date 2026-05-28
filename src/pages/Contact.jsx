@@ -65,8 +65,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-bold text-xs text-slate-400 uppercase tracking-widest">General Enquiries</h4>
-                    <a href="mailto:support@sharingit.app" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
-                      support@sharingit.app
+                    <a href="mailto:support@sharingit.anobyte.online" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
+                      support@sharingit.anobyte.online
                     </a>
                   </div>
                 </div>
@@ -89,8 +89,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-bold text-xs text-slate-400 uppercase tracking-widest">Developer Hub</h4>
-                    <a href="https://sharingit.app" target="_blank" rel="noreferrer" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
-                      sharingit.app
+                    <a href="https://sharingit.anobyte.online" target="_blank" rel="noreferrer" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
+                      sharingit.anobyte.online
                     </a>
                   </div>
                 </div>

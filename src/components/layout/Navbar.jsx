@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, User, ShieldAlert } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
-import { supabase, isMocked } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import logoImg from '../../assets/logo.png';
 
 export default function Navbar() {
@@ -57,7 +57,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Upload', path: '/upload', icon: <UploadCloud className="w-4 h-4" /> },
-    { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+    ...(user ? [{ name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> }] : []),
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -118,13 +118,7 @@ export default function Navbar() {
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </motion.button>
 
-            {/* Mock Database warning banner */}
-            {isMocked && (
-              <div className="hidden lg:flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
-                <ShieldAlert className="w-3.5 h-3.5" />
-                <span>Sandbox Mode</span>
-              </div>
-            )}
+
 
             {/* Auth Action */}
             {user ? (
@@ -215,11 +209,7 @@ export default function Navbar() {
 
           {/* Mobile hamburger menu button */}
           <div className="flex items-center gap-2 md:hidden">
-            {isMocked && (
-              <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
-                <span>Sandbox</span>
-              </div>
-            )}
+
             
             <button
               onClick={toggleTheme}

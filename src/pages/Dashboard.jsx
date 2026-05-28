@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { File, Trash2, Download, Copy, Search, Filter, Server, Loader2, Plus, LogOut, CheckCircle, Clock, Calendar, QrCode } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import { supabase, isMocked } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function Dashboard() {

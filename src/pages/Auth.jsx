@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Mail, Lock, User, Loader2, ArrowRight, ShieldAlert } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import { supabase, isMocked } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function Auth() {
@@ -88,18 +88,6 @@ export default function Auth() {
     >
       <div className="max-w-md mx-auto px-4 py-16 sm:py-24 flex flex-col justify-center min-h-[80vh]">
         
-        {/* Mock database sandboxes warning banner */}
-        {isMocked && (
-          <div className="mb-6 p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 text-left space-y-2">
-            <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
-              <ShieldAlert className="w-4 h-4" />
-              <span className="font-bold text-xs font-display">Sandbox Credentials Enabled</span>
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-              Real databases are currently locked. You can sign in immediately using the seeded credential: <span className="font-semibold text-slate-800 dark:text-slate-200">demo@sharingit.app</span> with password <span className="font-semibold text-slate-800 dark:text-slate-200">password123</span> or create any new sandbox credentials.
-            </p>
-          </div>
-        )}
 
         {/* Card Frame */}
         <div className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center relative overflow-hidden">
