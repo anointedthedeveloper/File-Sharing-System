@@ -206,23 +206,28 @@ export default function Auth() {
       title={isLogin ? 'Sign In to Anobyte Software - Secure File Sharing' : 'Create Free Account - Anobyte Software for Transfer Files Online'}
       description="Create an account or sign in to manage secure file sharing, shared files, transfer files online, and how to share file links with confidence."
     >
-      <div className="max-w-md mx-auto px-4 py-16 sm:py-24 flex flex-col justify-center min-h-[80vh]">
+      <div className="relative max-w-md mx-auto px-4 py-16 sm:py-24 flex flex-col justify-center min-h-[80vh]">
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -top-10 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-blue-500/15 blur-3xl" />
+          <div className="absolute bottom-8 right-0 h-32 w-32 rounded-full bg-indigo-500/10 blur-3xl" />
+          <div className="absolute inset-x-8 top-1/3 h-24 rounded-full bg-slate-400/5 blur-2xl" />
+        </div>
 
         {/* Email verification card */}
         {confirmed ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-6 sm:p-10 rounded-[2rem] glass-card border border-blue-100/70 dark:border-blue-900/40 text-center space-y-5"
+            className="p-6 sm:p-10 rounded-[2rem] border border-white/10 bg-slate-900/75 text-center space-y-5 shadow-[0_24px_80px_-35px_rgba(15,23,42,0.95)] backdrop-blur-xl"
           >
             <div className="flex justify-center">
-              <div className="w-16 h-16 rounded-full bg-blue-600 shadow-glow flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_40px_-18px_rgba(56,189,248,0.85)] flex items-center justify-center">
                 <CheckCircle2 className="w-8 h-8 text-white" />
               </div>
             </div>
             <div className="space-y-2">
-              <h1 className="text-2xl font-extrabold font-display text-slate-900 dark:text-white">Verify Your Email</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              <h1 className="text-2xl font-extrabold font-display text-white">Verify Your Email</h1>
+              <p className="text-sm text-slate-300/90 leading-relaxed">
                 We sent a code and secure link to <span className="font-semibold text-blue-700 dark:text-blue-300">{pendingAuth?.email || email}</span>.
                 Open the link or enter the code below to continue.
               </p>
@@ -239,12 +244,12 @@ export default function Auth() {
                 onChange={(e) => setVerificationCode(e.target.value)}
                 placeholder="Paste 6-digit code"
                 disabled={loading}
-                className="form-input text-center text-lg font-bold tracking-[0.35em] py-3"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-center text-lg font-semibold tracking-[0.35em] text-slate-100 shadow-inner shadow-slate-950/70 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-all shadow-glow"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_32px_-12px_rgba(56,189,248,0.55)] hover:-translate-y-0.5 hover:shadow-[0_20px_36px_-12px_rgba(56,189,248,0.7)] disabled:opacity-50 transition-all"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
                 <span>Verify and Continue</span>
@@ -254,14 +259,14 @@ export default function Auth() {
               <button
                 onClick={resendVerification}
                 disabled={loading}
-                className="py-3 rounded-2xl text-xs font-semibold border border-blue-100 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 bg-blue-50/70 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950 transition-all"
+                className="py-3 rounded-2xl text-xs font-semibold border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white transition-all"
               >
                 Resend Code
               </button>
               <button
                 onClick={() => { setConfirmed(false); setPendingAuth(null); setVerificationCode(''); setIsLogin(true); navigate('/auth?tab=login'); }}
                 disabled={loading}
-                className="py-3 rounded-2xl text-xs font-semibold border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+                className="py-3 rounded-2xl text-xs font-semibold border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white transition-all"
               >
                 Back to Sign In
               </button>
@@ -269,15 +274,16 @@ export default function Auth() {
           </motion.div>
         ) : (
         /* Card Frame */
-        <div className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center relative overflow-hidden">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/75 p-6 text-center shadow-[0_24px_80px_-35px_rgba(15,23,42,0.95)] backdrop-blur-xl sm:p-8">
+          <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(129,140,248,0.08),_transparent_25%)]" />
 
           {/* Header titles */}
           <div className="space-y-2 mb-8">
-            <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 dark:text-white leading-tight">
-              {isLogin ? 'Welcome Back' : 'Create Account'}
+            <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-white leading-tight">
+              {isLogin ? 'Welcome back' : 'Create your workspace'}
             </h1>
-            <p className="text-xs text-slate-400">
-              {isLogin ? 'Access your dashboard parameters.' : 'Sign up to unlock larger size limits.'}
+            <p className="text-sm text-slate-300/90">
+              {isLogin ? 'Enter your credentials to access your secure workspace.' : 'Start with a free account and unlock larger sharing limits.'}
             </p>
           </div>
 
@@ -292,9 +298,9 @@ export default function Auth() {
                   transition={{ duration: 0.15 }}
                   className="space-y-1.5"
                 >
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                    <User className="w-3.5 h-3.5" />
-                    <span>Full Name *</span>
+                  <label className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-blue-300" />
+                    <span>Full name</span>
                   </label>
                   <input
                     type="text"
@@ -303,16 +309,16 @@ export default function Auth() {
                     placeholder="Alex Dev"
                     required={!isLogin}
                     disabled={loading}
-                    className="form-input text-sm py-3"
+                    className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
                   />
                 </motion.div>
               )}
             </AnimatePresence>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                <Mail className="w-3.5 h-3.5" />
-                <span>Email Address *</span>
+              <label className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-blue-300" />
+                <span>Email address</span>
               </label>
               <input
                 type="email"
@@ -321,14 +327,14 @@ export default function Auth() {
                 placeholder="you@example.com"
                 required
                 disabled={loading}
-                className="form-input text-sm py-3"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                <Lock className="w-3.5 h-3.5" />
-                <span>Password *</span>
+              <label className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-blue-300" />
+                <span>Password</span>
               </label>
               <input
                 type="password"
@@ -337,7 +343,7 @@ export default function Auth() {
                 placeholder="Enter password..."
                 required
                 disabled={loading}
-                className="form-input text-sm py-3"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
               />
             </div>
 
@@ -345,7 +351,7 @@ export default function Auth() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all min-h-[48px]"
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_32px_-12px_rgba(56,189,248,0.55)] hover:-translate-y-0.5 hover:shadow-[0_20px_38px_-12px_rgba(56,189,248,0.75)] disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px]"
               >
                 {loading ? (
                   <>
@@ -367,7 +373,7 @@ export default function Auth() {
               type="button"
               onClick={sendPasswordlessLogin}
               disabled={loading}
-              className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/50 bg-blue-50/70 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950 transition-all disabled:opacity-50"
+              className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold text-slate-100 border border-white/10 bg-white/5 hover:bg-white/10 hover:text-white transition-all disabled:opacity-50"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Sign in with email code or link</span>
@@ -375,8 +381,8 @@ export default function Auth() {
           )}
 
           {/* Bottom toggle prompt */}
-          <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-900/50 flex items-center justify-center gap-1.5 text-xs">
-            <span className="text-slate-400">
+          <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-center gap-1.5 text-xs">
+            <span className="text-slate-300/90">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}
             </span>
             <button
@@ -385,7 +391,7 @@ export default function Auth() {
                 setIsLogin(!isLogin);
                 navigate(`/auth?tab=${isLogin ? 'register' : 'login'}`);
               }}
-              className="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 cursor-pointer"
+              className="font-semibold text-blue-300 hover:text-blue-100 underline decoration-blue-400/30 underline-offset-4 transition-all cursor-pointer"
             >
               {isLogin ? 'Register' : 'Log In'}
             </button>
