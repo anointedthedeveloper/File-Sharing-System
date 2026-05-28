@@ -19,7 +19,7 @@ if (!isMocked) {
 }
 
 if (isMocked || !supabaseClient) {
-  console.log('📂 Running Anobyte in local mock sandbox database. To connect a live Supabase, configure your .env file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+  console.log('📂 Running Sharing It in local mock sandbox database. To connect a live Supabase, configure your .env file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
   
   // Custom auth listeners storage
   const authListeners = new Set();

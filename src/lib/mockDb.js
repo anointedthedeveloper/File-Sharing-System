@@ -32,10 +32,10 @@ const setLocal = (key, val) => {
 const initMockData = () => {
   const users = getLocal(KEYS.USERS);
   if (users.length === 0) {
-    // Seed a demo user: demo@anobyte.online / password123
+    // Seed a demo user: demo@sharingit.app / password123
     const demoUser = {
       id: 'demo-user-id-1234',
-      email: 'demo@anobyte.online',
+      email: 'demo@sharingit.app',
       password: 'password123',
       name: 'Alex Developer'
     };
@@ -53,7 +53,7 @@ const initMockData = () => {
       {
         id: 'file-1',
         user_id: demoUser.id,
-        name: 'anobyte-architecture.pdf',
+        name: 'sharingit-architecture.pdf',
         size: 2450000, // 2.45 MB
         type: 'application/pdf',
         storage_path: 'mock/path/architecture.pdf',

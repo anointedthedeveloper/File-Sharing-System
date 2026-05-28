@@ -112,12 +112,12 @@ export default function Footer() {
             <Cpu className="w-3.5 h-3.5" />
             <span>Powered by</span>
             <a 
-              href="https://sharingit.app" 
+              href="https://anobyte.online" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 hover:underline"
             >
-              Sharing It
+              Anobyte
             </a>
           </div>
         </div>

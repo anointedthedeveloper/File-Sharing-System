@@ -205,7 +205,7 @@ export default function UploadPage() {
 
   return (
     <LayoutContainer 
-      title="Upload and Share Files - Anobyte"
+      title="Upload and Share Files - Sharing It"
       description="Drag and drop files to generate premium secure, password-locked auto-expiring links instantly."
     >
       <div className="max-w-4xl mx-auto px-4 py-12 sm:py-20">
@@ -503,7 +503,7 @@ export default function UploadPage() {
                   <h4 className="font-bold text-sm font-display">Sandbox Uploader Active</h4>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  You are testing Anobyte in local Sandbox mode. File shares, passwords, history logs, and download gates simulate exactly like live systems, stored locally inside your browser cache. Zero keys or backend servers required.
+                  You are testing Sharing It in local Sandbox mode. File shares, passwords, history logs, and download gates simulate exactly like live systems, stored locally inside your browser cache. Zero keys or backend servers required.
                 </p>
               </div>
             )}

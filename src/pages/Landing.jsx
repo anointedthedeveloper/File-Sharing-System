@@ -117,7 +117,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
             {/* LEFT: Text + CTAs */}
-            <div className="space-y-7 text-left">
+            <div className="space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 text-left">
 
               {/* Badge */}
               <motion.div
@@ -135,7 +135,7 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6 }}
-                className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display leading-[1.1]"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl 2xl:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display leading-[1.1]"
               >
                 Share Files{' '}
                 <span className="text-blue-600 dark:text-blue-400">Instantly.</span>
@@ -150,7 +150,7 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="text-base sm:text-lg text-slate-500 dark:text-slate-400 max-w-md leading-relaxed"
+                className="text-sm sm:text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-md leading-relaxed"
               >
                 Send files to anyone, anywhere — in seconds. No sign-up required. Just drop, share, and go.
               </motion.p>
@@ -160,18 +160,18 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-2"
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1 sm:pt-2"
               >
                 <Link
                   to="/upload"
-                  className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-2xl text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   <span>Share Files Now</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/auth?tab=register"
-                  className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   Create Free Account
                 </Link>
@@ -207,7 +207,7 @@ export default function Landing() {
               <img
                 src={heroImg}
                 alt="Sharing It — share files instantly between devices"
-                className="w-full max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-3xl object-contain drop-shadow-2xl"
+                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl rounded-3xl object-contain drop-shadow-2xl"
               />
             </motion.div>
 
