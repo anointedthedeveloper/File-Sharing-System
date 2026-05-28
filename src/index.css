@@ -20,7 +20,7 @@
   }
 
   body.dark {
-    @apply bg-slate-950 text-slate-100;
+    @apply bg-[#050b18] text-slate-100;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -31,7 +31,7 @@
 @layer components {
   /* Premium Glassmorphic Card */
   .glass-card {
-    @apply bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 shadow-premium dark:shadow-premium-dark;
+    @apply bg-white/80 dark:bg-[#0a1224]/80 backdrop-blur-md border border-slate-200/50 dark:border-blue-900/30 shadow-premium dark:shadow-premium-dark;
   }
   
   .glass-card-hover {
@@ -57,14 +57,16 @@
 .bg-grid-pattern {
   background-size: 40px 40px;
   background-image: 
-    linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(239, 246, 255, 0.9), rgba(255, 255, 255, 0.82) 48%, rgba(219, 234, 254, 0.55));
 }
 
 .dark .bg-grid-pattern {
   background-image: 
-    linear-gradient(to right, rgba(99, 102, 241, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(99, 102, 241, 0.02) 1px, transparent 1px);
+    linear-gradient(to right, rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+    linear-gradient(135deg, #050b18 0%, #071427 45%, #0b1e3a 100%);
 }
 
 /* Elegant Scrollbars */
@@ -89,5 +91,5 @@
 
 /* Custom input style */
 .form-input {
-  @apply w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all duration-200;
+  @apply w-full px-4 py-3 bg-slate-50 dark:bg-[#081225] border border-slate-200 dark:border-blue-900/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-transparent transition-all duration-200;
 }

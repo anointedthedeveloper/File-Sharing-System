@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, User, ShieldAlert } from 'lucide-react';
+import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
@@ -65,7 +65,7 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md transition-colors duration-300">
+    <nav className="sticky top-0 z-50 w-full border-b border-blue-100/70 dark:border-blue-900/30 bg-white/80 dark:bg-[#061126]/90 backdrop-blur-md transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
@@ -126,19 +126,19 @@ export default function Navbar() {
                 <motion.button
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 p-1.5 pr-3 rounded-xl border border-slate-200/50 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer"
+                  className="flex items-center gap-2 p-1.5 pr-3 rounded-full border border-blue-500/30 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white shadow-glow transition-all cursor-pointer"
                 >
                   <img
                     src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`}
                     alt="Avatar"
-                    className="w-8 h-8 rounded-lg object-cover bg-slate-200"
+                    className="w-8 h-8 rounded-full object-cover bg-blue-100 ring-2 ring-white/45"
                   />
                   <div className="text-left max-w-[100px] hidden xl:block">
-                    <p className="text-xs font-semibold truncate text-slate-800 dark:text-slate-200">
+                    <p className="text-xs font-semibold truncate text-white">
                       {profile?.full_name || 'User'}
                     </p>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-blue-100 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </motion.button>
 
                 {/* Dropdown Menu */}
@@ -153,7 +153,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 w-52 z-20 origin-top-right rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md p-2 shadow-premium dark:shadow-premium-dark"
+                        className="absolute right-0 mt-2 w-56 z-20 origin-top-right rounded-[1.5rem] border border-blue-100/70 dark:border-blue-900/40 bg-white/95 dark:bg-[#071327]/95 backdrop-blur-md p-2 shadow-premium dark:shadow-premium-dark"
                       >
                         <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-900">
                           <p className="text-xs text-slate-400">Signed in as</p>

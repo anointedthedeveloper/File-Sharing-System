@@ -100,17 +100,10 @@ export default function Landing() {
       description="Anobyte software helps you transfer files online free, share files securely, and enjoy an Airdrop-style experience for photos, docs, and media with auto-expiring links."
     >
       
-      {/* 1. HERO SECTION — two-column layout matching reference image */}
-      <section className="relative overflow-hidden pt-4 pb-6 sm:pt-6 sm:pb-8 lg:pt-8 lg:pb-12">
-
-        {/* Soft background blobs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-blue-100/60 dark:bg-blue-900/10 blur-[100px]" />
-          <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-indigo-100/50 dark:bg-indigo-900/10 blur-[120px]" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      {/* 1. HERO SECTION - full viewport app-like first screen */}
+      <section className="relative overflow-hidden min-h-[calc(100svh-4rem)] sm:min-h-[calc(100svh-5rem)] flex items-center py-8 sm:py-10 lg:py-12 border-b border-blue-100/60 dark:border-blue-900/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
 
             {/* LEFT: Text + CTAs */}
             <div className="space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 text-left">
@@ -160,14 +153,14 @@ export default function Landing() {
               >
                 <Link
                   to="/upload"
-                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-2xl text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   <span>Share Files Now</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/auth?tab=register"
-                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-full border border-blue-100 dark:border-blue-900/40 bg-white/80 dark:bg-blue-950/20 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-blue-100 transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   Create Free Account
                 </Link>
@@ -203,7 +196,7 @@ export default function Landing() {
               <img
                 src={heroImg}
                 alt="Sharing It — share files instantly between devices"
-                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl rounded-3xl object-contain drop-shadow-2xl"
+                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl max-h-[42svh] sm:max-h-[48svh] lg:max-h-[62svh] object-contain drop-shadow-2xl"
               />
             </motion.div>
 
@@ -291,8 +284,8 @@ export default function Landing() {
       </section>
 
       {/* 4. SECURITY HIGHLIGHTS */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white rounded-[40px] max-w-7xl mx-auto px-6 sm:px-12 my-12 border border-slate-200/50 dark:border-slate-800/50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent z-0" />
+      <section className="py-20 bg-white/70 dark:bg-[#071327]/90 text-slate-900 dark:text-white rounded-[32px] max-w-7xl mx-auto px-6 sm:px-12 my-12 border border-blue-100/60 dark:border-blue-900/40 relative overflow-hidden shadow-premium dark:shadow-premium-dark">
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(37,99,235,0.08),transparent_42%,rgba(14,165,233,0.08))] z-0" />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           <div className="lg:col-span-6 space-y-6 text-left">

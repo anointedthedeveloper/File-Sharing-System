@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { File, Download, Lock, Shield, ShieldAlert, Key, Eye, EyeOff, Loader2, ArrowLeft, RefreshCw, Calendar, CheckCircle } from 'lucide-react';
+import { File, Download, Lock, ShieldAlert, Key, Eye, EyeOff, Loader2, ArrowLeft, Calendar } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import { supabase } from '../lib/supabase';
+import { STORAGE_BUCKET, supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function Share() {
@@ -34,7 +34,7 @@ export default function Share() {
         .select('*')
         .eq('slug', slug);
 
-      if (error || !data) {
+      if (error || !data?.length) {
         throw new Error(error?.message || 'File share link does not exist or has expired.');
       }
 
@@ -88,7 +88,7 @@ export default function Share() {
       
       // 2. Fetch secure signed URL from storage bucket
       const { data, error } = await supabase.storage
-        .from('sharing-it-files')
+        .from(STORAGE_BUCKET)
         .createSignedUrl(fileData.storage_path, 60);
       
       if (error) throw error;

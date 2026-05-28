@@ -128,11 +128,7 @@ export default function LayoutContainer({
   }, [title, description, keywords, ogImage, ogType]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-grid-pattern">
-      {/* Dynamic Background Glow Elements for Modern Premium feel */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-400/5 dark:bg-blue-600/5 blur-[120px] pointer-events-none z-0" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-400/5 dark:bg-indigo-600/5 blur-[120px] pointer-events-none z-0" />
-
+    <div className="flex flex-col min-h-screen bg-white dark:bg-[#050b18] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-grid-pattern">
       {/* Header */}
       <Navbar />
 

@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, RefreshCw, QrCode, Mail, ShieldAlert } from 'lucide-react';
+import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, RefreshCw, QrCode } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
-import { supabase } from '../lib/supabase';
+import { STORAGE_BUCKET, supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function UploadPage() {
@@ -13,7 +13,6 @@ export default function UploadPage() {
   // App states
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
-  const [fileBase64, setFileBase64] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [expiry, setExpiry] = useState('24h'); // 1h, 24h, 7d, never
@@ -112,10 +111,15 @@ export default function UploadPage() {
       let storagePath = `uploads/${slug}/${file.name}`;
 
       // 2. Direct storage upload to real Supabase bucket
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('sharing-it-files')
+      const { error: uploadError } = await supabase.storage
+        .from(STORAGE_BUCKET)
         .upload(storagePath, file);
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        if (uploadError.message?.toLowerCase().includes('bucket not found')) {
+          throw new Error(`Storage bucket "${STORAGE_BUCKET}" was not found. Run supabase_schema.sql in Supabase SQL Editor, then retry the upload.`);
+        }
+        throw uploadError;
+      }
 
       // 3. Register Database Record inside files table
       const newFileData = {
@@ -129,7 +133,7 @@ export default function UploadPage() {
         expires_at: expiresAt
       };
 
-      const { data: dbRecords, error: dbError } = await supabase
+      const { error: dbError } = await supabase
         .from('files')
         .insert(newFileData);
 
