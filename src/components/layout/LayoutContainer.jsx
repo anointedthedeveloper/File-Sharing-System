@@ -5,10 +5,10 @@ import Footer from './Footer';
 
 export default function LayoutContainer({ 
   children, 
-  title = 'Anobyte - Modern Premium File Sharing',
-  description = 'Anobyte is a secure, blazing-fast, and auto-expiring file-sharing platform designed for developers and creators.',
+  title = 'Sharing It - Secure File Sharing, Instantly',
+  description = 'Sharing It is a secure, blazing-fast, and auto-expiring file-sharing platform. Share files instantly with anyone, anywhere.',
   ogType = 'website',
-  ogImage = 'https://anobyte.online/og-image.jpg'
+  ogImage = 'https://sharingit.app/og-image.jpg'
 }) {
   
   // Dynamic SEO Page Meta Tag Updates

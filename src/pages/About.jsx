@@ -23,15 +23,15 @@ export default function About() {
 
   return (
     <LayoutContainer 
-      title="About Anobyte - Secure Auto-Expiring Sharing"
-      description="Learn about Anobyte's privacy-focused sharing engineering, visual systems and secure credentials handling."
+      title="About Sharing It - Secure Auto-Expiring File Sharing"
+      description="Learn about Sharing It's privacy-focused sharing, visual systems and secure credentials handling."
     >
       <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24">
         
         {/* Header */}
         <div className="text-center space-y-4 mb-16">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white font-display">
-            The Anobyte Vision
+            The Sharing It Vision
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
             Architecting the next-generation simple sharing node for developers, creators, and modern teams.
@@ -42,13 +42,13 @@ export default function About() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20 text-left">
           <div className="space-y-4">
             <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 dark:text-white">
-              Why We Built Anobyte
+              Why We Built Sharing It
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
               We realized that traditional file sharing platforms have become heavy, ad-ridden, and slow. Sharing a simple archive, document, or code template shouldn't require logging in, dodging popups, or leaving files permanently sitting on the cloud.
             </p>
             <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
-              Anobyte was designed as a lightweight, beautiful SaaS alternative: dropping a file, picking rules, getting a sharing node, and having it auto-destruct to preserve storage space.
+              Sharing It was designed as a lightweight, beautiful SaaS alternative: dropping a file, picking rules, getting a sharing node, and having it auto-destruct to preserve storage space.
             </p>
           </div>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, Cpu } from 'lucide-react';
+import logoImg from '../../assets/logo.png';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -14,7 +15,7 @@ export default function Footer() {
     company: [
       { name: 'About Us', path: '/about' },
       { name: 'Contact Support', path: '/contact' },
-      { name: 'Official Website', href: 'https://anobyte.online' },
+      { name: 'Official Website', href: 'https://sharingit.app' },
     ],
     legal: [
       { name: 'Privacy Policy', path: '/privacy' },
@@ -30,12 +31,7 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="col-span-1 md:col-span-1.5 space-y-4">
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 shadow-glow">
-                <span className="font-display font-bold text-white text-sm">A</span>
-              </div>
-              <span className="font-display font-extrabold text-lg tracking-tight text-slate-900 dark:text-white">
-                Anobyte
-              </span>
+              <img src={logoImg} alt="Sharing It" className="h-8 w-auto object-contain" />
             </Link>
             <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs leading-relaxed">
               Secure, fast, and auto-expiring file sharing designed for modern developers and creators. Share anything, anywhere.
@@ -109,19 +105,19 @@ export default function Footer() {
         {/* Bottom copyright info */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            &copy; {currentYear} Anobyte. All rights reserved.
+            &copy; {currentYear} Sharing It. All rights reserved.
           </div>
           
           <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
             <Cpu className="w-3.5 h-3.5" />
             <span>Powered by</span>
             <a 
-              href="https://anobyte.online" 
+              href="https://sharingit.app" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 hover:underline"
             >
-              Anobyte
+              Sharing It
             </a>
           </div>
         </div>

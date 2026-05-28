@@ -213,7 +213,7 @@ export default function Share() {
 
   return (
     <LayoutContainer 
-      title="Secure Shared File - Anobyte"
+      title="Secure Shared File - Sharing It"
       description="Access, preview and safely download secure shared links."
     >
       <div className="max-w-md mx-auto px-4 py-20 flex flex-col justify-center min-h-[70vh]">
@@ -257,7 +257,7 @@ export default function Share() {
               <div className="pt-2">
                 <Link to="/" className="inline-flex items-center gap-1 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700">
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Go to Anobyte Home</span>
+                  <span>Go to Sharing It Home</span>
                 </Link>
               </div>
             </motion.div>
@@ -363,7 +363,7 @@ export default function Share() {
                 </button>
                 
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed max-w-xs mx-auto">
-                  Files downloads are verified secure using encrypted temporary link tokens. Powered by <a href="https://anobyte.online" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-blue-500">Anobyte</a>.
+                  Files downloads are verified secure using encrypted temporary link tokens. Powered by <a href="https://sharingit.app" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-blue-500">Sharing It</a>.
                 </p>
               </div>
 

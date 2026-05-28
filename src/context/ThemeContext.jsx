@@ -4,24 +4,21 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    // Check local storage or system preference
-    const savedTheme = localStorage.getItem('anobyte_theme');
-    if (savedTheme) return savedTheme;
-    
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return systemPrefersDark ? 'dark' : 'light';
+    // Check local storage — default is always light mode
+    const savedTheme = localStorage.getItem('sharingit_theme');
+    return savedTheme || 'light';
   });
 
   useEffect(() => {
     const root = window.document.body;
     if (theme === 'dark') {
       root.classList.add('dark');
-      root.style.backgroundColor = '#020617'; // dark.950 match
+      root.style.backgroundColor = '#020617';
     } else {
       root.classList.remove('dark');
       root.style.backgroundColor = '#ffffff';
     }
-    localStorage.setItem('anobyte_theme', theme);
+    localStorage.setItem('sharingit_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

@@ -36,8 +36,8 @@ export default function Contact() {
 
   return (
     <LayoutContainer 
-      title="Contact Support - Anobyte File Share"
-      description="Connect with the Anobyte team for enterprise feedback, questions, or storage inquiries."
+      title="Contact Support - Sharing It"
+      description="Connect with the Sharing It team for feedback, questions, or storage inquiries."
     >
       <div className="max-w-5xl mx-auto px-4 py-16 sm:py-24">
         
@@ -65,8 +65,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-bold text-xs text-slate-400 uppercase tracking-widest">General Enquiries</h4>
-                    <a href="mailto:support@anobyte.online" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
-                      support@anobyte.online
+                    <a href="mailto:support@sharingit.app" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
+                      support@sharingit.app
                     </a>
                   </div>
                 </div>
@@ -78,7 +78,7 @@ export default function Contact() {
                   <div>
                     <h4 className="font-bold text-xs text-slate-400 uppercase tracking-widest">Live Updates</h4>
                     <a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
-                      @AnobyteStatus
+                      @SharingItApp
                     </a>
                   </div>
                 </div>
@@ -89,8 +89,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-bold text-xs text-slate-400 uppercase tracking-widest">Developer Hub</h4>
-                    <a href="https://anobyte.online" target="_blank" rel="noreferrer" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
-                      anobyte.online
+                    <a href="https://sharingit.app" target="_blank" rel="noreferrer" className="text-sm text-slate-700 dark:text-slate-300 font-semibold hover:underline">
+                      sharingit.app
                     </a>
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export default function Contact() {
                         value={formData.email} 
                         onChange={handleChange}
                         className="form-input text-sm" 
-                        placeholder="alex@anobyte.online"
+                        placeholder="you@example.com"
                         required
                         disabled={loading}
                       />

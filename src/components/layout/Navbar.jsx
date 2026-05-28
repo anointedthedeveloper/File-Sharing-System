@@ -5,6 +5,7 @@ import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, 
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase, isMocked } from '../../lib/supabase';
+import logoImg from '../../assets/logo.png';
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -70,16 +71,11 @@ export default function Navbar() {
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 shadow-glow overflow-hidden">
-              <span className="font-display font-bold text-white text-xl">A</span>
-              <motion.div 
-                className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                initial={false}
-              />
-            </div>
-            <span className="font-display font-extrabold text-xl sm:text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-600 to-indigo-600 dark:from-white dark:via-blue-400 dark:to-indigo-400">
-              Anobyte
-            </span>
+            <img
+              src={logoImg}
+              alt="Sharing It"
+              className="h-9 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}

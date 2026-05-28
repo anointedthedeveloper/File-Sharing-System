@@ -4,7 +4,7 @@ import LayoutContainer from '../components/layout/LayoutContainer';
 export default function Privacy() {
   return (
     <LayoutContainer 
-      title="Privacy Policy - Anobyte File Sharing"
+      title="Privacy Policy - Sharing It"
       description="Review our data storage rules, automated share deletion strategies and cookie protocols."
     >
       <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24 text-left">
@@ -15,12 +15,12 @@ export default function Privacy() {
         
         <div className="prose prose-slate dark:prose-invert max-w-none space-y-6 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
           <p>
-            Welcome to Anobyte. We are highly committed to protecting your privacy. This policy outlines how we manage and protect the items and files you upload to our storage nodes.
+            Welcome to Sharing It. We are highly committed to protecting your privacy. This policy outlines how we manage and protect the items and files you upload to our storage nodes.
           </p>
 
           <h2 className="text-xl font-bold font-display text-slate-900 dark:text-white pt-4">1. Information We Collect</h2>
           <p>
-            When utilizing Anobyte as a guest, we do not require you to supply an email address or username. We solely record file metadata necessary to generate sharing tokens, including file name, size, mime type, and chosen expiry timer limits. For registered users, we save credentials (email, hashed password, and full name) to facilitate access control.
+            When utilizing Sharing It as a guest, we do not require you to supply an email address or username. We solely record file metadata necessary to generate sharing tokens, including file name, size, mime type, and chosen expiry timer limits. For registered users, we save credentials (email, hashed password, and full name) to facilitate access control.
           </p>
 
           <h2 className="text-xl font-bold font-display text-slate-900 dark:text-white pt-4">2. File Storage and Expiry</h2>

@@ -55,7 +55,7 @@ export default function Auth() {
         });
         if (error) throw error;
         
-        showToast('Welcome back to Anobyte!', 'success');
+        showToast('Welcome back to Sharing It!', 'success');
         navigate('/dashboard');
       } else {
         // Sign Up Action
@@ -83,8 +83,8 @@ export default function Auth() {
 
   return (
     <LayoutContainer 
-      title={isLogin ? "Sign In - Anobyte File Sharing" : "Create Free Account - Anobyte"}
-      description="Access your Anobyte user dashboard to review download metrics, expiry parameters and shared histories."
+      title={isLogin ? "Sign In - Sharing It" : "Create Free Account - Sharing It"}
+      description="Access your Sharing It dashboard to review download metrics, expiry parameters and shared histories."
     >
       <div className="max-w-md mx-auto px-4 py-16 sm:py-24 flex flex-col justify-center min-h-[80vh]">
         
@@ -96,7 +96,7 @@ export default function Auth() {
               <span className="font-bold text-xs font-display">Sandbox Credentials Enabled</span>
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-              Real databases are currently locked. You can sign in immediately using the seeded credential: <span className="font-semibold text-slate-800 dark:text-slate-200">demo@anobyte.online</span> with password <span className="font-semibold text-slate-800 dark:text-slate-200">password123</span> or create any new sandbox credentials.
+              Real databases are currently locked. You can sign in immediately using the seeded credential: <span className="font-semibold text-slate-800 dark:text-slate-200">demo@sharingit.app</span> with password <span className="font-semibold text-slate-800 dark:text-slate-200">password123</span> or create any new sandbox credentials.
             </p>
           </div>
         )}
@@ -151,7 +151,7 @@ export default function Auth() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="alex@anobyte.online"
+                placeholder="you@example.com"
                 required
                 disabled={loading}
                 className="form-input text-xs"
