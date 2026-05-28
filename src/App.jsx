@@ -7,7 +7,7 @@ import { ToastProvider } from './context/ToastContext';
 import Landing from './pages/Landing';
 import Upload from './pages/Upload';
 import Dashboard from './pages/Dashboard';
-import Auth from './pages/Auth';
+import AuthSplit from './pages/AuthSplit';
 import Share from './pages/Share';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -34,7 +34,7 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             
             {/* Auth Portal */}
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth" element={<AuthSplit />} />
             
             {/* Shared File Recipient Gate */}
             <Route path="/share/:slug" element={<Share />} />
