@@ -1,0 +1,15 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /upload
+Allow: /auth
+
+# Disallow indexing search bots on secure temporary shared links to protect user privacy
+Disallow: /share/
+Disallow: /dashboard
+
+Sitemap: https://anobyte.online/sitemap.xml
