@@ -98,8 +98,8 @@ export default function Auth() {
 
   return (
     <LayoutContainer
-      title={isLogin ? 'Sign In - Sharing It' : 'Create Free Account - Sharing It'}
-      description="Access your Sharing It dashboard to review download metrics, expiry parameters and shared histories."
+      title={isLogin ? 'Sign In to Anobyte Software - Secure File Sharing' : 'Create Free Account - Anobyte Software for Transfer Files Online'}
+      description="Create an account or sign in to manage secure file sharing, shared files, transfer files online, and how to share file links with confidence."
     >
       <div className="max-w-md mx-auto px-4 py-16 sm:py-24 flex flex-col justify-center min-h-[80vh]">
 

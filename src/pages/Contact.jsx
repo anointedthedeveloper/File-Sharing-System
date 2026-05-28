@@ -36,8 +36,8 @@ export default function Contact() {
 
   return (
     <LayoutContainer 
-      title="Contact Support - Sharing It"
-      description="Connect with the Sharing It team for feedback, questions, or storage inquiries."
+      title="Contact Anobyte Software - File Sharing Support & Transfer Files Online Help"
+      description="Contact Anobyte software for help with transfer files online, share files free, secure file sharing, and how to share file links confidently."
     >
       <div className="max-w-5xl mx-auto px-4 py-16 sm:py-24">
         

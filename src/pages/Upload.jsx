@@ -188,8 +188,8 @@ export default function UploadPage() {
 
   return (
     <LayoutContainer
-      title="Upload and Share Files - Sharing It"
-      description="Drag and drop files to generate premium secure, password-locked auto-expiring links instantly."
+      title="Upload & Share Files Free - Anobyte Software for Transfer Files Online"
+      description="Upload and share files free with Anobyte software. Transfer files online, set password locks, and create secure links for shared files in seconds."
     >
       <div className="max-w-4xl mx-auto px-4 py-12 sm:py-20">
 

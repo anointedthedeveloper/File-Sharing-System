@@ -96,8 +96,8 @@ export default function Landing() {
 
   return (
     <LayoutContainer 
-      title="Sharing It - Share Files Instantly, Securely, Effortlessly"
-      description="Send files to anyone, anywhere in seconds. Secure, auto-expiring file sharing with password protection and QR codes."
+      title="Sharing It by Anobyte Software - Transfer Files Online Free & Share Files Securely"
+      description="Anobyte software helps you transfer files online free, share files securely, and enjoy an Airdrop-style experience for photos, docs, and media with auto-expiring links."
     >
       
       {/* 1. HERO SECTION — two-column layout matching reference image */}

@@ -216,8 +216,8 @@ export default function Share() {
 
   return (
     <LayoutContainer 
-      title="Secure Shared File - Sharing It"
-      description="Access, preview and safely download secure shared links."
+      title="Secure Shared File - Anobyte Software Transfer Files Online"
+      description="Access and download secure shared files with Anobyte software, designed for transfer files online, share files free, and safe file delivery."
     >
       <div className="max-w-md mx-auto px-4 py-20 flex flex-col justify-center min-h-[70vh]">
         

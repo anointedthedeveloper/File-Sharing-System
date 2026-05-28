@@ -4,8 +4,8 @@ import LayoutContainer from '../components/layout/LayoutContainer';
 export default function Privacy() {
   return (
     <LayoutContainer 
-      title="Privacy Policy - Sharing It"
-      description="Review our data storage rules, automated share deletion strategies and cookie protocols."
+      title="Privacy Policy - Anobyte Software File Sharing & Transfer Files Online"
+      description="Review how Anobyte software protects shared files, secure links, transfer files online, and free file sharing data with clear privacy practices."
     >
       <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24 text-left">
         <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900 dark:text-white mb-4">

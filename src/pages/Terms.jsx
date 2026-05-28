@@ -4,8 +4,8 @@ import LayoutContainer from '../components/layout/LayoutContainer';
 export default function Terms() {
   return (
     <LayoutContainer 
-      title="Terms of Service - Sharing It"
-      description="Read our platform boundaries, storage restrictions and account sharing policies."
+      title="Terms of Service - Anobyte Software File Sharing & Share Files Free"
+      description="Read the terms for secure file sharing, share files free, transfer files online, and how Anobyte software handles shared files responsibly."
     >
       <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24 text-left">
         <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900 dark:text-white mb-4">

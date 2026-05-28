@@ -23,8 +23,8 @@ export default function About() {
 
   return (
     <LayoutContainer 
-      title="About Sharing It - Secure Auto-Expiring File Sharing"
-      description="Learn about Sharing It's privacy-focused sharing, visual systems and secure credentials handling."
+      title="About Anobyte Software - Secure File Sharing, Airdrop Alternative & Transfer Files Online"
+      description="Learn how Anobyte software powers secure file sharing, transfer files online free, and a practical Airdrop alternative for sharing files safely."
     >
       <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24">
         

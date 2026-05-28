@@ -34,7 +34,7 @@ export default function Footer() {
               <img src={logoImg} alt="Sharing It" className="h-8 w-auto object-contain" />
             </Link>
             <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs leading-relaxed">
-              Secure, fast, and auto-expiring file sharing designed for modern developers and creators. Share anything, anywhere.
+              Anobyte software delivers secure, fast, and auto-expiring file sharing for transfer files online, share files free, and Airdrop-style delivery.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a href="https://twitter.com" target="_blank" rel="noreferrer" className="p-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-900 text-slate-400 hover:text-blue-500 transition-colors" aria-label="Twitter">
@@ -105,7 +105,7 @@ export default function Footer() {
         {/* Bottom copyright info */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            &copy; {currentYear} Sharing It. All rights reserved.
+            &copy; {currentYear} Anobyte software. Sharing It is part of the Anobyte file-sharing platform.
           </div>
 
           <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">

@@ -8,7 +8,7 @@ Allow: /terms
 Allow: /upload
 Allow: /auth
 
-# Disallow indexing search bots on secure temporary shared links to protect user privacy
+# Keep temporary shares private, but allow the public landing pages to be indexed.
 Disallow: /share/
 Disallow: /dashboard
 

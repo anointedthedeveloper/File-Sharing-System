@@ -136,8 +136,8 @@ export default function Dashboard() {
 
   return (
     <LayoutContainer 
-      title="User Dashboard - Sharing It"
-      description="Manage shared files, check storage limits and track download telemetry metrics."
+      title="User Dashboard - Manage Shared Files & Free File Sharing with Anobyte Software"
+      description="Track shared files, manage download links, and monitor secure file sharing activity for transfer files online and share files free workflows."
     >
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
         
