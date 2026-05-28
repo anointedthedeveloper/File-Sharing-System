@@ -1,6 +1,6 @@
 # Resend + Supabase Email Setup
 
-Use Resend as the delivery layer for Supabase Auth emails so the app can accept a code or link without breaking `supabase.auth.verifyOtp`.
+Use the Supabase Send Email Auth Hook when you want our Resend function to send auth emails directly. Custom SMTP only changes the transport; Supabase still owns the email send. The hook replaces Supabase's built-in email sender.
 
 ## 1. Vercel Environment Variables
 
@@ -17,9 +17,47 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 Use a verified sending domain in Resend before using `hello@sharingit.anobyte.online`.
 
-## 2. Supabase Auth SMTP
+## 2. Supabase Auth Email Hook
+
+Deploy the Edge Function:
+
+```bash
+supabase functions deploy send-email --no-verify-jwt
+```
 
 In Supabase Dashboard:
+
+1. Go to Authentication -> Hooks.
+2. Create a Send Email hook.
+3. Select HTTPS.
+4. URL:
+
+```text
+https://tiviaprimusuiaspeqai.supabase.co/functions/v1/send-email
+```
+
+5. Click Generate Secret and copy the value.
+6. Add the secret locally and in Supabase:
+
+```env
+SEND_EMAIL_HOOK_SECRET=v1,whsec_...
+```
+
+```bash
+supabase secrets set RESEND_API_KEY=your_resend_api_key RESEND_FROM_EMAIL="Sharing It <hello@sharingit.anobyte.online>" APP_URL=https://sharingit.anobyte.online SEND_EMAIL_HOOK_SECRET=v1,whsec_...
+```
+
+7. Push auth config:
+
+```bash
+supabase config push --yes
+```
+
+Once enabled, Supabase will call `supabase/functions/send-email/index.ts`, and that function sends the email through Resend.
+
+## 3. Optional SMTP Fallback
+
+If you do not enable the hook, configure SMTP as a fallback:
 
 1. Go to Authentication -> Settings -> SMTP Settings.
 2. Enable Custom SMTP.
@@ -33,7 +71,7 @@ In Supabase Dashboard:
 
 This makes Supabase send confirmation, magic-link, and OTP emails through Resend.
 
-## 3. Supabase Confirm Signup Template
+## 4. Supabase Confirm Signup Template
 
 Authentication -> Email Templates -> Confirm signup:
 
@@ -59,7 +97,7 @@ Body:
 </div>
 ```
 
-## 4. Magic Link Template
+## 5. Magic Link Template
 
 Authentication -> Email Templates -> Magic Link:
 
@@ -84,7 +122,7 @@ Body:
 </div>
 ```
 
-## 5. Deliverability Checklist
+## 6. Deliverability Checklist
 
 - Verify the sending domain in Resend.
 - Add SPF, DKIM, and DMARC records from Resend DNS settings.

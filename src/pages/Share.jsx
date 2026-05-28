@@ -20,6 +20,7 @@ export default function Share() {
   const [showPassword, setShowPassword] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     fetchFileDetails();
@@ -79,6 +80,7 @@ export default function Share() {
   // Secure download loop and metrics tracker
   const handleDownload = async () => {
     if (!fileData) return;
+    setDownloading(true);
     try {
       // 1. Increment database download count metrics
       await supabase
@@ -94,29 +96,22 @@ export default function Share() {
       if (error) throw error;
       
       if (data?.signedUrl) {
-        try {
-          const res = await fetch(data.signedUrl);
-          if (!res.ok) throw new Error();
-          const blob = await res.blob();
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = fileData.name;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-          toast.showToast('Download initialized!', 'success');
-        } catch (err) {
-          // Graceful fallback to opening in new window if fetch is blocked by CORS/network
-          window.open(data.signedUrl, '_blank');
-          toast.showToast('Download opened in new window!', 'success');
-        }
+        const link = document.createElement('a');
+        link.href = data.signedUrl;
+        link.download = fileData.name;
+        link.rel = 'noopener noreferrer';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.showToast('Download started in the background.', 'success');
       } else {
         throw new Error('Could not generate download URL');
       }
     } catch (e) {
       toast.showToast(e.message || 'Failed to trigger download file stream.', 'error');
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -359,10 +354,11 @@ export default function Share() {
               <div className="space-y-3.5">
                 <button
                   onClick={handleDownload}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all min-h-[52px]"
+                  disabled={downloading}
+                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all min-h-[52px]"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download Secure File</span>
+                  {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                  <span>{downloading ? 'Starting Download...' : 'Download Secure File'}</span>
                 </button>
                 
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed max-w-xs mx-auto">
