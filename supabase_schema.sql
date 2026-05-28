@@ -13,10 +13,12 @@ create table if not exists public.profiles (
 -- Enable RLS for Profiles
 alter table public.profiles enable row level security;
 
--- Profiles Policies
+-- Profiles Policies (Drop if they exist before creating)
+drop policy if exists "Public profiles are viewable by everyone." on public.profiles;
 create policy "Public profiles are viewable by everyone." on public.profiles
   for select using (true);
 
+drop policy if exists "Users can update their own profile." on public.profiles;
 create policy "Users can update their own profile." on public.profiles
   for update using (auth.uid() = id);
 
@@ -38,16 +40,20 @@ create table if not exists public.files (
 -- Enable RLS for Files
 alter table public.files enable row level security;
 
--- Files Policies
+-- Files Policies (Drop if they exist before creating)
+drop policy if exists "Anyone can view files by slug if not expired" on public.files;
 create policy "Anyone can view files by slug if not expired" on public.files
   for select using (expires_at is null or expires_at > now());
 
+drop policy if exists "Anyone can insert files (allows guest uploads)" on public.files;
 create policy "Anyone can insert files (allows guest uploads)" on public.files
   for insert with check (true);
 
+drop policy if exists "Anyone can update files (allows download count increments)" on public.files;
 create policy "Anyone can update files (allows download count increments)" on public.files
   for update using (true);
 
+drop policy if exists "Owners can delete their own files" on public.files;
 create policy "Owners can delete their own files" on public.files
   for delete using (auth.uid() = user_id);
 
@@ -62,7 +68,7 @@ begin
     coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', 'User'),
     coalesce(
       new.raw_user_meta_data->>'avatar_url',
-      'https://api.dicebear.com/7.x/initials/svg?seed=' || encodeURIComponent(coalesce(new.raw_user_meta_data->>'full_name', new.email))
+      'https://api.dicebear.com/7.x/initials/svg?seed=' || coalesce(new.id::text, 'User')
     )
   );
   return new;
