@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import heroImg from '../assets/hero.png';
+import symbolImg from '../assets/symbol.png';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { useTheme } from '../context/ThemeContext';
@@ -8,6 +9,31 @@ export default function AuthSplit() {
   const [isLogin, setIsLogin] = useState(true);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+
+  // Slideshow images and copy
+  const slides = [
+    {
+      img: heroImg,
+      title: 'Secure file delivery in milliseconds.',
+      desc: 'Experience the ultimate workspace file routing. Fully encrypted, beautifully intuitive.'
+    },
+    {
+      img: symbolImg,
+      title: 'Share instantly, anywhere.',
+      desc: 'Send files to anyone, on any device, with a single link. No app required.'
+    },
+    {
+      img: heroImg,
+      title: 'Your data, your control.',
+      desc: 'Privacy-first design. You decide who accesses your files.'
+    }
+  ];
+  const [slideIdx, setSlideIdx] = useState(0);
+  // Auto-advance slideshow every 4s
+  React.useEffect(() => {
+    const t = setTimeout(() => setSlideIdx((i) => (i + 1) % slides.length), 4000);
+    return () => clearTimeout(t);
+  }, [slideIdx]);
 
   const shellClass = isDark
     ? 'bg-[linear-gradient(135deg,#020617_0%,#0f172a_45%,#111827_100%)] text-slate-100'
@@ -28,10 +54,10 @@ export default function AuthSplit() {
   return (
     <div className={`min-h-screen w-full ${shellClass} select-none font-sans`}>
       <Navbar />
-      <main className="flex min-h-[calc(100vh-4rem)] items-stretch justify-center px-0 py-0 md:px-4 md:py-4">
-        <div className={`relative flex w-full min-h-[calc(100vh-4rem)] overflow-hidden border-y md:min-h-[calc(100vh-6rem)] md:rounded-none md:border ${panelClass}`}>
+      <main className="flex flex-col min-h-[calc(100vh-4rem)] items-stretch justify-center px-0 py-0 md:px-4 md:py-4">
+        <div className={`relative flex flex-col md:flex-row w-full min-h-[calc(100vh-4rem)] overflow-hidden border-y md:min-h-[calc(100vh-6rem)] md:rounded-none md:border ${panelClass}`}>
         {/* SIGN UP FORM (Left side background layer) */}
-        <div className={`w-full md:w-1/2 h-full flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12 transition-all duration-700 ease-in-out ${isLogin ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`w-full md:w-1/2 h-full flex flex-col justify-center px-4 py-8 sm:px-8 lg:px-12 transition-all duration-700 ease-in-out ${isLogin ? 'opacity-0 pointer-events-none absolute md:static' : 'opacity-100 static'}`}>
           <div className="max-w-md w-full mx-auto space-y-6">
             <div className="space-y-2">
               <h2 className={`text-3xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Create Account</h2>
@@ -57,7 +83,7 @@ export default function AuthSplit() {
           </div>
         </div>
         {/* LOGIN FORM (Right side background layer) */}
-        <div className={`w-full md:w-1/2 h-full flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12 transition-all duration-700 ease-in-out ${!isLogin ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`w-full md:w-1/2 h-full flex flex-col justify-center px-4 py-8 sm:px-8 lg:px-12 transition-all duration-700 ease-in-out ${!isLogin ? 'opacity-0 pointer-events-none absolute md:static' : 'opacity-100 static'}`}>
           <div className="max-w-md w-full mx-auto space-y-6">
             <div className="space-y-2">
               <h2 className={`text-3xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Welcome Back</h2>
@@ -83,35 +109,40 @@ export default function AuthSplit() {
             </div>
           </div>
         </div>
-        {/* MOVING VISUAL PANEL OVERLAY (Desktop Only) */}
-        <div 
-          className={`hidden md:flex absolute top-0 bottom-0 w-1/2 h-full transition-transform duration-700 ease-in-out z-10 p-12 flex-col justify-between border ${visualClass}
-            ${isLogin ? 'translate-x-0 left-0 border-r' : 'translate-x-full left-0 border-l'}`}
+        {/* VISUAL PANEL (Slideshow, Brand, Toggles) */}
+        <div
+          className={`flex flex-col items-center justify-between border-t md:border-t-0 md:border-l md:static md:w-1/2 w-full z-10 p-6 md:p-12 ${visualClass}
+            ${isLogin ? 'order-3 md:order-none' : 'order-3 md:order-none'}`}
         >
           {/* Subtle Woven Aesthetic Background Asset */}
           <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-screen overflow-hidden">
-            <div className="absolute -top-20 -left-20 w-96 h-96 bg-blue-500/30 rounded-full blur-[100px]" />
-            <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px]" />
+            <div className="absolute -top-20 -left-20 w-72 h-72 bg-blue-500/30 rounded-full blur-[100px]" />
+            <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-cyan-500/20 rounded-full blur-[100px]" />
           </div>
           {/* Top Panel Brand */}
-          <div className="relative z-20 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md">S</div>
-            <span className={`font-semibold tracking-wide ${isDark ? 'text-white' : 'text-slate-900'}`}>Sharing It?</span>
+          <div className="relative z-20 flex items-center gap-2 mb-4">
+            <img src={symbolImg} alt="Brand Symbol" className="w-10 h-10 rounded-lg shadow-md bg-blue-600 p-1" />
+            <span className={`font-semibold tracking-wide text-lg ${isDark ? 'text-white' : 'text-slate-900'}`}>Sharing It?</span>
           </div>
-          {/* Center Dynamic Marketing Copy & Hero */}
-          <div className="relative z-20 flex flex-col items-center justify-center flex-1 space-y-4">
-            <img src={heroImg} alt="Sharing It Hero" className="w-56 rounded-2xl shadow-2xl mb-4" />
-            <h3 className={`text-2xl font-semibold leading-snug text-center ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              {isLogin ? "Simpler data pipelines start here." : "Secure file delivery in milliseconds."}
-            </h3>
-            <p className={`${isDark ? 'text-slate-400' : 'text-slate-500'} text-sm leading-relaxed max-w-sm text-center`}>
-              {isLogin 
-                ? "Connect your local developer environments and monitor system configurations dynamically."
-                : "Experience the ultimate workspace file routing. Fully encrypted, beautifully intuitive."}
-            </p>
+          {/* Slideshow */}
+          <div className="relative z-20 flex flex-col items-center justify-center flex-1 space-y-4 w-full max-w-xs mx-auto">
+            <img src={slides[slideIdx].img} alt="Slide visual" className="w-44 h-44 object-contain rounded-2xl shadow-2xl mb-2 transition-all duration-500" />
+            <h3 className={`text-xl font-semibold leading-snug text-center ${isDark ? 'text-white' : 'text-slate-900'}`}>{slides[slideIdx].title}</h3>
+            <p className={`${isDark ? 'text-slate-400' : 'text-slate-500'} text-sm leading-relaxed text-center`}>{slides[slideIdx].desc}</p>
+            {/* Slideshow dots */}
+            <div className="flex gap-2 justify-center mt-2">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  className={`w-2.5 h-2.5 rounded-full border-2 ${i === slideIdx ? 'bg-blue-500 border-blue-500' : 'bg-transparent border-slate-400'} transition-all`}
+                  onClick={() => setSlideIdx(i)}
+                  aria-label={`Go to slide ${i+1}`}
+                />
+              ))}
+            </div>
           </div>
           {/* Bottom Interface Toggles */}
-          <div className="relative z-20 text-sm text-slate-400">
+          <div className="relative z-20 text-sm text-slate-400 mt-6">
             {isLogin ? (
               <span>Don't have an account? <button onClick={() => setIsLogin(false)} className="text-blue-500 hover:text-blue-600 font-medium transition underline ml-1">Register</button></span>
             ) : (
@@ -119,14 +150,7 @@ export default function AuthSplit() {
             )}
           </div>
         </div>
-        {/* Mobile Toggle Footer (Fallback for small screens) */}
-        <div className={`md:hidden block text-center pb-8 pt-2 z-20 text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-          {isLogin ? (
-            <span>Don't have an account? <button onClick={() => setIsLogin(false)} className="text-blue-500 font-medium underline ml-1">Register</button></span>
-          ) : (
-            <span>Already have an account? <button onClick={() => setIsLogin(true)} className="text-blue-500 font-medium underline ml-1">Sign In</button></span>
-          )}
-        </div>
+        {/* Mobile: Hide extra toggle, handled in visual panel */}
         </div>
       </main>
       <Footer />
