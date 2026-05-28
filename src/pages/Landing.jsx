@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, Shield, Share2, Eye, Zap, Key, CheckCircle, ChevronDown, MessageSquare, ArrowRight } from 'lucide-react';
+import { UploadCloud, Shield, Share2, Eye, Zap, Key, CheckCircle, ChevronDown, MessageSquare, ArrowRight, Cpu } from 'lucide-react';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function Landing() {
