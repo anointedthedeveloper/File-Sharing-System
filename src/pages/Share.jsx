@@ -303,7 +303,7 @@ export default function Share() {
                 <button
                   type="submit"
                   disabled={verifying}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 min-h-[48px]"
                 >
                   {verifying ? (
                     <>
@@ -356,7 +356,7 @@ export default function Share() {
               <div className="space-y-3.5">
                 <button
                   onClick={handleDownload}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all min-h-[52px]"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download Secure File</span>

@@ -105,7 +105,7 @@ export default function Landing() {
     >
       
       {/* 1. HERO SECTION — two-column layout matching reference image */}
-      <section className="relative overflow-hidden pt-10 pb-12 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
+      <section className="relative overflow-hidden pt-4 pb-6 sm:pt-6 sm:pb-8 lg:pt-8 lg:pb-12">
 
         {/* Soft background blobs */}
         <div className="absolute inset-0 pointer-events-none">
@@ -114,7 +114,7 @@ export default function Landing() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
             {/* LEFT: Text + CTAs */}
             <div className="space-y-7 text-left">
@@ -135,7 +135,7 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6 }}
-                className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display leading-[1.05]"
+                className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display leading-[1.1]"
               >
                 Share Files{' '}
                 <span className="text-blue-600 dark:text-blue-400">Instantly.</span>
@@ -202,12 +202,12 @@ export default function Landing() {
               initial={{ opacity: 0, x: 40, scale: 0.97 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               transition={{ delay: 0.25, type: 'spring', stiffness: 60, damping: 16 }}
-              className="relative flex items-center justify-center"
+              className="relative flex items-center justify-center order-2 lg:order-1"
             >
               <img
                 src={heroImg}
                 alt="Sharing It — share files instantly between devices"
-                className="w-full max-w-2xl lg:max-w-full rounded-3xl object-contain drop-shadow-2xl"
+                className="w-full max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-3xl object-contain drop-shadow-2xl"
               />
             </motion.div>
 

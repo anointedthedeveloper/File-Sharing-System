@@ -313,7 +313,7 @@ export default function UploadPage() {
                             value={expiry}
                             onChange={(e) => setExpiry(e.target.value)}
                             disabled={uploading}
-                            className="form-input text-xs cursor-pointer h-[44px]"
+                            className="form-input text-sm cursor-pointer py-3 min-h-[48px]"
                           >
                             <option value="1h">1 Hour</option>
                             <option value="24h">24 Hours (1 Day)</option>
@@ -331,7 +331,7 @@ export default function UploadPage() {
                           <button
                             type="button"
                             onClick={() => !uploading && setPasswordProtect(!passwordProtect)}
-                            className={`w-full h-[44px] flex items-center justify-between px-4 border rounded-xl transition-all text-xs font-semibold ${
+                            className={`w-full min-h-[48px] flex items-center justify-between px-4 border rounded-xl transition-all text-sm font-semibold ${
                               passwordProtect 
                                 ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-500/50 text-blue-600 dark:text-blue-400' 
                                 : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
@@ -363,7 +363,7 @@ export default function UploadPage() {
                                   onChange={(e) => setPassword(e.target.value)}
                                   disabled={uploading}
                                   placeholder="Enter secure passcode..."
-                                  className="form-input text-xs pr-10"
+                                  className="form-input text-sm py-3 pr-10"
                                 />
                                 <button
                                   type="button"
@@ -405,7 +405,7 @@ export default function UploadPage() {
                       <button
                         onClick={handleUpload}
                         disabled={!file || uploading}
-                        className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all"
+                        className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all min-h-[52px]"
                       >
                         {uploading ? (
                           <>

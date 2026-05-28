@@ -136,7 +136,7 @@ export default function Auth() {
                     placeholder="Alex Dev"
                     required={!isLogin}
                     disabled={loading}
-                    className="form-input text-xs"
+                    className="form-input text-sm py-3"
                   />
                 </motion.div>
               )}
@@ -154,7 +154,7 @@ export default function Auth() {
                 placeholder="you@example.com"
                 required
                 disabled={loading}
-                className="form-input text-xs"
+                className="form-input text-sm py-3"
               />
             </div>
 
@@ -170,7 +170,7 @@ export default function Auth() {
                 placeholder="Enter password..."
                 required
                 disabled={loading}
-                className="form-input text-xs"
+                className="form-input text-sm py-3"
               />
             </div>
 
@@ -178,7 +178,7 @@ export default function Auth() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all"
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all min-h-[48px]"
               >
                 {loading ? (
                   <>

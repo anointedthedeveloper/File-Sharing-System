@@ -262,7 +262,7 @@ export default function Dashboard() {
               {filteredFiles.length === 0 ? (
                 
                 /* Empty state dashboard visual */
-                <div className="p-16 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4">
+                <div className="p-8 sm:p-16 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4">
                   <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center mx-auto text-slate-400">
                     <File className="w-6 h-6 animate-pulse" />
                   </div>
@@ -287,77 +287,145 @@ export default function Dashboard() {
                 </div>
               ) : (
                 
-                /* List of shared files */
-                <div className="overflow-x-auto rounded-3xl border border-slate-200/40 dark:border-slate-800/40 bg-white/70 dark:bg-slate-950/20 backdrop-blur-md">
-                  <table className="w-full text-left border-collapse min-w-[600px]">
-                    <thead>
-                      <tr className="border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/30">
-                        <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filename</th>
-                        <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filesize</th>
-                        <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type</th>
-                        <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Downloads</th>
-                        <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expiry</th>
-                        <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-900/60">
-                      {filteredFiles.map((file) => (
-                        <tr 
-                          key={file.id}
-                          className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors"
-                        >
-                          <td className="px-6 py-4.5 truncate max-w-[200px]">
-                            <div className="flex items-center gap-3">
-                              <File className="w-4.5 h-4.5 text-blue-500 flex-shrink-0" />
-                              <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate" title={file.name}>
-                                {file.name}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
-                            {formatBytes(file.size)}
-                          </td>
-                          <td className="px-6 py-4.5 text-xs text-slate-400 font-semibold truncate max-w-[120px]">
-                            {file.type.split('/')[1] || 'binary'}
-                          </td>
-                          <td className="px-6 py-4.5 text-xs text-slate-600 dark:text-slate-300 font-bold">
-                            {file.downloads_count}
-                          </td>
-                          <td className="px-6 py-4.5">
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded-md uppercase bg-slate-50 dark:bg-slate-900/40">
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>{getRemainingTime(file.expires_at)}</span>
-                            </span>
-                          </td>
-                          <td className="px-6 py-4.5 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => handleCopyLink(file.slug)}
-                                className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-400 hover:text-blue-500 hover:border-blue-500/50 transition-colors"
-                                title="Copy Share Link"
-                              >
-                                <Copy className="w-3.5 h-3.5" />
-                              </button>
-                              
-                              <button
-                                onClick={() => handleDelete(file.id)}
-                                disabled={deletingId === file.id}
-                                className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-400 hover:text-rose-500 hover:border-rose-500/50 transition-colors"
-                                title="Delete Share Link"
-                              >
-                                {deletingId === file.id ? (
-                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                ) : (
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                )}
-                              </button>
-                            </div>
-                          </td>
+                /* List of shared files - Card layout for mobile, Table for desktop */
+                <>
+                  {/* Mobile Card Layout */}
+                  <div className="md:hidden space-y-4">
+                    {filteredFiles.map((file) => (
+                      <div
+                        key={file.id}
+                        className="p-5 rounded-2xl glass-card border border-slate-200/40 dark:border-slate-800/40 space-y-4"
+                      >
+                        {/* File name and icon */}
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center flex-shrink-0">
+                            <File className="w-5 h-5 text-blue-500" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate" title={file.name}>
+                              {file.name}
+                            </p>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                              {file.type.split('/')[1] || 'binary'} • {formatBytes(file.size)}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Stats row */}
+                        <div className="flex items-center gap-4 text-xs">
+                          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                            <Download className="w-3.5 h-3.5" />
+                            <span className="font-semibold">{file.downloads_count} downloads</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span className="font-semibold">{getRemainingTime(file.expires_at)}</span>
+                          </div>
+                        </div>
+
+                        {/* Action buttons */}
+                        <div className="flex items-center gap-2 pt-2">
+                          <button
+                            onClick={() => handleCopyLink(file.slug)}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500/50 transition-colors"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy Link</span>
+                          </button>
+                          <button
+                            onClick={() => handleDelete(file.id)}
+                            disabled={deletingId === file.id}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-500/50 transition-colors"
+                          >
+                            {deletingId === file.id ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                <span>Deleting...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop Table Layout */}
+                  <div className="hidden md:block overflow-x-auto rounded-3xl border border-slate-200/40 dark:border-slate-800/40 bg-white/70 dark:bg-slate-950/20 backdrop-blur-md">
+                    <table className="w-full text-left border-collapse min-w-[600px]">
+                      <thead>
+                        <tr className="border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/30">
+                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filename</th>
+                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filesize</th>
+                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type</th>
+                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Downloads</th>
+                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expiry</th>
+                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-900/60">
+                        {filteredFiles.map((file) => (
+                          <tr 
+                            key={file.id}
+                            className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors"
+                          >
+                            <td className="px-6 py-4.5 truncate max-w-[200px]">
+                              <div className="flex items-center gap-3">
+                                <File className="w-4.5 h-4.5 text-blue-500 flex-shrink-0" />
+                                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate" title={file.name}>
+                                  {file.name}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                              {formatBytes(file.size)}
+                            </td>
+                            <td className="px-6 py-4.5 text-xs text-slate-400 font-semibold truncate max-w-[120px]">
+                              {file.type.split('/')[1] || 'binary'}
+                            </td>
+                            <td className="px-6 py-4.5 text-xs text-slate-600 dark:text-slate-300 font-bold">
+                              {file.downloads_count}
+                            </td>
+                            <td className="px-6 py-4.5">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded-md uppercase bg-slate-50 dark:bg-slate-900/40">
+                                <Clock className="w-3.5 h-3.5" />
+                                <span>{getRemainingTime(file.expires_at)}</span>
+                              </span>
+                            </td>
+                            <td className="px-6 py-4.5 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => handleCopyLink(file.slug)}
+                                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-400 hover:text-blue-500 hover:border-blue-500/50 transition-colors"
+                                  title="Copy Share Link"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                </button>
+                                
+                                <button
+                                  onClick={() => handleDelete(file.id)}
+                                  disabled={deletingId === file.id}
+                                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-400 hover:text-rose-500 hover:border-rose-500/50 transition-colors"
+                                  title="Delete Share Link"
+                                >
+                                  {deletingId === file.id ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
 
             </motion.div>

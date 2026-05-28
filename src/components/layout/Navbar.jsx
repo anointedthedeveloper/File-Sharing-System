@@ -79,7 +79,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-1 lg:gap-3">
+          <div className="hidden md:flex items-center gap-1 lg:gap-2 xl:gap-3">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -106,7 +106,7 @@ export default function Navbar() {
           </div>
 
           {/* Action CTAs */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2 lg:gap-4">
             
             {/* Theme Toggle */}
             <motion.button
@@ -205,7 +205,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/auth?tab=register"
-                  className="px-4.5 py-2.5 text-sm font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-glow transition-all duration-200"
+                  className="px-4 py-2 text-sm font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-glow transition-all duration-200"
                 >
                   Get Started
                 </Link>
