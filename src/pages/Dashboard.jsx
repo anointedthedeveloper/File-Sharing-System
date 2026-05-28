@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { File, Trash2, Download, Copy, Search, Filter, Server, Loader2, Plus, LogOut, CheckCircle, Clock, Calendar, QrCode } from 'lucide-react';
+import { File, Trash2, Download, Copy, Search, Filter, Loader2, Plus, Clock, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
+import { sendWelcomeEmailOnce } from '../lib/email';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function Dashboard() {
@@ -16,12 +17,14 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [files, setFiles] = useState([]);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
   
   // Filtering & Search
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all'); // all, image, document, media, other
-  const [viewMode, setViewMode] = useState('list'); // list, grid
-
   useEffect(() => {
     const initSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -32,6 +35,7 @@ export default function Dashboard() {
       }
       setUser(session.user);
       setProfile(session.profile);
+      sendWelcomeEmailOnce().catch(() => {});
       fetchUserFiles(session.user.id);
     };
     initSession();
@@ -87,6 +91,34 @@ export default function Dashboard() {
     const link = `${window.location.origin}/share/${slug}`;
     navigator.clipboard.writeText(link);
     showToast('Share link copied!', 'success');
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    if (newPassword.length < 8) {
+      showToast('Use at least 8 characters for your new password.', 'warning');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      showToast('Password confirmation does not match.', 'error');
+      return;
+    }
+
+    setUpdatingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+
+      setNewPassword('');
+      setConfirmPassword('');
+      showToast('Password updated successfully.', 'success');
+    } catch (e) {
+      showToast(e.message || 'Could not update password.', 'error');
+    } finally {
+      setUpdatingPassword(false);
+    }
   };
 
   // Metrics calculators
@@ -217,6 +249,84 @@ export default function Dashboard() {
                   <p className="text-[9px] text-slate-400 mt-3 sm:mt-0 font-medium">Reaching limit automatically locks further uploads.</p>
                 </div>
 
+              </div>
+
+              {/* Account Security */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div className="lg:col-span-5 p-6 rounded-[2rem] glass-card border border-blue-100/60 dark:border-blue-900/40 text-left">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase tracking-widest">Account</p>
+                      <h2 className="text-2xl font-extrabold font-display text-slate-900 dark:text-white mt-2">Security Settings</h2>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                        Signed in as <span className="font-semibold text-slate-700 dark:text-slate-200">{user?.email}</span>
+                      </p>
+                    </div>
+                    <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-glow">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+
+                <form
+                  onSubmit={handlePasswordChange}
+                  className="lg:col-span-7 p-6 rounded-[2rem] glass-card border border-blue-100/60 dark:border-blue-900/40 text-left space-y-4"
+                >
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                    <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                    <span>Change Password</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">New Password</label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="Minimum 8 characters"
+                          disabled={updatingPassword}
+                          className="form-input text-sm py-3 pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-3.5 text-slate-400 hover:text-blue-500"
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Confirm Password</label>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repeat new password"
+                        disabled={updatingPassword}
+                        className="form-input text-sm py-3"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                    <p className="text-[10px] text-slate-400 leading-relaxed max-w-md">
+                      Password changes apply to your Supabase account immediately. Use a unique password you do not use elsewhere.
+                    </p>
+                    <button
+                      type="submit"
+                      disabled={updatingPassword || !newPassword || !confirmPassword}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all"
+                    >
+                      {updatingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+                      <span>Update Password</span>
+                    </button>
+                  </div>
+                </form>
               </div>
 
               {/* 2. HISTORY CONTROLS BAR */}

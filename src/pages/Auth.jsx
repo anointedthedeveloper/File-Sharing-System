@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Loader2, ArrowRight, CheckCircle2, KeyRound, Send } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
+import { sendWelcomeEmailOnce } from '../lib/email';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function Auth() {
@@ -88,6 +89,7 @@ export default function Auth() {
 
       if (error) throw error;
 
+      sendWelcomeEmailOnce().catch(() => {});
       showToast('Email verified. You are signed in.', 'success');
       navigate('/dashboard');
     } catch (e) {
@@ -150,11 +152,26 @@ export default function Auth() {
           return;
         }
 
+        sendWelcomeEmailOnce().catch(() => {});
         showToast('Welcome back to Sharing It!', 'success');
         navigate('/dashboard');
       } else {
+        const { data: existingProfile, error: existingProfileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .ilike('email', email.trim())
+          .maybeSingle();
+
+        if (existingProfileError) throw existingProfileError;
+        if (existingProfile) {
+          showToast('An account with this email already exists. Please sign in instead.', 'warning');
+          setIsLogin(true);
+          navigate('/auth?tab=login');
+          return;
+        }
+
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: email.trim().toLowerCase(),
           password,
           options: {
             emailRedirectTo: redirectTo,
@@ -168,6 +185,7 @@ export default function Auth() {
 
         // If session is immediately available, email confirmation is disabled — go straight to dashboard
         if (data.session) {
+          sendWelcomeEmailOnce().catch(() => {});
           showToast('Account successfully provisioned!', 'success');
           navigate('/dashboard');
         } else {

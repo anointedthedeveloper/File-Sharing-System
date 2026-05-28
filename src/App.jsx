@@ -13,6 +13,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import Unsubscribe from './pages/Unsubscribe';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
             
             {/* Core Features Pages */}
             <Route path="/upload" element={<Upload />} />
