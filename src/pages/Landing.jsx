@@ -159,47 +159,112 @@ export default function Landing() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  to="/auth?tab=register"
+                  to="#features"
                   className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-full border border-blue-100 dark:border-blue-900/40 bg-white/80 dark:bg-blue-950/20 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-blue-100 transition-all duration-300 transform hover:-translate-y-0.5"
                 >
-                  Create Free Account
+                  View Features
                 </Link>
               </motion.div>
 
-              {/* Trust badges */}
+              {/* Trust badges - Technical */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.6 }}
-                className="flex items-center gap-5 pt-2"
+                className="flex items-center gap-3 pt-2 flex-wrap"
               >
                 {[
-                  { icon: <Shield className="w-4 h-4 text-blue-500" />, label: 'End-to-end secure' },
-                  { icon: <Zap className="w-4 h-4 text-blue-500" />, label: 'No sign-up needed' },
-                  { icon: <Key className="w-4 h-4 text-blue-500" />, label: 'Auto-expires' },
+                  { icon: <Shield className="w-4 h-4" />, label: 'P2P Encrypted' },
+                  { icon: <Zap className="w-4 h-4" />, label: 'Max Speed' },
+                  { icon: <Key className="w-4 h-4" />, label: 'Auto-Wiped' },
                 ].map(({ icon, label }) => (
-                  <div key={label} className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <motion.div
+                    key={label}
+                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30"
+                  >
                     {icon}
                     <span>{label}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </motion.div>
             </div>
 
-            {/* RIGHT: Hero image */}
+            {/* RIGHT: Hero image with drop animation */}
             <motion.div
-              initial={{ opacity: 0, x: 40, scale: 0.97 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ delay: 0.25, type: 'spring', stiffness: 60, damping: 16 }}
+              initial={{ opacity: 0, x: 40, scale: 0.97, y: -50 }}
+              animate={{ opacity: 1, x: 0, scale: 1, y: 0 }}
+              transition={{ delay: 0.25, type: 'spring', stiffness: 60, damping: 16, duration: 0.8 }}
               className="relative flex items-center justify-center order-2 lg:order-1"
             >
-              <img
+              <motion.img
                 src={heroImg}
                 alt="Sharing It — share files instantly between devices"
                 className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl max-h-[42svh] sm:max-h-[48svh] lg:max-h-[62svh] object-contain drop-shadow-2xl"
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
               />
             </motion.div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* 1.5. WHY CHOOSE SHARING IT */}
+      <section className="py-20 bg-white dark:bg-[#020617]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4 max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
+              Why Choose Sharing It?
+            </h2>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
+              Unlike traditional cloud storage, we prioritize speed, privacy, and simplicity over account requirements and storage quotas.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <Zap className="w-12 h-12" />,
+                title: "Zero Friction",
+                desc: "No account creation, no email verification, no bloated onboarding. Just drop and go."
+              },
+              {
+                icon: <Share2 className="w-12 h-12" />,
+                title: "Speed Over Everything",
+                desc: "Optimized peer-to-peer and edge network delivery means your files transfer at the absolute limit of your bandwidth."
+              },
+              {
+                icon: <Shield className="w-12 h-12" />,
+                title: "Privacy by Default",
+                desc: "We don't track your data or index your files. What you share is encrypted, delivered, and permanently wiped."
+              }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="p-8 rounded-3xl bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-100 dark:border-blue-900/30 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 group"
+              >
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-display mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -218,12 +283,16 @@ export default function Landing() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step) => (
-              <div
+              <motion.div
                 key={step.number}
-                className="relative p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 flex flex-col justify-between h-64 hover:border-blue-500/50 dark:hover:border-blue-500/30 transition-all duration-300 group"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="relative p-8 rounded-3xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 flex flex-col justify-between h-64 hover:border-blue-500/50 dark:hover:border-blue-500/30 transition-all duration-300 group shadow-lg hover:shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50"
               >
                 <div>
-                  <span className="font-display font-extrabold text-4xl sm:text-5xl text-blue-600/10 dark:text-blue-400/10 group-hover:text-blue-500/20 transition-colors">
+                  <span className="font-display font-extrabold text-4xl sm:text-5xl bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:via-indigo-400 group-hover:to-sky-300 transition-all">
                     {step.number}
                   </span>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white font-display mt-4 mb-2">
@@ -233,7 +302,7 @@ export default function Landing() {
                     {step.desc}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -283,7 +352,53 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 4. SECURITY HIGHLIGHTS */}
+      {/* 4. COMPARISON TABLE */}
+      <section className="py-20 bg-slate-50/50 dark:bg-slate-950/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4 max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
+              Sharing It vs Traditional Cloud Storage
+            </h2>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
+              See why modern teams choose Sharing It over Google Drive, Dropbox, and WeTransfer.
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-800">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900 dark:text-white">Feature</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-500 dark:text-slate-400">Google Drive</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-500 dark:text-slate-400">Dropbox</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30">Sharing It</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { feature: "Account Required", drive: "Yes", dropbox: "Yes", sharing: "No" },
+                  { feature: "File Size Limit", drive: "5GB", dropbox: "2GB", sharing: "5GB (Free)" },
+                  { feature: "Auto-Expiration", drive: "Manual", dropbox: "Manual", sharing: "Automatic" },
+                  { feature: "End-to-End Encryption", drive: "Optional", dropbox: "Optional", sharing: "Default" },
+                  { feature: "Password Protection", drive: "No", dropbox: "No", sharing: "Yes" },
+                  { feature: "QR Code Sharing", drive: "No", dropbox: "No", sharing: "Yes" },
+                  { feature: "File Previews", drive: "Limited", dropbox: "Limited", sharing: "Full" },
+                  { feature: "Privacy Tracking", drive: "Yes", dropbox: "Yes", sharing: "None" },
+                ].map((row, index) => (
+                  <tr key={index} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
+                    <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{row.feature}</td>
+                    <td className="px-6 py-4 text-center text-sm text-slate-500 dark:text-slate-400">{row.drive}</td>
+                    <td className="px-6 py-4 text-center text-sm text-slate-500 dark:text-slate-400">{row.dropbox}</td>
+                    <td className="px-6 py-4 text-center text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20">{row.sharing}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. SECURITY HIGHLIGHTS */}
       <section className="py-20 bg-white/70 dark:bg-[#071327]/90 text-slate-900 dark:text-white rounded-[32px] max-w-7xl mx-auto px-6 sm:px-12 my-12 border border-blue-100/60 dark:border-blue-900/40 relative overflow-hidden shadow-premium dark:shadow-premium-dark">
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(37,99,235,0.08),transparent_42%,rgba(14,165,233,0.08))] z-0" />
         
@@ -302,19 +417,19 @@ export default function Landing() {
               We encrypt file names in storage and grant download permissions using signed tokens. Expired files are scrubbed from servers to protect confidentiality.
             </p>
 
-            <ul className="space-y-3 pt-2">
+            <div className="grid grid-cols-2 gap-4 pt-2">
               {[
                 "Optional SHA-256 download passkeys",
                 "Temporary access link signatures",
                 "Full automated cron cleanup",
                 "100% compliant data control policies"
               ].map((bullet) => (
-                <li key={bullet} className="flex items-center gap-2.5 text-slate-700 dark:text-slate-300 text-sm font-medium">
+                <div key={bullet} className="flex items-center gap-2.5 text-slate-700 dark:text-slate-300 text-sm font-medium">
                   <CheckCircle className="w-4 h-4 text-blue-500 dark:text-blue-400 flex-shrink-0" />
                   <span>{bullet}</span>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
           <div className="lg:col-span-6 flex justify-center lg:justify-end">
@@ -362,16 +477,29 @@ export default function Landing() {
             {faqs.map((faq, idx) => {
               const isOpen = activeFaq === idx;
               return (
-                <div
+                <motion.div
                   key={idx}
-                  className="rounded-2xl border border-slate-200/40 dark:border-slate-800/40 bg-white dark:bg-slate-900/40 overflow-hidden transition-all duration-200"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.05 }}
+                  className={`rounded-2xl border overflow-hidden transition-all duration-200 ${
+                    isOpen
+                      ? 'border-blue-500/50 dark:border-blue-500/30 bg-white dark:bg-slate-900/60 shadow-lg shadow-blue-500/10'
+                      : 'border-slate-200/40 dark:border-slate-800/40 bg-white dark:bg-slate-900/40 hover:border-blue-300 dark:hover:border-blue-700'
+                  }`}
                 >
                   <button
                     onClick={() => setActiveFaq(isOpen ? null : idx)}
                     className="w-full px-6 py-5 flex items-center justify-between text-left font-semibold text-slate-800 dark:text-slate-100 hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer select-none"
                   >
                     <span>{faq.q}</span>
-                    <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                    <motion.div
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ChevronDown className="w-5 h-5 text-slate-400" />
+                    </motion.div>
                   </button>
 
                   <AnimatePresence initial={false}>
@@ -388,7 +516,7 @@ export default function Landing() {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               );
             })}
           </div>
