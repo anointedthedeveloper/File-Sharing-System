@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, RefreshCw, QrCode } from 'lucide-react';
+import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, RefreshCw, QrCode, Clock, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
 import { STORAGE_BUCKET, supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
+import { Link } from 'react-router-dom';
 
 export default function UploadPage() {
   const { showToast } = useToast();
@@ -198,7 +199,7 @@ export default function UploadPage() {
       <div className="max-w-4xl mx-auto px-4 py-12 sm:py-20">
 
         {/* Title */}
-        <div className="text-center space-y-3 mb-12 sm:mb-16">
+        <div className="text-center space-y-3 mb-8">
           <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white font-display">
             Share Your Files
           </h1>
@@ -207,11 +208,12 @@ export default function UploadPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        {/* Centered Container Card */}
+        <div className="w-full max-w-5xl mx-auto bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 shadow-xl">
 
           {/* Main Upload Box Card (Lefthand Column) */}
           <div className="col-span-1 md:col-span-7 space-y-6">
-            <div className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center relative overflow-hidden">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 text-center relative overflow-hidden">
 
               <AnimatePresence mode="wait">
                 {!shareData ? (
@@ -220,6 +222,7 @@ export default function UploadPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
                     className="space-y-6"
                   >
                     {/* Drag-drop zone */}
@@ -230,8 +233,8 @@ export default function UploadPage() {
                         onDragOver={handleDrag}
                         onDrop={handleDrop}
                         onClick={triggerFileInput}
-                        className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 cursor-pointer transition-all duration-300 flex flex-col items-center gap-3 relative select-none ${dragActive
-                            ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[0.99]'
+                        className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 cursor-pointer transition-colors duration-200 flex flex-col items-center gap-3 relative select-none ${dragActive
+                            ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20'
                             : 'border-slate-200 dark:border-slate-800 hover:border-blue-500/50 hover:bg-slate-50 dark:hover:bg-slate-900/40'
                           }`}
                       >
@@ -256,6 +259,13 @@ export default function UploadPage() {
                         <div className="text-[10px] font-bold text-slate-400 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded-md uppercase">
                           Max Size: {userId ? '1GB' : '50MB'}
                         </div>
+                        {!userId && (
+                          <div className="text-[10px] text-blue-500 font-medium">
+                            <Link to="/auth?tab=register" className="hover:underline">
+                              Need more space? Sign up to unlock 2GB transfers
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       /* File Selected Card */
@@ -336,7 +346,7 @@ export default function UploadPage() {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.15 }}
                             className="overflow-hidden"
                           >
                             <div className="space-y-1.5 text-left pt-1">
@@ -390,7 +400,7 @@ export default function UploadPage() {
                       <button
                         onClick={handleUpload}
                         disabled={!file || uploading}
-                        className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all min-h-[52px]"
+                        className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 hover:from-blue-700 hover:via-indigo-600 hover:to-sky-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/25 transition-all min-h-[52px]"
                       >
                         {uploading ? (
                           <>
@@ -412,8 +422,9 @@ export default function UploadPage() {
                   /* 3. POST-UPLOAD SHARE SUCCESS OVERLAY (Glassmorphic Slide Card) */
                   <motion.div
                     key="upload-success"
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2 }}
                     className="space-y-6 text-center py-4"
                   >
                     <div className="w-14 h-14 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center mx-auto border border-emerald-100 dark:border-emerald-900/30 text-emerald-500">
@@ -479,31 +490,39 @@ export default function UploadPage() {
 
           {/* Guidelines Sidebar Panel (Righthand Column) */}
           <div className="col-span-1 md:col-span-5 space-y-6 text-left">
-
-
-
-            <div className="p-6.5 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 space-y-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 space-y-6 h-full">
               <h3 className="text-xl font-bold font-display text-slate-900 dark:text-white">Sharing Paradigms</h3>
 
               <ul className="space-y-4">
                 {[
                   {
                     title: "Access Gate Locking",
-                    desc: "Apply passkeys to protect links. Receivers must input correct password signatures to verify download streams."
+                    desc: "Apply passkeys to protect links. Receivers must input correct password signatures to verify download streams.",
+                    icon: <Lock className="w-4 h-4" />,
+                    active: passwordProtect
                   },
                   {
                     title: "Auto-expiring Lifespans",
-                    desc: "Specify timeline nodes (1 hour, 1 day, 7 days). Reaching limits automatically renders files entirely inaccessible."
+                    desc: "Specify timeline nodes (1 hour, 1 day, 7 days). Reaching limits automatically renders files entirely inaccessible.",
+                    icon: <Clock className="w-4 h-4" />,
+                    active: expiry !== 'never'
                   },
                   {
                     title: "Mobile Friendly Previews",
-                    desc: "Instantly preview PDFs, code snippets, visual images, or play audio and video directly in mobile browsers using QR codes."
+                    desc: "Instantly preview PDFs, code snippets, visual images, or play audio and video directly in mobile browsers using QR codes.",
+                    icon: <Smartphone className="w-4 h-4" />,
+                    active: true
                   }
                 ].map((rule) => (
-                  <li key={rule.title} className="space-y-1">
-                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 font-display flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                  <li key={rule.title} className={`space-y-1 transition-all ${rule.active ? 'opacity-100' : 'opacity-60'}`}>
+                    <h4 className={`font-bold text-sm font-display flex items-center gap-2 ${rule.active ? 'text-blue-600 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                      <div className={`p-1.5 rounded-lg ${rule.active ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                        {rule.icon}
+                      </div>
                       <span>{rule.title}</span>
+                      {rule.active && (
+                        <Check className="w-3.5 h-3.5 text-blue-500" />
+                      )}
                     </h4>
                     <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed pl-3.5">
                       {rule.desc}
