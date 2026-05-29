@@ -208,23 +208,29 @@ export default function Auth() {
     >
       <div className="relative max-w-md mx-auto px-4 py-16 sm:py-24 flex flex-col justify-center min-h-[80vh]">
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-10 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-blue-500/15 blur-3xl" />
-          <div className="absolute bottom-8 right-0 h-32 w-32 rounded-full bg-indigo-500/10 blur-3xl" />
+          <div className="absolute -top-10 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-blue-500/15 blur-3xl animate-pulse" />
+          <div className="absolute bottom-8 right-0 h-32 w-32 rounded-full bg-indigo-500/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
           <div className="absolute inset-x-8 top-1/3 h-24 rounded-full bg-slate-400/5 blur-2xl" />
         </div>
 
         {/* Email verification card */}
         {confirmed ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             className="p-6 sm:p-10 rounded-[2rem] border border-white/10 bg-slate-900/75 text-center space-y-5 shadow-[0_24px_80px_-35px_rgba(15,23,42,0.95)] backdrop-blur-xl"
           >
-            <div className="flex justify-center">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_40px_-18px_rgba(56,189,248,0.85)] flex items-center justify-center">
+            <motion.div 
+              className="flex justify-center"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 15 }}
+            >
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_40px_-18px_rgba(56,189,248,0.85)] flex items-center justify-center hover:scale-110 transition-transform duration-300">
                 <CheckCircle2 className="w-8 h-8 text-white" />
               </div>
-            </div>
+            </motion.div>
             <div className="space-y-2">
               <h1 className="text-2xl font-extrabold font-display text-white">Verify Your Email</h1>
               <p className="text-sm text-slate-300/90 leading-relaxed">
@@ -244,47 +250,68 @@ export default function Auth() {
                 onChange={(e) => setVerificationCode(e.target.value)}
                 placeholder="Paste 6-digit code"
                 disabled={loading}
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-center text-lg font-semibold tracking-[0.35em] text-slate-100 shadow-inner shadow-slate-950/70 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-center text-lg font-semibold tracking-[0.35em] text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all hover:border-white/20"
               />
-              <button
+              <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_32px_-12px_rgba(56,189,248,0.55)] hover:-translate-y-0.5 hover:shadow-[0_20px_36px_-12px_rgba(56,189,248,0.7)] disabled:opacity-50 transition-all"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_32px_-12px_rgba(56,189,248,0.55)] hover:shadow-[0_20px_36px_-12px_rgba(56,189,248,0.7)] disabled:opacity-50 transition-all min-h-[48px]"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
                 <span>Verify and Continue</span>
-              </button>
+              </motion.button>
             </form>
             <div className="grid grid-cols-2 gap-2">
-              <button
+              <motion.button
                 onClick={resendVerification}
                 disabled={loading}
-                className="py-3 rounded-2xl text-xs font-semibold border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="py-3 rounded-2xl text-xs font-semibold border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white transition-all disabled:opacity-50"
               >
                 Resend Code
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => { setConfirmed(false); setPendingAuth(null); setVerificationCode(''); setIsLogin(true); navigate('/auth?tab=login'); }}
                 disabled={loading}
-                className="py-3 rounded-2xl text-xs font-semibold border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="py-3 rounded-2xl text-xs font-semibold border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white transition-all disabled:opacity-50"
               >
                 Back to Sign In
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         ) : (
         /* Card Frame */
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/75 p-6 text-center shadow-[0_24px_80px_-35px_rgba(15,23,42,0.95)] backdrop-blur-xl sm:p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/75 p-6 text-center shadow-[0_24px_80px_-35px_rgba(15,23,42,0.95)] backdrop-blur-xl sm:p-8 hover:border-white/20 transition-colors duration-300"
+        >
           <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(129,140,248,0.08),_transparent_25%)]" />
 
           {/* Header titles */}
           <div className="space-y-2 mb-8">
-            <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-white leading-tight">
+            <motion.h1 
+              className="text-2xl sm:text-3xl font-extrabold font-display text-white leading-tight"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
               {isLogin ? 'Welcome back' : 'Create your workspace'}
-            </h1>
-            <p className="text-sm text-slate-300/90">
+            </motion.h1>
+            <motion.p 
+              className="text-sm text-slate-300/90"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
               {isLogin ? 'Enter your credentials to access your secure workspace.' : 'Start with a free account and unlock larger sharing limits.'}
-            </p>
+            </motion.p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 text-left">
@@ -292,66 +319,86 @@ export default function Auth() {
               {!isLogin && (
                 <motion.div
                   key="fullName-field"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.15 }}
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -10 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className="space-y-1.5"
                 >
                   <label className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-blue-300" />
                     <span>Full name</span>
                   </label>
-                  <input
+                  <motion.input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Alex Dev"
                     required={!isLogin}
                     disabled={loading}
-                    className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
+                    whileFocus={{ scale: 1.01 }}
+                    className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all hover:border-white/20"
                   />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="space-y-1.5">
+            <motion.div 
+              className="space-y-1.5"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
               <label className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-blue-300" />
                 <span>Email address</span>
               </label>
-              <input
+              <motion.input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
                 disabled={loading}
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
+                whileFocus={{ scale: 1.01 }}
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all hover:border-white/20"
               />
-            </div>
+            </motion.div>
 
-            <div className="space-y-1.5">
+            <motion.div 
+              className="space-y-1.5"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
               <label className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-blue-300" />
                 <span>Password</span>
               </label>
-              <input
+              <motion.input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password..."
                 required
                 disabled={loading}
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all"
+                whileFocus={{ scale: 1.01 }}
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-slate-950/70 placeholder:text-slate-400 focus:border-blue-400/70 focus:outline-none focus:ring-2 focus:ring-blue-400/35 transition-all hover:border-white/20"
               />
-            </div>
+            </motion.div>
 
-            <div className="pt-2">
-              <button
+            <motion.div 
+              className="pt-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_32px_-12px_rgba(56,189,248,0.55)] hover:-translate-y-0.5 hover:shadow-[0_20px_38px_-12px_rgba(56,189,248,0.75)] disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px]"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 shadow-[0_18px_32px_-12px_rgba(56,189,248,0.55)] hover:shadow-[0_20px_38px_-12px_rgba(56,189,248,0.75)] disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px]"
               >
                 {loading ? (
                   <>
@@ -364,40 +411,54 @@ export default function Auth() {
                     <ArrowRight className="w-3.5 h-3.5" />
                   </>
                 )}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </form>
 
-          {isLogin && (
-            <button
-              type="button"
-              onClick={sendPasswordlessLogin}
-              disabled={loading}
-              className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold text-slate-100 border border-white/10 bg-white/5 hover:bg-white/10 hover:text-white transition-all disabled:opacity-50"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>Sign in with email code or link</span>
-            </button>
-          )}
+          <AnimatePresence>
+            {isLogin && (
+              <motion.button
+                type="button"
+                onClick={sendPasswordlessLogin}
+                disabled={loading}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                whileTap={{ scale: 0.98 }}
+                className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold text-slate-100 border border-white/10 bg-white/5 hover:text-white transition-all disabled:opacity-50"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Sign in with email code or link</span>
+              </motion.button>
+            )}
+          </AnimatePresence>
 
           {/* Bottom toggle prompt */}
-          <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-center gap-1.5 text-xs">
+          <motion.div 
+            className="mt-6 pt-4 border-t border-white/10 flex items-center justify-center gap-1.5 text-xs"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
             <span className="text-slate-300/90">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}
             </span>
-            <button
+            <motion.button
               onClick={() => {
                 if (loading) return;
                 setIsLogin(!isLogin);
                 navigate(`/auth?tab=${isLogin ? 'register' : 'login'}`);
               }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className="font-semibold text-blue-300 hover:text-blue-100 underline decoration-blue-400/30 underline-offset-4 transition-all cursor-pointer"
             >
               {isLogin ? 'Register' : 'Log In'}
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
-        </div>
+        </motion.div>
         )}
 
       </div>
