@@ -5,17 +5,17 @@ import LayoutContainer from '../components/layout/LayoutContainer';
 export default function About() {
   const values = [
     {
-      icon: <Shield className="w-5 h-5 text-blue-500" />,
+      icon: <Shield className="w-12 h-12 text-blue-500" />,
       title: "Privacy First",
       desc: "We build systems that respect your storage limits and confidentiality, purging access points when expired."
     },
     {
-      icon: <Server className="w-5 h-5 text-blue-500" />,
+      icon: <Server className="w-12 h-12 text-blue-500" />,
       title: "Resilient Infrastructure",
       desc: "Powered by Supabase's cloud PostgreSQL architectures and storage clusters to assure global availability."
     },
     {
-      icon: <Users className="w-5 h-5 text-blue-500" />,
+      icon: <Users className="w-12 h-12 text-blue-500" />,
       title: "Developer Focused",
       desc: "Designed to help developers share templates, mock archives, and visual images seamlessly."
     }

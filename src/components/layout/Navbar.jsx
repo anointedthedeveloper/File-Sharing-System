@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown } from 'lucide-react';
+import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, HelpCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
@@ -58,6 +58,7 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Upload', path: '/upload', icon: <UploadCloud className="w-4 h-4" /> },
     ...(user ? [{ name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> }] : []),
+    { name: 'FAQ', path: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -66,8 +67,8 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-blue-100/70 dark:border-blue-900/30 bg-white/80 dark:bg-[#061126]/90 backdrop-blur-md transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">

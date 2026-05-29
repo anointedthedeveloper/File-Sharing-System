@@ -27,32 +27,32 @@ export default function Landing() {
 
   const features = [
     {
-      icon: <UploadCloud className="w-6 h-6 text-blue-500" />,
+      icon: <UploadCloud className="w-12 h-12 text-blue-500" />,
       title: "Drag & Drop Upload",
       desc: "Simplicity at its core. Grab any file, throw it in, and let us handle the rest. Instantly."
     },
     {
-      icon: <Shield className="w-6 h-6 text-blue-500" />,
+      icon: <Shield className="w-12 h-12 text-blue-500" />,
       title: "Secure Access Control",
       desc: "Protect your links with optional passkeys. Only the recipients you choose get access."
     },
     {
-      icon: <Zap className="w-6 h-6 text-blue-500" />,
+      icon: <Zap className="w-12 h-12 text-blue-500" />,
       title: "Real-time Tracking",
       desc: "Watch your files upload chunk by chunk with gorgeous progress indicators."
     },
     {
-      icon: <Share2 className="w-6 h-6 text-blue-500" />,
+      icon: <Share2 className="w-12 h-12 text-blue-500" />,
       title: "QR Code Sharing",
       desc: "Transfer files to mobile devices in a snap. Point your camera, download, and go."
     },
     {
-      icon: <Eye className="w-6 h-6 text-blue-500" />,
+      icon: <Eye className="w-12 h-12 text-blue-500" />,
       title: "File Previews",
       desc: "Preview documents, PDFs, images, text, audio, and videos right in the browser."
     },
     {
-      icon: <Key className="w-6 h-6 text-blue-500" />,
+      icon: <Key className="w-12 h-12 text-blue-500" />,
       title: "Auto-Expiry Nodes",
       desc: "Set files to automatically self-destruct after download, 1 hour, 1 day, or 7 days."
     }
