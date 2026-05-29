@@ -196,24 +196,23 @@ export default function UploadPage() {
       title="Upload & Share Files Free - Anobyte Software for Transfer Files Online"
       description="Upload and share files free with Anobyte software. Transfer files online, set password locks, and create secure links for shared files in seconds."
     >
-      <div className="max-w-4xl mx-auto px-4 py-12 sm:py-20">
-
-        {/* Title */}
-        <div className="text-center space-y-3 mb-8">
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white font-display">
-            Share Your Files
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-md mx-auto">
-            Choose files to securely upload. Configure password controls or expiry timelines as required.
-          </p>
-        </div>
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-6 sm:py-8">
 
         {/* Centered Container Card */}
-        <div className="w-full max-w-5xl mx-auto bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 shadow-xl">
+        <div className="w-full max-w-6xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 sm:p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 md:gap-8 shadow-xl">
+          {/* Title - moved inside container */}
+          <div className="col-span-1 md:col-span-12 text-center space-y-2 mb-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
+              Share Your Files
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm max-w-md mx-auto">
+              Choose files to securely upload. Configure password controls or expiry timelines as required.
+            </p>
+          </div>
 
           {/* Main Upload Box Card (Lefthand Column) */}
-          <div className="col-span-1 md:col-span-7 space-y-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 text-center relative overflow-hidden">
+          <div className="col-span-1 md:col-span-7 space-y-4">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 text-center relative overflow-hidden">
 
               <AnimatePresence mode="wait">
                 {!shareData ? (
@@ -223,7 +222,7 @@ export default function UploadPage() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="space-y-6"
+                    className="space-y-4"
                   >
                     {/* Drag-drop zone */}
                     {!file ? (
@@ -233,7 +232,7 @@ export default function UploadPage() {
                         onDragOver={handleDrag}
                         onDrop={handleDrop}
                         onClick={triggerFileInput}
-                        className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 cursor-pointer transition-colors duration-200 flex flex-col items-center gap-3 relative select-none ${dragActive
+                        className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 cursor-pointer transition-colors duration-200 flex flex-col items-center gap-3 relative select-none ${dragActive
                             ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20'
                             : 'border-slate-200 dark:border-slate-800 hover:border-blue-500/50 hover:bg-slate-50 dark:hover:bg-slate-900/40'
                           }`}
@@ -245,11 +244,11 @@ export default function UploadPage() {
                           onChange={handleFileChange}
                         />
 
-                        <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center border border-blue-100/30 dark:border-blue-900/30 text-blue-600 dark:text-blue-400">
-                          <Upload className="w-7 h-7" />
+                        <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center border border-blue-100/30 dark:border-blue-900/30 text-blue-600 dark:text-blue-400">
+                          <Upload className="w-6 h-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-sm sm:text-base text-slate-800 dark:text-slate-100">
+                          <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
                             Drag and Drop File Here
                           </p>
                           <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
@@ -269,7 +268,7 @@ export default function UploadPage() {
                       </div>
                     ) : (
                       /* File Selected Card */
-                      <div className="border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 flex items-center justify-between gap-4 text-left">
+                      <div className="border border-slate-200 dark:border-slate-800 p-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 flex items-center justify-between gap-4 text-left">
                         <div className="flex items-center gap-3 truncate">
                           <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 text-blue-500">
                             <File className="w-5 h-5" />
@@ -296,8 +295,8 @@ export default function UploadPage() {
                     )}
 
                     {/* Expiry and Password properties */}
-                    <div className="space-y-4 pt-2">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-3 pt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                         {/* Expiry Option */}
                         <div className="space-y-1.5 text-left">
@@ -309,7 +308,7 @@ export default function UploadPage() {
                             value={expiry}
                             onChange={(e) => setExpiry(e.target.value)}
                             disabled={uploading}
-                            className="form-input text-sm cursor-pointer py-3 min-h-[48px]"
+                            className="form-input text-sm cursor-pointer py-2.5 min-h-[44px]"
                           >
                             <option value="1h">1 Hour</option>
                             <option value="24h">24 Hours (1 Day)</option>
@@ -327,7 +326,7 @@ export default function UploadPage() {
                           <button
                             type="button"
                             onClick={() => !uploading && setPasswordProtect(!passwordProtect)}
-                            className={`w-full min-h-[48px] flex items-center justify-between px-4 border rounded-xl transition-all text-sm font-semibold ${passwordProtect
+                            className={`w-full min-h-[44px] flex items-center justify-between px-4 border rounded-xl transition-all text-sm font-semibold ${passwordProtect
                                 ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-500/50 text-blue-600 dark:text-blue-400'
                                 : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
                               }`}
@@ -358,12 +357,12 @@ export default function UploadPage() {
                                   onChange={(e) => setPassword(e.target.value)}
                                   disabled={uploading}
                                   placeholder="Enter secure passcode..."
-                                  className="form-input text-sm py-3 pr-10"
+                                  className="form-input text-sm py-2.5 pr-10"
                                 />
                                 <button
                                   type="button"
                                   onClick={() => setShowPassword(!showPassword)}
-                                  className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600"
+                                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
                                 >
                                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
@@ -377,7 +376,7 @@ export default function UploadPage() {
 
                     {/* Progress tracking wrapper */}
                     {uploading && (
-                      <div className="space-y-2 text-left pt-4">
+                      <div className="space-y-2 text-left pt-3">
                         <div className="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
                           <span className="flex items-center gap-1.5">
                             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -400,7 +399,7 @@ export default function UploadPage() {
                       <button
                         onClick={handleUpload}
                         disabled={!file || uploading}
-                        className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 hover:from-blue-700 hover:via-indigo-600 hover:to-sky-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/25 transition-all min-h-[52px]"
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 hover:from-blue-700 hover:via-indigo-600 hover:to-sky-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/25 transition-all min-h-[48px]"
                       >
                         {uploading ? (
                           <>
@@ -425,14 +424,14 @@ export default function UploadPage() {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
-                    className="space-y-6 text-center py-4"
+                    className="space-y-4 text-center py-3"
                   >
-                    <div className="w-14 h-14 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center mx-auto border border-emerald-100 dark:border-emerald-900/30 text-emerald-500">
-                      <Check className="w-8 h-8" />
+                    <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center mx-auto border border-emerald-100 dark:border-emerald-900/30 text-emerald-500">
+                      <Check className="w-7 h-7" />
                     </div>
 
                     <div className="space-y-1">
-                      <h3 className="text-xl sm:text-2xl font-bold font-display text-slate-900 dark:text-white">Share Node Generated!</h3>
+                      <h3 className="text-lg sm:text-xl font-bold font-display text-slate-900 dark:text-white">Share Node Generated!</h3>
                       <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-sm mx-auto">
                         Your file {shareData.name} is uploaded.
                       </p>
@@ -459,9 +458,9 @@ export default function UploadPage() {
                     </div>
 
                     {/* QR Code and Actions grid */}
-                    <div className="p-5 border border-slate-200/50 dark:border-slate-800/50 rounded-2xl bg-slate-50 dark:bg-slate-900/40 max-w-xs mx-auto flex flex-col items-center gap-4">
+                    <div className="p-4 border border-slate-200/50 dark:border-slate-800/50 rounded-2xl bg-slate-50 dark:bg-slate-900/40 max-w-xs mx-auto flex flex-col items-center gap-3">
                       <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
-                        <QRCodeSVG value={shareData.link} size={130} />
+                        <QRCodeSVG value={shareData.link} size={110} />
                       </div>
                       <div className="text-center">
                         <p className="text-[10px] font-bold text-slate-500 flex items-center gap-1 justify-center uppercase tracking-wider">
@@ -472,10 +471,10 @@ export default function UploadPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-2 pt-2">
+                    <div className="flex items-center justify-center gap-2 pt-1">
                       <button
                         onClick={() => { setShareData(null); removeFile(); }}
-                        className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+                        className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
                       >
                         Share Another File
                       </button>
@@ -489,11 +488,11 @@ export default function UploadPage() {
           </div>
 
           {/* Guidelines Sidebar Panel (Righthand Column) */}
-          <div className="col-span-1 md:col-span-5 space-y-6 text-left">
-            <div className="p-6 sm:p-8 rounded-3xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 space-y-6 h-full">
-              <h3 className="text-xl font-bold font-display text-slate-900 dark:text-white">Sharing Paradigms</h3>
+          <div className="col-span-1 md:col-span-5 space-y-4 text-left">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 space-y-4 h-full">
+              <h3 className="text-lg font-bold font-display text-slate-900 dark:text-white">Sharing Paradigms</h3>
 
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {[
                   {
                     title: "Access Gate Locking",
