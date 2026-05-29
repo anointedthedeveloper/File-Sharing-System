@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
+import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, HelpCircle, Sparkles, Radio } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
@@ -56,6 +56,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Upload', path: '/upload', icon: <UploadCloud className="w-4 h-4" /> },
+    { name: 'Quick Share', path: '/quick-share', icon: <Radio className="w-4 h-4" /> },
     ...(user ? [{ name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> }] : []),
     { name: 'FAQ', path: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
     { name: 'About', path: '/about' },

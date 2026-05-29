@@ -16,14 +16,16 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Unsubscribe from './pages/Unsubscribe';
 import FAQ from './pages/FAQ';
+import QuickShare from './pages/QuickShare';
+import ScrollToTop from './components/ScrollToTop';
 
 function PageTransition({ children }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       className="w-full"
     >
       {children}
@@ -45,6 +47,7 @@ function AppContent() {
           <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
           <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
           <Route path="/upload" element={<PageTransition><Upload /></PageTransition>} />
+          <Route path="/quick-share" element={<PageTransition><QuickShare /></PageTransition>} />
           <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
           <Route path="/auth" element={<PageTransition><AuthSplit /></PageTransition>} />
           <Route path="/share/:slug" element={<PageTransition><Share /></PageTransition>} />
@@ -71,6 +74,7 @@ export default function App() {
           ) : (
             <motion.div key="app" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
               <BrowserRouter>
+                <ScrollToTop />
                 <Suspense fallback={<PageLoader message="Loading page..." />}>
                   <AppContent />
                 </Suspense>

@@ -11,6 +11,7 @@ export default function Footer() {
   const links = {
     product: [
       { name: 'Upload Files', path: '/upload' },
+      { name: 'Quick Share', path: '/quick-share' },
       { name: 'Dashboard', path: '/dashboard' },
       { name: 'Security', path: '/about#security' },
     ],

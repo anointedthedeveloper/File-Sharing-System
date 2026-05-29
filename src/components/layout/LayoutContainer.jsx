@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import AmbientBackground from './AmbientBackground';
@@ -49,7 +48,6 @@ export default function LayoutContainer({
     }
     canonical.href = `${siteUrl}${window.location.pathname}`;
 
-    window.scrollTo(0, 0);
   }, [title, description, keywords, ogImage, ogType]);
 
   return (
@@ -57,14 +55,9 @@ export default function LayoutContainer({
       {ambient && <AmbientBackground />}
       <Navbar />
 
-      <motion.main
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', duration: 0.55, bounce: 0.12 }}
-        className="flex-grow z-10 w-full relative"
-      >
+      <main className="flex-grow z-10 w-full relative animate-fade-in">
         {children}
-      </motion.main>
+      </main>
 
       <Footer />
     </div>

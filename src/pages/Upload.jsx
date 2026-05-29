@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, QrCode, Clock, Smartphone } from 'lucide-react';
+import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, QrCode, Clock, Smartphone, Minimize2 } from 'lucide-react';
+import AnimatedDropZone from '../components/ui/AnimatedDropZone';
+import FilePreview, { canPreviewType } from '../components/ui/FilePreview';
+import { compressFile, formatCompressionNote } from '../lib/compressFile';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
@@ -21,12 +24,16 @@ export default function UploadPage() {
   const [passwordProtect, setPasswordProtect] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [shareData, setShareData] = useState(null); // stores success metadata
+  const [shareData, setShareData] = useState(null);
+  const [compressEnabled, setCompressEnabled] = useState(true);
+  const [compressNote, setCompressNote] = useState('');
+  const [originalFileMeta, setOriginalFileMeta] = useState(null);
 
   const fileInputRef = useRef(null);
-
-  // Auto-fill mock credentials when guest uploads
   const [userId, setUserId] = useState(null);
+  const isGuest = !userId;
+  const compressLocked = isGuest;
+
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getSession();
@@ -34,6 +41,10 @@ export default function UploadPage() {
     };
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    if (isGuest) setCompressEnabled(true);
+  }, [isGuest]);
 
   // Drag & Drop handlers
   const handleDrag = (e) => {
@@ -71,6 +82,8 @@ export default function UploadPage() {
     }
 
     setFile(selectedFile);
+    setCompressNote('');
+    setOriginalFileMeta({ size: selectedFile.size, name: selectedFile.name });
   };
 
   const triggerFileInput = () => {
@@ -80,6 +93,8 @@ export default function UploadPage() {
   const removeFile = () => {
     setFile(null);
     setProgress(0);
+    setCompressNote('');
+    setOriginalFileMeta(null);
   };
 
   // Convert human expiry key to timestamp
@@ -96,26 +111,34 @@ export default function UploadPage() {
   const handleUpload = async () => {
     if (!file) return;
     setUploading(true);
-    setProgress(5);
+    setProgress(8);
+    setCompressNote('');
 
     try {
-      // 1. Simulate active file upload looping indicators
-      const duration = 2000; // 2 seconds
-      const steps = 10;
-      for (let i = 1; i <= steps; i++) {
-        await new Promise(r => setTimeout(r, duration / steps));
-        setProgress(Math.min(5 + i * 9.5, 95));
+      let uploadFile = file;
+
+      if (compressEnabled) {
+        setProgress(20);
+        const result = await compressFile(file);
+        uploadFile = result.file;
+        const note = formatCompressionNote(result);
+        if (note) {
+          setCompressNote(note);
+          showToast(note, 'success');
+        }
+        setProgress(40);
+      } else {
+        setProgress(25);
       }
 
       const slug = Math.random().toString(36).substr(2, 6);
       const expiresAt = calculateExpiryTimestamp();
+      const storagePath = `uploads/${slug}/${uploadFile.name}`;
 
-      let storagePath = `uploads/${slug}/${file.name}`;
-
-      // 2. Direct storage upload to real Supabase bucket
+      setProgress(55);
       const { error: uploadError } = await supabase.storage
         .from(STORAGE_BUCKET)
-        .upload(storagePath, file);
+        .upload(storagePath, uploadFile);
       if (uploadError) {
         if (uploadError.message?.toLowerCase().includes('bucket not found')) {
           throw new Error(`Storage bucket "${STORAGE_BUCKET}" was not found. Run supabase_schema.sql in Supabase SQL Editor, then retry the upload.`);
@@ -124,11 +147,12 @@ export default function UploadPage() {
       }
 
       // 3. Register Database Record inside files table
+      setProgress(85);
       const newFileData = {
         user_id: userId,
-        name: file.name,
-        size: file.size,
-        type: file.type,
+        name: uploadFile.name,
+        size: uploadFile.size,
+        type: uploadFile.type,
         storage_path: storagePath,
         slug,
         password: passwordProtect && password ? password : null,
@@ -149,10 +173,11 @@ export default function UploadPage() {
       setShareData({
         link: generatedLink,
         slug,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        expiresAt
+        name: uploadFile.name,
+        size: uploadFile.size,
+        type: uploadFile.type,
+        expiresAt,
+        compressed: compressEnabled && uploadFile.size < (originalFileMeta?.size || uploadFile.size),
       });
 
       // Trigger canvas confetti celebration!
@@ -197,10 +222,9 @@ export default function UploadPage() {
       title="Upload & Share Files Free - Anobyte Software for Transfer Files Online"
       description="Upload and share files free with Anobyte software. Transfer files online, set password locks, and create secure links for shared files in seconds."
     >
-      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-6 sm:py-8">
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-3 sm:px-4 py-6 sm:py-8 w-full max-w-[100vw] overflow-x-hidden">
 
-        {/* Centered Container Card */}
-        <div className="w-full max-w-6xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 sm:p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 md:gap-8 shadow-xl">
+        <div className="w-full max-w-6xl glass-card border rounded-2xl p-4 sm:p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 md:gap-8 shadow-premium" style={{ borderColor: 'var(--border)' }}>
           {/* Title - moved inside container */}
           <div className="col-span-1 md:col-span-12 text-center space-y-2 mb-2">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
@@ -226,72 +250,51 @@ export default function UploadPage() {
                     className="space-y-4"
                   >
                     {/* Drag-drop zone */}
+                    <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+
                     {!file ? (
-                      <div
+                      <AnimatedDropZone
+                        dragActive={dragActive}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
                         onDragOver={handleDrag}
                         onDrop={handleDrop}
                         onClick={triggerFileInput}
-                        className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 cursor-pointer transition-colors duration-200 flex flex-col items-center gap-3 relative select-none ${dragActive
-                            ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20'
-                            : 'border-slate-200 dark:border-slate-800 hover:border-blue-500/50 hover:bg-slate-50 dark:hover:bg-slate-900/40'
-                          }`}
+                        onFileChange={handleFileChange}
+                        inputRef={fileInputRef}
+                        disabled={uploading}
+                        maxLabel={`Max ${userId ? '1GB' : '50MB'}`}
                       >
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          className="hidden"
-                          onChange={handleFileChange}
-                        />
-
-                        <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center border border-blue-100/30 dark:border-blue-900/30 text-blue-600 dark:text-blue-400">
-                          <Upload className="w-6 h-6" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
-                            Drag and Drop File Here
-                          </p>
-                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                            or click to browse local storage
-                          </p>
-                        </div>
-                        <div className="text-[10px] font-bold text-slate-400 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded-md uppercase">
-                          Max Size: {userId ? '1GB' : '50MB'}
-                        </div>
                         {!userId && (
-                          <div className="text-[10px] text-blue-500 font-medium">
+                          <p className="text-[10px] font-medium mt-1" style={{ color: 'var(--accent)' }}>
                             <Link to="/auth?tab=register" className="hover:underline">
-                              Need more space? Sign up to unlock 2GB transfers
+                              Sign up for 1GB uploads
                             </Link>
-                          </div>
+                          </p>
                         )}
-                      </div>
+                      </AnimatedDropZone>
                     ) : (
-                      /* File Selected Card */
-                      <div className="border border-slate-200 dark:border-slate-800 p-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 flex items-center justify-between gap-4 text-left">
-                        <div className="flex items-center gap-3 truncate">
-                          <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 text-blue-500">
-                            <File className="w-5 h-5" />
+                      <div className="space-y-4 text-left">
+                        <div className="border p-3 sm:p-4 rounded-2xl flex items-center justify-between gap-3" style={{ borderColor: 'var(--border)', background: 'var(--bg-muted)' }}>
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                              <File className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{file.name}</p>
+                              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                                {formatBytes(file.size)} · {file.type || 'Binary'}
+                              </p>
+                            </div>
                           </div>
-                          <div className="truncate">
-                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate pr-4">
-                              {file.name}
-                            </p>
-                            <p className="text-xs text-slate-400 font-medium">
-                              {formatBytes(file.size)} &bull; {file.type || 'Binary'}
-                            </p>
-                          </div>
+                          <button type="button" onClick={removeFile} disabled={uploading} className="p-2 rounded-lg border shrink-0" style={{ borderColor: 'var(--border)' }} aria-label="Remove file">
+                            <X className="w-4 h-4 text-rose-500" />
+                          </button>
                         </div>
 
-                        <button
-                          onClick={removeFile}
-                          disabled={uploading}
-                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
-                          aria-label="Remove File"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        {canPreviewType(file.type) && (
+                          <FilePreview file={file} type={file.type} name={file.name} maxHeight={240} className="w-full" />
+                        )}
                       </div>
                     )}
 
@@ -372,6 +375,35 @@ export default function UploadPage() {
                           </motion.div>
                         )}
                       </AnimatePresence>
+
+                      <label
+                        className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-opacity ${
+                          compressLocked ? 'opacity-90 cursor-default' : ''
+                        }`}
+                        style={{ borderColor: 'var(--border)', background: 'var(--bg-elevated)' }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={compressEnabled}
+                          disabled={compressLocked || uploading || !file}
+                          onChange={(e) => setCompressEnabled(e.target.checked)}
+                          className="mt-1 w-4 h-4 rounded accent-blue-600 shrink-0"
+                        />
+                        <div className="text-left min-w-0">
+                          <span className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                            <Minimize2 className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+                            Compress images before upload
+                          </span>
+                          <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                            {compressLocked
+                              ? 'Required for guest uploads — optimizes photos automatically.'
+                              : 'Recommended for photos (JPEG/PNG/WebP). Videos and documents upload as-is.'}
+                          </p>
+                          {compressNote && (
+                            <p className="text-xs mt-2 font-medium text-emerald-600 dark:text-emerald-400">{compressNote}</p>
+                          )}
+                        </div>
+                      </label>
 
                     </div>
 
@@ -476,7 +508,7 @@ export default function UploadPage() {
 
           {/* Guidelines Sidebar Panel (Righthand Column) */}
           <div className="col-span-1 md:col-span-5 space-y-4 text-left">
-            <div className="p-4 sm:p-6 rounded-2xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 space-y-4 h-full">
+            <div className="p-4 sm:p-6 rounded-2xl border space-y-4 h-full hidden md:block" style={{ borderColor: 'var(--border)', background: 'var(--bg-elevated)' }}>
               <h3 className="text-lg font-bold font-display text-slate-900 dark:text-white">Sharing Paradigms</h3>
 
               <ul className="space-y-3">

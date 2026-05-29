@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { STORAGE_BUCKET, supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
 import { FeatureLoader } from '../components/ui/Loader';
+import FilePreview, { canPreviewType } from '../components/ui/FilePreview';
 
 export default function Share() {
   const { slug } = useParams();
@@ -22,10 +23,36 @@ export default function Share() {
   const [unlocked, setUnlocked] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
     fetchFileDetails();
   }, [slug]);
+
+  useEffect(() => {
+    if (!unlocked || !fileData?.storage_path) return undefined;
+    if (!canPreviewType(fileData.type)) {
+      setPreviewUrl(null);
+      return undefined;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase.storage
+          .from(STORAGE_BUCKET)
+          .createSignedUrl(fileData.storage_path, 3600);
+        if (error) throw error;
+        if (!cancelled && data?.signedUrl) setPreviewUrl(data.signedUrl);
+      } catch (e) {
+        console.error('[Share] preview URL', e);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [unlocked, fileData]);
 
   const fetchFileDetails = async () => {
     setLoading(true);
@@ -144,78 +171,13 @@ export default function Share() {
     return `Expires in ${hours} hours`;
   };
 
-  // Premium inline browser file preview render nodes
-  const renderPreview = () => {
-    if (!fileData || !fileData.file_data) return null;
-    
-    const { type, file_data, name } = fileData;
-    
-    // Images
-    if (type.startsWith('image/')) {
-      return (
-        <div className="rounded-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden bg-slate-900/10 flex items-center justify-center p-2 max-h-[300px]">
-          <img src={file_data} alt={name} className="max-h-[280px] w-auto object-contain rounded-xl shadow-sm" />
-        </div>
-      );
-    }
-    
-    // Audio files
-    if (type.startsWith('audio/')) {
-      return (
-        <div className="w-full p-4 border border-slate-200/50 dark:border-slate-800/50 rounded-2xl bg-slate-50 dark:bg-slate-900/60">
-          <audio controls className="w-full">
-            <source src={file_data} type={type} />
-            Your browser does not support audio elements.
-          </audio>
-        </div>
-      );
-    }
-
-    // Video files
-    if (type.startsWith('video/')) {
-      return (
-        <div className="rounded-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden max-h-[300px]">
-          <video controls className="w-full max-h-[280px] object-contain">
-            <source src={file_data} type={type} />
-          </video>
-        </div>
-      );
-    }
-
-    // PDF files representation
-    if (type === 'application/pdf') {
-      return (
-        <div className="flex flex-col items-center justify-center p-8 border border-slate-200/50 dark:border-slate-800/50 rounded-2xl bg-slate-50 dark:bg-slate-900/40 gap-3">
-          <File className="w-12 h-12 text-rose-500" />
-          <div className="text-center">
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">PDF Document Ready</p>
-            <p className="text-xs text-slate-400 mt-0.5">Click below to open/download PDF file stream.</p>
-          </div>
-        </div>
-      );
-    }
-
-    // Catch plain text and code structures
-    if (type.startsWith('text/') || type === 'application/json' || type === 'application/javascript') {
-      const codePreview = file_data.split(',')[1] 
-        ? atob(file_data.split(',')[1]).substring(0, 500) 
-        : 'File payload previewing un-encodable data...';
-      return (
-        <div className="rounded-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden bg-slate-50 dark:bg-slate-900/60 p-4 font-mono text-xs text-slate-700 dark:text-slate-300 text-left max-h-[220px] overflow-y-auto">
-          <pre>{codePreview}{codePreview.length >= 500 && '\n... [truncated]'}</pre>
-        </div>
-      );
-    }
-
-    return null;
-  };
 
   return (
     <LayoutContainer 
       title="Secure Shared File - Anobyte Software Transfer Files Online"
       description="Access and download secure shared files with Anobyte software, designed for transfer files online, share files free, and safe file delivery."
     >
-      <div className="max-w-md mx-auto px-4 py-20 flex flex-col justify-center min-h-[70vh]">
+      <div className="max-w-lg sm:max-w-xl mx-auto px-4 py-12 sm:py-20 flex flex-col justify-center min-h-[60vh] w-full">
         
         <AnimatePresence mode="wait">
           
@@ -348,8 +310,9 @@ export default function Share() {
                 </div>
               </div>
 
-              {/* Dynamic preview elements inside sandbox mode */}
-              {renderPreview()}
+              {previewUrl && canPreviewType(fileData?.type) && (
+                <FilePreview url={previewUrl} type={fileData.type} name={fileData.name} maxHeight={320} className="w-full" />
+              )}
 
               {/* Download trigger CTA */}
               <div className="space-y-3.5">
@@ -363,7 +326,11 @@ export default function Share() {
                 </button>
                 
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed max-w-xs mx-auto">
-                  Files downloads are verified secure using encrypted temporary link tokens. Powered by <a href="https://sharingit.anobyte.online" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-blue-500">Sharing It</a>.
+                  Downloads use encrypted temporary link tokens. Powered by{' '}
+                  <a href="https://anobyte.online" target="_blank" rel="noreferrer" className="underline font-semibold gradient-text">
+                    Anobyte
+                  </a>
+                  .
                 </p>
               </div>
 
