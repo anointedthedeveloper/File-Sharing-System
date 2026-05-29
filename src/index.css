@@ -7,9 +7,9 @@
 @layer base {
   :root {
     color-scheme: light;
-    --bg-base: #f4f7fc;
+    --bg-base: #f0f4fb;
     --bg-elevated: #ffffff;
-    --bg-muted: #e8eef8;
+    --bg-muted: #e2eaf5;
     --text-primary: #0c1222;
     --text-secondary: #5b6b85;
     --text-muted: #8b9bb5;

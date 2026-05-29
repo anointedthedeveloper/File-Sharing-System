@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { File, Trash2, Download, Copy, Search, Filter, Loader2, Plus, Clock, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import {
+  File,
+  Trash2,
+  Download,
+  Copy,
+  Search,
+  Filter,
+  Loader2,
+  Plus,
+  Clock,
+  Lock,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  FolderOpen,
+  HardDrive,
+  User,
+  Link2,
+} from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import { sendWelcomeEmailOnce } from '../lib/email';
@@ -54,7 +72,7 @@ export default function Dashboard() {
       if (error) throw error;
       setFiles(data || []);
     } catch (e) {
-      console.error(e);
+      console.error('[Dashboard] fetchUserFiles', { message: e?.message, code: e?.code }, e);
       showToast('Error loading shared files history.', 'error');
     } finally {
       setLoading(false);
@@ -173,25 +191,34 @@ export default function Dashboard() {
       description="Track shared files, manage download links, and monitor secure file sharing activity for transfer files online and share files free workflows."
     >
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-        
-        {/* Welcome Block */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 border-b border-slate-200/50 dark:border-slate-800/50 pb-6 text-left">
-          <div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display leading-tight">
-              User Dashboard
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Welcome back, <span className="font-semibold text-slate-800 dark:text-slate-200">{profile?.full_name || user?.email}</span>. Manage your shared links parameters.
-            </p>
+        <div className="relative overflow-hidden rounded-[2rem] glass-card p-6 sm:p-8 mb-10 border" style={{ borderColor: 'var(--border)' }}>
+          <div
+            className="pointer-events-none absolute inset-0 opacity-70"
+            style={{ background: 'radial-gradient(ellipse 60% 80% at 100% 0%, var(--mesh-1), transparent 50%)' }}
+          />
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-left">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center shadow-glow shrink-0">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="section-badge mb-2">Your workspace</span>
+                <h1 className="text-2xl sm:text-3xl font-extrabold font-display leading-tight" style={{ color: 'var(--text-primary)' }}>
+                  Dashboard
+                </h1>
+                <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+                  Welcome back,{' '}
+                  <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    {profile?.full_name || user?.email}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <Link to="/upload" className="btn-primary text-sm !rounded-xl shrink-0">
+              <Plus className="w-4 h-4" />
+              <span>Upload new file</span>
+            </Link>
           </div>
-          
-          <Link 
-            to="/upload" 
-            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Upload New File</span>
-          </Link>
         </div>
 
         <AnimatePresence mode="wait">
@@ -212,72 +239,81 @@ export default function Dashboard() {
               animate={{ opacity: 1 }}
               className="space-y-8"
             >
-              {/* 1. METRICS GRID */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                {/* File Count Card */}
-                <div className="p-6 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-left">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Shares</p>
-                  <p className="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white mt-2">
-                    {totalFiles}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-1.5">Shared link instances currently hosted.</p>
-                </div>
-
-                {/* Total Downloads Count Card */}
-                <div className="p-6 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-left">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Downloads</p>
-                  <p className="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white mt-2">
-                    {totalDownloads}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-1.5">Aggregate link visits and file downloads.</p>
-                </div>
-
-                {/* Storage Used Analytics Card */}
-                <div className="p-6 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-left flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-widest">
-                      <span>Space Allocated</span>
-                      <span className="text-slate-500 dark:text-slate-300">{formatBytes(usedStorageBytes)} / {formatBytes(storageLimitBytes, 0)}</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  {
+                    icon: Link2,
+                    label: 'Active shares',
+                    value: totalFiles,
+                    hint: 'Live share links on your account',
+                  },
+                  {
+                    icon: Download,
+                    label: 'Total downloads',
+                    value: totalDownloads,
+                    hint: 'All-time download count',
+                  },
+                  {
+                    icon: HardDrive,
+                    label: 'Storage used',
+                    value: formatBytes(usedStorageBytes),
+                    hint: `${formatBytes(storageLimitBytes, 0)} limit · ${Math.round(storagePercentage)}% full`,
+                    progress: storagePercentage,
+                  },
+                ].map((card) => {
+                  const Icon = card.icon;
+                  return (
+                    <div
+                      key={card.label}
+                      className="p-6 rounded-2xl glass-card border text-left flex flex-col gap-3"
+                      style={{ borderColor: 'var(--border)' }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                          {card.label}
+                        </p>
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'color-mix(in srgb, var(--accent) 12%, transparent)' }}>
+                          <Icon className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+                        </div>
+                      </div>
+                      <p className="text-3xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
+                        {card.value}
+                      </p>
+                      {card.progress !== undefined && (
+                        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--bg-muted)' }}>
+                          <div className="h-full rounded-full transition-all" style={{ width: `${card.progress}%`, background: 'var(--gradient-brand)' }} />
+                        </div>
+                      )}
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{card.hint}</p>
                     </div>
-                    
-                    {/* Linear Progress Bar */}
-                    <div className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/50 h-2 rounded-full mt-3 overflow-hidden">
-                      <div 
-                        className="bg-blue-600 dark:bg-blue-500 h-full rounded-full"
-                        style={{ width: `${storagePercentage}%` }}
-                      />
-                    </div>
-                  </div>
-                  <p className="text-[9px] text-slate-400 mt-3 sm:mt-0 font-medium">Reaching limit automatically locks further uploads.</p>
-                </div>
-
+                  );
+                })}
               </div>
 
-              {/* Account Security */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div className="lg:col-span-5 p-6 rounded-[2rem] glass-card border border-blue-100/60 dark:border-blue-900/40 text-left">
+                <div className="lg:col-span-5 p-6 rounded-2xl glass-card border text-left" style={{ borderColor: 'var(--border)' }}>
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase tracking-widest">Account</p>
-                      <h2 className="text-2xl font-extrabold font-display text-slate-900 dark:text-white mt-2">Security Settings</h2>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                        Signed in as <span className="font-semibold text-slate-700 dark:text-slate-200">{user?.email}</span>
+                      <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>Account</p>
+                      <h2 className="text-xl font-extrabold font-display mt-2" style={{ color: 'var(--text-primary)' }}>Security</h2>
+                      <p className="text-xs mt-2 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        Signed in as <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{user?.email}</span>
                       </p>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-glow">
-                      <Lock className="w-5 h-5" />
+                    <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center shadow-glow">
+                      <Lock className="w-5 h-5 text-white" />
                     </div>
                   </div>
                 </div>
 
                 <form
                   onSubmit={handlePasswordChange}
-                  className="lg:col-span-7 p-6 rounded-[2rem] glass-card border border-blue-100/60 dark:border-blue-900/40 text-left space-y-4"
+                  className="lg:col-span-7 p-6 rounded-2xl glass-card border text-left space-y-4"
+                  style={{ borderColor: 'var(--border)' }}
                 >
-                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
-                    <CheckCircle2 className="w-4 h-4 text-blue-500" />
-                    <span>Change Password</span>
+                  <div className="flex items-center gap-2 text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+                    <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+                    <span>Change password</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -323,7 +359,7 @@ export default function Dashboard() {
                     <button
                       type="submit"
                       disabled={updatingPassword || !newPassword || !confirmPassword}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all"
+                      className="btn-primary !text-xs !py-3 !px-5 !rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {updatingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
                       <span>Update Password</span>
@@ -332,8 +368,7 @@ export default function Dashboard() {
                 </form>
               </div>
 
-              {/* 2. HISTORY CONTROLS BAR */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-left">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl glass-card border text-left" style={{ borderColor: 'var(--border)' }}>
                 
                 {/* Search field */}
                 <div className="relative flex-1">
@@ -375,14 +410,13 @@ export default function Dashboard() {
               {filteredFiles.length === 0 ? (
                 
                 /* Empty state dashboard visual */
-                <div className="p-8 sm:p-16 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl text-center space-y-4">
-                  <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center mx-auto text-slate-400">
-                    <File className="w-6 h-6 animate-pulse" />
+                <div className="p-8 sm:p-16 border border-dashed rounded-3xl text-center space-y-4" style={{ borderColor: 'var(--border)' }}>
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto" style={{ background: 'var(--bg-muted)' }}>
+                    <FolderOpen className="w-7 h-7" style={{ color: 'var(--text-muted)' }} />
                   </div>
-                  
                   <div className="space-y-1">
-                    <h3 className="text-lg font-bold font-display text-slate-800 dark:text-slate-100">No shared files found</h3>
-                    <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                    <h3 className="text-lg font-bold font-display" style={{ color: 'var(--text-primary)' }}>No shared files found</h3>
+                    <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--text-muted)' }}>
                       {search || category !== 'all' 
                         ? 'No files matching chosen search filters.' 
                         : 'You haven\'t uploaded any file shares yet.'}
@@ -391,7 +425,7 @@ export default function Dashboard() {
 
                   {(!search && category === 'all') && (
                     <div className="pt-2">
-                      <Link to="/upload" className="inline-flex items-center gap-1 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700">
+                      <Link to="/upload" className="btn-primary !text-xs !py-2.5 !px-5 !rounded-xl inline-flex">
                         <Plus className="w-4 h-4" />
                         <span>Upload First File</span>
                       </Link>
