@@ -19,6 +19,12 @@
       "dest": "/api/$1"
     },
     {
+      "src": "/(favicon\\.png|image\\.png|image2\\.png)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
       "src": "/assets/(.*)",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
