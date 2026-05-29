@@ -19,24 +19,13 @@
       "dest": "/api/$1"
     },
     {
-      "src": "/sitemap.xml",
-      "dest": "/public/sitemap.xml",
-      "headers": {
-        "Content-Type": "application/xml"
-      }
-    },
-    {
-      "src": "/robots.txt",
-      "dest": "/public/robots.txt",
-      "headers": {
-        "Content-Type": "text/plain"
-      }
-    },
-    {
       "src": "/assets/(.*)",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
       }
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
