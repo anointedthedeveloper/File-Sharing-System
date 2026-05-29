@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle, Shield, Zap, UploadCloud, Share2, Lock, FileText, Users, Clock, Globe, Smartphone, Database, CheckCircle, X } from 'lucide-react';
+import { ChevronDown, HelpCircle, Shield, Zap, UploadCloud, Share2, Lock, FileText, Users, Clock, Globe, Smartphone, Database, CheckCircle, X, MessageSquare } from 'lucide-react';
 import LayoutContainer from '../components/layout/LayoutContainer';
 
 export default function FAQ() {
