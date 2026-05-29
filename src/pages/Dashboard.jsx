@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import { sendWelcomeEmailOnce } from '../lib/email';
 import LayoutContainer from '../components/layout/LayoutContainer';
+import { SkeletonTable } from '../components/ui/Loader';
 
 export default function Dashboard() {
   const { showToast } = useToast();
@@ -197,9 +198,11 @@ export default function Dashboard() {
           {loading ? (
             
             /* Skeletons */
-            <motion.div key="dashboard-loading" className="space-y-6 py-12">
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" />
-              <p className="text-xs text-slate-400 text-center font-semibold uppercase tracking-wider">Syncing database registries...</p>
+            <motion.div key="dashboard-loading" className="space-y-4 py-4">
+              <p className="text-xs text-center font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                Syncing your shares...
+              </p>
+              <SkeletonTable rows={6} />
             </motion.div>
           ) : (
             

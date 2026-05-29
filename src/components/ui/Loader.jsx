@@ -1,205 +1,163 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, UploadCloud, Shield, Share2, Zap, CheckCircle } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
-export function PageLoader() {
+export function PageLoader({ message = 'Loading workspace...' }) {
+  const { isDark } = useTheme();
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]">
-      <div className="relative">
-        {/* Animated background circles */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0.8, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute inset-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.5,
-          }}
-          className="absolute inset-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl"
-        />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6"
+      style={{ background: isDark ? 'var(--bg-base)' : 'var(--bg-base)' }}
+    >
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="ambient-orb w-72 h-72 -top-20 -left-20 bg-blue-500/25" style={{ animationDelay: '0s' }} />
+        <div className="ambient-orb w-96 h-96 bottom-0 right-0 bg-violet-500/20" style={{ animationDelay: '2s' }} />
+      </div>
 
-        {/* Main loader */}
-        <div className="relative flex items-center justify-center">
+      <div className="relative">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+          className="w-20 h-20 rounded-full border-2 border-transparent"
+          style={{
+            borderTopColor: 'var(--accent)',
+            borderRightColor: 'color-mix(in srgb, var(--accent-secondary) 60%, transparent)',
+          }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            className="relative"
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
           >
-            <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full" />
-            <div className="absolute inset-0 border-4 border-transparent border-t-blue-500 rounded-full" />
+            <UploadCloud className="w-8 h-8" style={{ color: 'var(--accent)' }} />
           </motion.div>
-          <div className="absolute">
-            <UploadCloud className="w-12 h-12 text-blue-400" />
-          </div>
         </div>
       </div>
-    </div>
+
+      <div className="text-center space-y-2 relative z-10">
+        <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+          {message}
+        </p>
+        <DotsLoader />
+      </div>
+    </motion.div>
+  );
+}
+
+export function RouteLoader() {
+  return (
+    <motion.div
+      initial={{ scaleX: 0 }}
+      animate={{ scaleX: 1 }}
+      exit={{ scaleX: 1, opacity: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="fixed top-0 left-0 right-0 z-[60] h-1 origin-left"
+      style={{ background: 'var(--gradient-brand)' }}
+    />
   );
 }
 
 export function ButtonLoader({ size = 'sm' }) {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-5 h-5',
-    lg: 'w-6 h-6',
-  };
-
+  const sizeClasses = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' };
   return (
-    <motion.div
-      animate={{ rotate: 360 }}
-      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-    >
+    <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}>
       <Loader2 className={`${sizeClasses[size]} text-current`} />
     </motion.div>
   );
 }
 
 export function ProgressLoader({ progress = 0, size = 'md' }) {
-  const sizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16',
-  };
-
-  const circumference = 2 * Math.PI * 45;
+  const sizeClasses = { sm: 'w-10 h-10', md: 'w-14 h-14', lg: 'w-20 h-20' };
+  const circumference = 2 * Math.PI * 42;
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative">
-      <svg className={`${sizeClasses[size]} transform -rotate-90`} viewBox="0 0 100 100">
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="8"
-          className="text-slate-700"
-        />
+    <div className={`relative ${sizeClasses[size]}`}>
+      <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="6" className="opacity-20" />
         <motion.circle
           cx="50"
           cy="50"
-          r="45"
+          r="42"
           fill="none"
-          stroke="url(#gradient)"
-          strokeWidth="8"
+          stroke="url(#progressGrad)"
+          strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={circumference}
-          strokeDashoffset={offset}
           animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.25 }}
         />
         <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="50%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#0ea5e9" />
+          <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#2563eb" />
+            <stop offset="100%" stopColor="#7c3aed" />
           </linearGradient>
         </defs>
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-semibold text-white">{Math.round(progress)}%</span>
-      </div>
+      <span className="absolute inset-0 flex items-center justify-center text-xs font-bold" style={{ color: 'var(--text-primary)' }}>
+        {Math.round(progress)}%
+      </span>
     </div>
   );
 }
 
-export function DotsLoader({ color = 'blue' }) {
-  const colorClasses = {
-    blue: 'bg-blue-500',
-    indigo: 'bg-indigo-500',
-    sky: 'bg-sky-400',
-  };
-
+export function DotsLoader() {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-center gap-1.5">
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          animate={{
-            scale: [1, 1.5, 1],
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 0.8,
-            repeat: Infinity,
-            delay: i * 0.1,
-          }}
-          className={`w-3 h-3 rounded-full ${colorClasses[color]}`}
+          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.12 }}
+          className="w-2 h-2 rounded-full"
+          style={{ background: 'var(--accent)' }}
         />
       ))}
     </div>
   );
 }
 
-export function FileUploadLoader({ progress = 0 }) {
+export function FileUploadLoader({ progress = 0, fileName = '' }) {
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0"
-        >
-          <UploadCloud className="w-16 h-16 text-blue-500/30" />
-        </motion.div>
-        <UploadCloud className="w-16 h-16 text-blue-500" />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center gap-5 p-8 rounded-3xl glass-card max-w-sm w-full mx-auto"
+    >
+      <ProgressLoader progress={progress} size="lg" />
+      <div className="text-center w-full space-y-2">
+        <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+          Uploading securely...
+        </p>
+        {fileName && (
+          <p className="text-xs truncate max-w-[240px] mx-auto" style={{ color: 'var(--text-muted)' }}>
+            {fileName}
+          </p>
+        )}
       </div>
-      <div className="w-64 h-2 bg-slate-800 rounded-full overflow-hidden">
+      <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--bg-muted)' }}>
         <motion.div
-          className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400"
+          className="h-full rounded-full"
+          style={{ background: 'var(--gradient-brand)' }}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.3 }}
         />
       </div>
-      <span className="text-sm text-slate-300">{Math.round(progress)}%</span>
-    </div>
+    </motion.div>
   );
 }
 
 export function SuccessLoader() {
   return (
-    <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{
-        type: "spring",
-        stiffness: 200,
-        damping: 15,
-      }}
-      className="flex items-center justify-center"
-    >
-      <div className="relative">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0, 0.5],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-          }}
-          className="absolute inset-0 w-20 h-20 bg-green-500/30 rounded-full blur-2xl"
-        />
-        <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-green-500 via-emerald-500 to-teal-400 flex items-center justify-center shadow-[0_20px_60px_-20px_rgba(34,197,94,0.5)]">
-          <CheckCircle className="w-10 h-10 text-white" />
-        </div>
+    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 14 }}>
+      <div className="relative w-20 h-20 rounded-2xl flex items-center justify-center shadow-glow-lg" style={{ background: 'linear-gradient(135deg, #22c55e, #14b8a6)' }}>
+        <CheckCircle className="w-10 h-10 text-white" />
       </div>
     </motion.div>
   );
@@ -210,29 +168,73 @@ export function FeatureLoader() {
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % icons.length);
-    }, 2000);
+    const interval = setInterval(() => setCurrentIndex((p) => (p + 1) % 4), 1800);
     return () => clearInterval(interval);
   }, []);
 
   const CurrentIcon = icons[currentIndex];
 
   return (
-    <div className="relative flex items-center justify-center">
-      <motion.div
-        key={currentIndex}
-        initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-        exit={{ opacity: 0, scale: 0.8, rotate: 10 }}
-        transition={{ duration: 0.5 }}
-        className="relative"
-      >
-        <div className="absolute inset-0 w-24 h-24 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-sky-400 flex items-center justify-center shadow-[0_20px_60px_-20px_rgba(56,189,248,0.5)]">
+    <div className="flex flex-col items-center gap-4 py-12">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, y: 8, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -8, scale: 0.9 }}
+          transition={{ duration: 0.35 }}
+          className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-glow gradient-bg"
+        >
           <CurrentIcon className="w-8 h-8 text-white" />
-        </div>
-      </motion.div>
+        </motion.div>
+      </AnimatePresence>
+      <DotsLoader />
     </div>
+  );
+}
+
+export function SkeletonCard() {
+  return (
+    <div className="p-5 rounded-2xl glass-card space-y-4">
+      <div className="skeleton h-10 w-10 rounded-xl" />
+      <div className="skeleton h-4 w-3/4" />
+      <div className="skeleton h-3 w-full" />
+      <div className="skeleton h-3 w-5/6" />
+    </div>
+  );
+}
+
+export function SkeletonTable({ rows = 5 }) {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="flex items-center gap-4 p-4 rounded-2xl glass-card">
+          <div className="skeleton h-10 w-10 rounded-xl shrink-0" />
+          <div className="flex-1 space-y-2">
+            <div className="skeleton h-4 w-1/3" />
+            <div className="skeleton h-3 w-1/2" />
+          </div>
+          <div className="skeleton h-8 w-20 rounded-lg" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function OverlayLoader({ children, show }) {
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 z-20 flex items-center justify-center rounded-[inherit] backdrop-blur-sm"
+          style={{ background: 'color-mix(in srgb, var(--bg-base) 75%, transparent)' }}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

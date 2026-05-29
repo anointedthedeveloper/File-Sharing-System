@@ -5,6 +5,7 @@ import { File, Download, Lock, ShieldAlert, Key, Eye, EyeOff, Loader2, ArrowLeft
 import { useToast } from '../context/ToastContext';
 import { STORAGE_BUCKET, supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
+import { FeatureLoader } from '../components/ui/Loader';
 
 export default function Share() {
   const { slug } = useParams();
@@ -227,8 +228,8 @@ export default function Share() {
               exit={{ opacity: 0 }}
               className="p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center space-y-4"
             >
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" />
-              <p className="text-sm font-semibold text-slate-500">Decrypting share signature...</p>
+              <FeatureLoader />
+              <p className="text-sm font-semibold" style={{ color: 'var(--text-muted)' }}>Decrypting share signature...</p>
             </motion.div>
           )}
 

@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, Shield, Share2, Eye, Zap, Key, CheckCircle, ChevronDown, MessageSquare, ArrowRight } from 'lucide-react';
 import LayoutContainer from '../components/layout/LayoutContainer';
+import Slideshow from '../components/ui/Slideshow';
 import heroImg from '../assets/hero.png';
+import symbolImg from '../assets/symbol.png';
 
 export default function Landing() {
   const [activeFaq, setActiveFaq] = useState(null);
@@ -76,8 +78,78 @@ export default function Landing() {
       author: "Marcus Chen",
       role: "Senior Product Designer",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
+    },
+    {
+      quote: "We ship design assets to clients daily. Auto-expiry links mean nothing lingers on the internet longer than it should.",
+      author: "Elena Voss",
+      role: "Creative Director",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80"
     }
   ];
+
+  const showcaseSlides = [
+    {
+      content: (
+        <div className="grid md:grid-cols-2 gap-8 p-8 md:p-10 items-center min-h-[280px]">
+          <div className="flex justify-center">
+            <motion.img src={heroImg} alt="Instant sharing" className="w-full max-w-[220px] object-contain drop-shadow-2xl" animate={{ y: [0, -8, 0] }} transition={{ duration: 4, repeat: Infinity }} />
+          </div>
+          <div className="text-left space-y-3">
+            <span className="section-badge"><Zap className="w-3.5 h-3.5" /> Lightning fast</span>
+            <h3 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>Drop. Link. Done.</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>Guest uploads need no account. Your files get a secure link in seconds — optimized for speed on any connection.</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      content: (
+        <div className="grid md:grid-cols-2 gap-8 p-8 md:p-10 items-center min-h-[280px]">
+          <div className="flex justify-center order-2 md:order-1">
+            <div className="w-48 h-48 rounded-3xl flex items-center justify-center gradient-bg shadow-glow-lg">
+              <Shield className="w-20 h-20 text-white" />
+            </div>
+          </div>
+          <div className="text-left space-y-3 order-1 md:order-2">
+            <span className="section-badge"><Shield className="w-3.5 h-3.5" /> Hardened</span>
+            <h3 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>Locks, timers, wipe.</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>Password gates, signed download tokens, and auto-expiry nodes keep your data under your rules — not ours.</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      content: (
+        <div className="grid md:grid-cols-2 gap-8 p-8 md:p-10 items-center min-h-[280px]">
+          <div className="flex justify-center">
+            <img src={symbolImg} alt="QR sharing" className="w-40 h-40 object-contain rounded-2xl shadow-xl p-4 glass-card" />
+          </div>
+          <div className="text-left space-y-3">
+            <span className="section-badge"><Share2 className="w-3.5 h-3.5" /> Every device</span>
+            <h3 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>QR-ready sharing</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>Scan from phone to desktop in one motion. Preview images, PDFs, video, and audio without leaving the browser.</p>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  const testimonialSlides = testimonials.map((t) => ({
+    content: (
+      <div className="px-8 py-10 md:py-12 text-center max-w-2xl mx-auto space-y-6">
+        <p className="text-lg md:text-xl font-medium leading-relaxed italic" style={{ color: 'var(--text-primary)' }}>
+          &ldquo;{t.quote}&rdquo;
+        </p>
+        <div className="flex flex-col items-center gap-3">
+          <img src={t.avatar} alt={t.author} className="w-14 h-14 rounded-full object-cover ring-4 ring-white/20 shadow-lg" />
+          <div>
+            <p className="font-bold font-display" style={{ color: 'var(--text-primary)' }}>{t.author}</p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{t.role}</p>
+          </div>
+        </div>
+      </div>
+    ),
+  }));
 
   const faqs = [
     {
@@ -100,8 +172,8 @@ export default function Landing() {
       description="Anobyte software helps you transfer files online free, share files securely, and enjoy an Airdrop-style experience for photos, docs, and media with auto-expiring links."
     >
       
-      {/* 1. HERO SECTION - full viewport app-like first screen */}
-      <section className="relative overflow-hidden min-h-[calc(100svh-4rem)] sm:min-h-[calc(100svh-5rem)] flex items-center py-8 sm:py-10 lg:py-12 border-b border-blue-100/60 dark:border-blue-900/30">
+      {/* 1. HERO */}
+      <section className="relative overflow-hidden min-h-[calc(100svh-4rem)] sm:min-h-[calc(100svh-5rem)] flex items-center py-8 sm:py-10 lg:py-14 bg-mesh-hero border-b" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
 
@@ -113,10 +185,10 @@ export default function Landing() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30"
+                className="section-badge"
               >
                 <Zap className="w-3.5 h-3.5" />
-                <span>Next-Gen File Sharing Platform</span>
+                <span>Next-Gen File Sharing</span>
               </motion.div>
 
               {/* Headline */}
@@ -124,10 +196,11 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl 2xl:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display leading-[1.1]"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight font-display leading-[1.08]"
+                style={{ color: 'var(--text-primary)' }}
               >
                 Share Files{' '}
-                <span className="text-blue-600 dark:text-blue-400">Instantly.</span>
+                <span className="gradient-text">Instantly.</span>
                 <br />
                 Securely.
                 <br />
@@ -151,19 +224,13 @@ export default function Landing() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1 sm:pt-2"
               >
-                <Link
-                  to="/upload"
-                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5"
-                >
+                <Link to="/upload" className="btn-primary text-sm sm:text-base !rounded-full !px-8 !py-4">
                   <span>Share Files Now</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link
-                  to="#features"
-                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-full border border-blue-100 dark:border-blue-900/40 bg-white/80 dark:bg-blue-950/20 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-blue-100 transition-all duration-300 transform hover:-translate-y-0.5"
-                >
-                  View Features
-                </Link>
+                <a href="#showcase" className="btn-ghost text-sm sm:text-base !rounded-full !px-8 !py-4">
+                  See it in action
+                </a>
               </motion.div>
 
               {/* Trust badges - Technical */}
@@ -195,7 +262,7 @@ export default function Landing() {
               initial={{ opacity: 0, x: 40, scale: 0.97, y: -50 }}
               animate={{ opacity: 1, x: 0, scale: 1, y: 0 }}
               transition={{ delay: 0.25, type: 'spring', stiffness: 60, damping: 16, duration: 0.8 }}
-              className="relative flex items-center justify-center order-2 lg:order-1"
+              className="relative flex items-center justify-center"
             >
               <motion.img
                 src={heroImg}
@@ -216,8 +283,21 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 1.5. WHY CHOOSE SHARING IT */}
-      <section className="py-20 bg-white dark:bg-[#020617]">
+      {/* SHOWCASE SLIDESHOW */}
+      <section id="showcase" className="py-16 sm:py-24 scroll-mt-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-3 mb-10">
+            <span className="section-badge mx-auto">Product tour</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
+              Built for how you actually share
+            </h2>
+          </div>
+          <Slideshow slides={showcaseSlides} variant="hero" interval={6000} />
+        </div>
+      </section>
+
+      {/* WHY CHOOSE */}
+      <section className="py-20" style={{ background: 'var(--bg-elevated)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
@@ -308,8 +388,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 3. FEATURES SECTION */}
-      <section className="py-20 sm:py-32">
+      {/* FEATURES */}
+      <section id="features" className="py-20 sm:py-32 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center space-y-4 max-w-2xl mx-auto mb-16 sm:mb-20">
@@ -461,8 +541,21 @@ export default function Landing() {
 
 
 
-      {/* 6. FAQ SECTION */}
-      <section className="py-20 bg-slate-50/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-900 transition-colors">
+      {/* TESTIMONIALS SLIDESHOW */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10 space-y-3">
+            <span className="section-badge mx-auto"><MessageSquare className="w-3.5 h-3.5" /> Loved by teams</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
+              What people are saying
+            </h2>
+          </div>
+          <Slideshow slides={testimonialSlides} interval={7000} showCounter={false} />
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-20 border-t transition-colors" style={{ background: 'color-mix(in srgb, var(--bg-muted) 50%, transparent)', borderColor: 'var(--border)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
@@ -533,10 +626,7 @@ export default function Landing() {
             Upload files as a guest instantly or sign up to preserve histories and unlock storage extensions.
           </p>
           <div className="pt-2">
-            <Link
-              to="/upload"
-              className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5"
-            >
+            <Link to="/upload" className="btn-primary text-base !px-10 !py-4">
               <span>Launch Share Panel</span>
               <ArrowRight className="w-4 h-4" />
             </Link>

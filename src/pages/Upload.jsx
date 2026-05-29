@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, RefreshCw, QrCode, Clock, Smartphone } from 'lucide-react';
+import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, QrCode, Clock, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
 import { STORAGE_BUCKET, supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
 import { Link } from 'react-router-dom';
+import { FileUploadLoader, ButtonLoader } from '../components/ui/Loader';
 
 export default function UploadPage() {
   const { showToast } = useToast();
@@ -374,23 +375,9 @@ export default function UploadPage() {
 
                     </div>
 
-                    {/* Progress tracking wrapper */}
                     {uploading && (
-                      <div className="space-y-2 text-left pt-3">
-                        <div className="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
-                          <span className="flex items-center gap-1.5">
-                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                            <span>Uploading payload...</span>
-                          </span>
-                          <span>{Math.round(progress)}%</span>
-                        </div>
-                        <div className="w-full bg-slate-100 dark:bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-200/50 dark:border-slate-800/50">
-                          <motion.div
-                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full"
-                            style={{ width: `${progress}%` }}
-                            transition={{ ease: "easeOut" }}
-                          />
-                        </div>
+                      <div className="pt-4">
+                        <FileUploadLoader progress={progress} fileName={file?.name} />
                       </div>
                     )}
 
@@ -403,7 +390,7 @@ export default function UploadPage() {
                       >
                         {uploading ? (
                           <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <ButtonLoader size="sm" />
                             <span>Streaming to storage...</span>
                           </>
                         ) : (
