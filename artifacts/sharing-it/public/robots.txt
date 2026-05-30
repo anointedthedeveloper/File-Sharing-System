@@ -1,14 +1,16 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Allow: /upload
+Allow: /quick-share
 Allow: /about
 Allow: /contact
+Allow: /faq
 Allow: /privacy
 Allow: /terms
-Allow: /upload
 Allow: /auth
 
-# Keep temporary shares private, but allow the public landing pages to be indexed.
+# Keep individual share links and user dashboards private
 Disallow: /share/
 Disallow: /dashboard
 
