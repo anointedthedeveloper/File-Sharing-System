@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, Shield, Share2, Eye, Zap, Key, CheckCircle, ChevronDown, MessageSquare, ArrowRight } from 'lucide-react';
+import { UploadCloud, Shield, Share2, Eye, Zap, Key, CheckCircle, ChevronDown, MessageSquare, ArrowRight, Lock, Clock, FileType } from 'lucide-react';
 import LayoutContainer from '../components/layout/LayoutContainer';
 import Slideshow from '../components/ui/Slideshow';
 import heroImg from '../assets/hero.png';
@@ -19,44 +19,50 @@ export default function Landing() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 25 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 100 }
+      transition: { type: 'spring', stiffness: 100, damping: 20 }
     }
   };
 
   const features = [
     {
-      icon: <UploadCloud className="w-12 h-12 text-blue-500" />,
-      title: "Drag & Drop Upload",
-      desc: "Simplicity at its core. Grab any file, throw it in, and let us handle the rest. Instantly."
+      icon: <UploadCloud className="w-10 h-10" />,
+      title: "Frictionless Drop",
+      desc: "Drag any file. Get a secure link. Zero onboarding required. It's the fastest way to move data across the web.",
+      accent: "from-blue-500 to-cyan-400"
     },
     {
-      icon: <Shield className="w-12 h-12 text-blue-500" />,
-      title: "Secure Access Control",
-      desc: "Protect your links with optional passkeys. Only the recipients you choose get access."
+      icon: <Shield className="w-10 h-10" />,
+      title: "Ironclad Gates",
+      desc: "Apply cryptographic password locks. Ensure only the eyes you authorize ever see your files.",
+      accent: "from-indigo-500 to-violet-500"
     },
     {
-      icon: <Zap className="w-12 h-12 text-blue-500" />,
-      title: "Real-time Tracking",
-      desc: "Watch your files upload chunk by chunk with gorgeous progress indicators."
+      icon: <Clock className="w-10 h-10" />,
+      title: "Auto-Destruction",
+      desc: "Set precise expiry nodes. 1 hour, 24 hours, or 7 days. Files wipe permanently, leaving no trace.",
+      accent: "from-fuchsia-500 to-pink-500"
     },
     {
-      icon: <Share2 className="w-12 h-12 text-blue-500" />,
-      title: "QR Code Sharing",
-      desc: "Transfer files to mobile devices in a snap. Point your camera, download, and go."
+      icon: <Zap className="w-10 h-10" />,
+      title: "Velocity Tuned",
+      desc: "Optimized chunked uploads max out your bandwidth. Experience unthrottled gigabit transfers.",
+      accent: "from-sky-400 to-blue-500"
     },
     {
-      icon: <Eye className="w-12 h-12 text-blue-500" />,
-      title: "File Previews",
-      desc: "Preview documents, PDFs, images, text, audio, and videos right in the browser."
+      icon: <FileType className="w-10 h-10" />,
+      title: "In-Browser Previews",
+      desc: "Stream videos, play audio, and inspect documents without downloading. Immediate gratification.",
+      accent: "from-purple-500 to-indigo-400"
     },
     {
-      icon: <Key className="w-12 h-12 text-blue-500" />,
-      title: "Auto-Expiry Nodes",
-      desc: "Set files to automatically self-destruct after download, 1 hour, 1 day, or 7 days."
+      icon: <Share2 className="w-10 h-10" />,
+      title: "QR Code Handoff",
+      desc: "Bridge desktop to mobile instantly. Scan the auto-generated QR and download directly to your phone.",
+      accent: "from-cyan-400 to-teal-400"
     }
   ];
 
@@ -71,85 +77,77 @@ export default function Landing() {
       quote: "Sharing It has replaced heavy file systems for our engineering team. Quick shares, auto-destruction, and neat previews.",
       author: "Sarah Jenkins",
       role: "Lead Front-end Architect",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80"
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
     },
     {
       quote: "The interface is gorgeous. Being able to set password gates and scan QR codes on my phone is incredibly smooth.",
       author: "Marcus Chen",
       role: "Senior Product Designer",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus"
     },
     {
       quote: "We ship design assets to clients daily. Auto-expiry links mean nothing lingers on the internet longer than it should.",
       author: "Elena Voss",
       role: "Creative Director",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80"
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Elena"
     }
   ];
 
   const showcaseSlides = [
     {
       content: (
-        <div className="grid md:grid-cols-2 gap-8 p-8 md:p-10 items-center min-h-[280px]">
-          <div className="flex justify-center">
-            <motion.img src={heroImg} alt="Instant sharing" className="w-full max-w-[220px] object-contain drop-shadow-2xl" animate={{ y: [0, -8, 0] }} transition={{ duration: 4, repeat: Infinity }} />
+        <div className="grid md:grid-cols-2 gap-10 p-8 md:p-12 items-center min-h-[340px]">
+          <div className="flex justify-center relative">
+            <div className="absolute inset-0 bg-blue-500/20 blur-[80px] rounded-full" />
+            <motion.img 
+              src={heroImg} 
+              alt="Instant sharing" 
+              className="w-full max-w-[280px] object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative z-10" 
+              animate={{ y: [0, -15, 0], rotate: [0, -2, 0] }} 
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} 
+            />
           </div>
-          <div className="text-left space-y-3">
+          <div className="text-left space-y-4">
             <span className="section-badge"><Zap className="w-3.5 h-3.5" /> Lightning fast</span>
-            <h3 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>Drop. Link. Done.</h3>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>Guest uploads need no account. Your files get a secure link in seconds — optimized for speed on any connection.</p>
+            <h3 className="text-3xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>Drop. Link. Done.</h3>
+            <p className="text-base leading-relaxed font-medium text-[var(--text-secondary)]">Guest uploads need no account. Your files get a secure link in seconds — optimized for speed on any connection.</p>
           </div>
         </div>
       ),
     },
     {
       content: (
-        <div className="grid md:grid-cols-2 gap-8 p-8 md:p-10 items-center min-h-[280px]">
-          <div className="flex justify-center order-2 md:order-1">
-            <div className="w-48 h-48 rounded-3xl flex items-center justify-center gradient-bg shadow-glow-lg">
-              <Shield className="w-20 h-20 text-white" />
+        <div className="grid md:grid-cols-2 gap-10 p-8 md:p-12 items-center min-h-[340px]">
+          <div className="flex justify-center order-2 md:order-1 relative">
+            <div className="absolute inset-0 bg-indigo-500/20 blur-[80px] rounded-full" />
+            <div className="w-56 h-56 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_0_60px_-10px_rgba(99,102,241,0.6)] relative z-10 border border-white/10 backdrop-blur-xl">
+              <Shield className="w-24 h-24 text-white" />
             </div>
           </div>
-          <div className="text-left space-y-3 order-1 md:order-2">
+          <div className="text-left space-y-4 order-1 md:order-2">
             <span className="section-badge"><Shield className="w-3.5 h-3.5" /> Hardened</span>
-            <h3 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>Locks, timers, wipe.</h3>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>Password gates, signed download tokens, and auto-expiry nodes keep your data under your rules — not ours.</p>
+            <h3 className="text-3xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>Locks, timers, wipe.</h3>
+            <p className="text-base leading-relaxed font-medium text-[var(--text-secondary)]">Password gates, signed download tokens, and auto-expiry nodes keep your data under your rules — not ours.</p>
           </div>
         </div>
       ),
     },
     {
       content: (
-        <div className="grid md:grid-cols-2 gap-8 p-8 md:p-10 items-center min-h-[280px]">
-          <div className="flex justify-center">
-            <img src={symbolImg} alt="QR sharing" className="w-40 h-40 object-contain rounded-2xl shadow-xl p-4 glass-card" />
+        <div className="grid md:grid-cols-2 gap-10 p-8 md:p-12 items-center min-h-[340px]">
+          <div className="flex justify-center relative">
+            <div className="absolute inset-0 bg-cyan-500/20 blur-[80px] rounded-full" />
+            <img src={symbolImg} alt="QR sharing" className="w-48 h-48 object-contain rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-6 bg-black/40 backdrop-blur-xl border border-white/10 relative z-10" />
           </div>
-          <div className="text-left space-y-3">
+          <div className="text-left space-y-4">
             <span className="section-badge"><Share2 className="w-3.5 h-3.5" /> Every device</span>
-            <h3 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>QR-ready sharing</h3>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>Scan from phone to desktop in one motion. Preview images, PDFs, video, and audio without leaving the browser.</p>
+            <h3 className="text-3xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>QR-ready sharing</h3>
+            <p className="text-base leading-relaxed font-medium text-[var(--text-secondary)]">Scan from phone to desktop in one motion. Preview images, PDFs, video, and audio without leaving the browser.</p>
           </div>
         </div>
       ),
     },
   ];
-
-  const testimonialSlides = testimonials.map((t) => ({
-    content: (
-      <div className="px-8 py-10 md:py-12 text-center max-w-2xl mx-auto space-y-6">
-        <p className="text-lg md:text-xl font-medium leading-relaxed italic" style={{ color: 'var(--text-primary)' }}>
-          &ldquo;{t.quote}&rdquo;
-        </p>
-        <div className="flex flex-col items-center gap-3">
-          <img src={t.avatar} alt={t.author} className="w-14 h-14 rounded-full object-cover ring-4 ring-white/20 shadow-lg" />
-          <div>
-            <p className="font-bold font-display" style={{ color: 'var(--text-primary)' }}>{t.author}</p>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{t.role}</p>
-          </div>
-        </div>
-      </div>
-    ),
-  }));
 
   const faqs = [
     {
@@ -168,111 +166,91 @@ export default function Landing() {
 
   return (
     <LayoutContainer 
-      title="Sharing It by Anobyte Software - Transfer Files Online Free & Share Files Securely"
+      title="Sharing It - Cinematic Secure File Sharing"
       description="Anobyte software helps you transfer files online free, share files securely, and enjoy an Airdrop-style experience for photos, docs, and media with auto-expiring links."
     >
       
-      {/* 1. HERO */}
-      <section className="relative overflow-hidden min-h-[calc(100svh-4rem)] sm:min-h-[calc(100svh-5rem)] flex items-center py-8 sm:py-10 lg:py-14 bg-mesh-hero border-b" style={{ borderColor: 'var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+      {/* HERO */}
+      <section className="relative overflow-hidden min-h-[100svh] flex flex-col justify-center pt-24 pb-16">
+        {/* Cinematic depth elements */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--bg-base)] to-[var(--bg-base)] pointer-events-none z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--accent)] rounded-full blur-[150px] opacity-[0.08] pointer-events-none mix-blend-screen" />
+        
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* LEFT: Text + CTAs */}
-            <div className="space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 text-left">
-
-              {/* Badge */}
+            <div className="space-y-8 text-left">
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="section-badge"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>Next-Gen File Sharing</span>
-              </motion.div>
-
-              {/* Headline */}
-              <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.6 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight font-display leading-[1.08]"
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="section-badge inline-flex shadow-[0_0_20px_rgba(37,99,235,0.2)] border-blue-500/30 text-blue-500 dark:text-blue-400 bg-blue-500/10"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>Next-Gen File Delivery</span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tighter font-display leading-[1.05]"
                 style={{ color: 'var(--text-primary)' }}
               >
                 Share Files{' '}
-                <span className="gradient-text">Instantly.</span>
+                <br className="hidden sm:block" />
+                <span className="relative inline-block mt-2">
+                  <span className="absolute -inset-1 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)] opacity-20 blur-xl rounded-lg" />
+                  <span className="relative bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-400 bg-clip-text text-transparent">Instantly.</span>
+                </span>
                 <br />
-                Securely.
-                <br />
-                Effortlessly.
+                <span className="text-[var(--text-secondary)]">Securely.</span>
               </motion.h1>
 
-              {/* Subheadline */}
               <motion.p
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="text-sm sm:text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-md leading-relaxed"
+                transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="text-lg sm:text-xl font-medium max-w-lg leading-relaxed text-[var(--text-secondary)]"
               >
-                Send files to anyone, anywhere — in seconds. No sign-up required. Just drop, share, and go.
+                Send files to anyone, anywhere — in seconds. No surveillance, no ads, no friction. Just drop, share, and go.
               </motion.p>
 
-              {/* CTAs */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1 sm:pt-2"
+                transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col sm:flex-row items-center gap-4 pt-4"
               >
-                <Link to="/upload" className="btn-primary text-sm sm:text-base !rounded-full !px-8 !py-4">
-                  <span>Share Files Now</span>
-                  <ArrowRight className="w-4 h-4" />
+                <Link to="/upload" className="btn-primary w-full sm:w-auto !rounded-full !px-10 !py-4.5 text-lg">
+                  <span>Open Upload Bay</span>
+                  <ArrowRight className="w-5 h-5" />
                 </Link>
-                <a href="#showcase" className="btn-ghost text-sm sm:text-base !rounded-full !px-8 !py-4">
-                  See it in action
+                <a href="#features" className="btn-ghost w-full sm:w-auto !rounded-full !px-10 !py-4.5 text-lg">
+                  Explore Architecture
                 </a>
-              </motion.div>
-
-              {/* Trust badges - Technical */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                className="flex items-center gap-3 pt-2 flex-wrap"
-              >
-                {[
-                  { icon: <Shield className="w-4 h-4" />, label: 'P2P Encrypted' },
-                  { icon: <Zap className="w-4 h-4" />, label: 'Max Speed' },
-                  { icon: <Key className="w-4 h-4" />, label: 'Auto-Wiped' },
-                ].map(({ icon, label }) => (
-                  <motion.div
-                    key={label}
-                    whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30"
-                  >
-                    {icon}
-                    <span>{label}</span>
-                  </motion.div>
-                ))}
               </motion.div>
             </div>
 
-            {/* RIGHT: Hero image with drop animation */}
+            {/* RIGHT: Hero image */}
             <motion.div
-              initial={{ opacity: 0, x: 40, scale: 0.97, y: -50 }}
-              animate={{ opacity: 1, x: 0, scale: 1, y: 0 }}
-              transition={{ delay: 0.25, type: 'spring', stiffness: 60, damping: 16, duration: 0.8 }}
-              className="relative flex items-center justify-center"
+              initial={{ opacity: 0, x: 50, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="relative flex items-center justify-center lg:justify-end"
             >
+              <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-full blur-[100px]" />
               <motion.img
                 src={heroImg}
-                alt="Sharing It — share files instantly between devices"
-                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl max-h-[42svh] sm:max-h-[48svh] lg:max-h-[62svh] object-contain drop-shadow-2xl"
+                alt="Sharing It App Interface"
+                className="w-full max-w-[500px] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative z-10"
                 animate={{
-                  y: [0, -10, 0],
+                  y: [0, -20, 0],
+                  rotateZ: [0, 2, 0]
                 }}
                 transition={{
-                  duration: 3,
+                  duration: 8,
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
@@ -283,122 +261,95 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* SHOWCASE SLIDESHOW */}
-      <section id="showcase" className="py-16 sm:py-24 scroll-mt-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-3 mb-10">
-            <span className="section-badge mx-auto">Product tour</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
-              Built for how you actually share
-            </h2>
-          </div>
-          <Slideshow slides={showcaseSlides} variant="hero" interval={6000} />
-        </div>
-      </section>
-
       {/* WHY CHOOSE */}
-      <section className="py-20" style={{ background: 'var(--bg-elevated)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
-              Why Choose Sharing It?
+      <section id="features" className="py-24 sm:py-32 relative">
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[var(--border-strong)] to-transparent" />
+        
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="text-center space-y-6 max-w-3xl mx-auto mb-20">
+            <span className="section-badge tracking-[0.3em]">The Paradigm</span>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[var(--text-primary)] font-display tracking-tight leading-tight">
+              Built for <span className="text-[var(--text-secondary)] italic font-light">velocity.</span><br/>
+              Engineered for <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">privacy.</span>
             </h2>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
-              Unlike traditional cloud storage, we prioritize speed, privacy, and simplicity over account requirements and storage quotas.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8"
+          >
             {[
               {
-                icon: <Zap className="w-12 h-12" />,
+                icon: <Zap className="w-8 h-8" />,
                 title: "Zero Friction",
-                desc: "No account creation, no email verification, no bloated onboarding. Just drop and go."
+                desc: "No account creation, no email verification, no bloated onboarding. Just drop and go.",
+                bg: "from-blue-500/10 to-transparent",
+                color: "text-blue-500"
               },
               {
-                icon: <Share2 className="w-12 h-12" />,
-                title: "Speed Over Everything",
-                desc: "Optimized peer-to-peer and edge network delivery means your files transfer at the absolute limit of your bandwidth."
+                icon: <Share2 className="w-8 h-8" />,
+                title: "Maximum Speed",
+                desc: "Optimized chunked delivery networks ensure your files transfer at the absolute limit of your bandwidth.",
+                bg: "from-indigo-500/10 to-transparent",
+                color: "text-indigo-500"
               },
               {
-                icon: <Shield className="w-12 h-12" />,
+                icon: <Shield className="w-8 h-8" />,
                 title: "Privacy by Default",
-                desc: "We don't track your data or index your files. What you share is encrypted, delivered, and permanently wiped."
+                desc: "We don't track your data or index your files. What you share is encrypted, delivered, and permanently wiped.",
+                bg: "from-cyan-500/10 to-transparent",
+                color: "text-cyan-500"
               }
             ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="p-8 rounded-3xl bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-100 dark:border-blue-900/30 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 group"
+                variants={itemVariants}
+                className="group relative p-8 sm:p-10 rounded-[2.5rem] glass-card overflow-hidden"
               >
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300">
-                  {item.icon}
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-display mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                  {item.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 2. HOW IT WORKS */}
-      <section className="py-20 bg-slate-50/50 dark:bg-slate-950/20 border-y border-slate-100 dark:border-slate-900 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
-              How Sharing It Works
-            </h2>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
-              Share critical files in three fluid, simple steps with complete local encryption controls.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((step) => (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="relative p-8 rounded-3xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 flex flex-col justify-between h-64 hover:border-blue-500/50 dark:hover:border-blue-500/30 transition-all duration-300 group shadow-lg hover:shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50"
-              >
-                <div>
-                  <span className="font-display font-extrabold text-4xl sm:text-5xl bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:via-indigo-400 group-hover:to-sky-300 transition-all">
-                    {step.number}
-                  </span>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white font-display mt-4 mb-2">
-                    {step.title}
+                <div className={`absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b ${item.bg} opacity-50 group-hover:opacity-100 transition-opacity duration-500`} />
+                <div className="relative z-10">
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center bg-[var(--bg-elevated)] shadow-lg mb-8 ${item.color} group-hover:scale-110 transition-transform duration-500`}>
+                    {item.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold text-[var(--text-primary)] font-display mb-4">
+                    {item.title}
                   </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                    {step.desc}
+                  <p className="text-base text-[var(--text-secondary)] leading-relaxed font-medium">
+                    {item.desc}
                   </p>
                 </div>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* SHOWCASE SLIDESHOW */}
+      <section className="py-24 sm:py-32 relative overflow-hidden bg-[var(--bg-elevated)] border-y border-[var(--border-strong)]">
+        <div className="absolute inset-0 opacity-30 bg-grid-pattern pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 relative z-10">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-[var(--text-primary)] tracking-tight">
+              A cinematic sharing experience
+            </h2>
+          </div>
+          <div className="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl p-2 bg-[var(--bg-muted)]/50 backdrop-blur-3xl border-[var(--border-strong)]">
+            <Slideshow slides={showcaseSlides} variant="hero" interval={6000} />
           </div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section id="features" className="py-20 sm:py-32 scroll-mt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center space-y-4 max-w-2xl mx-auto mb-16 sm:mb-20">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
-              Everything You Need to Share
+      {/* DETAILED FEATURES */}
+      <section className="py-24 sm:py-32">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="text-center space-y-6 max-w-2xl mx-auto mb-20">
+            <span className="section-badge">Toolkit</span>
+            <h2 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
+              Powerful primitives.
             </h2>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
-              Empowered with tools to facilitate lightning quick uploads, custom timers, and direct phone downloads.
-            </p>
           </div>
 
           <motion.div
@@ -412,225 +363,46 @@ export default function Landing() {
               <motion.div
                 key={feat.title}
                 variants={itemVariants}
-                className="p-6 sm:p-8 rounded-3xl glass-card glass-card-hover border border-slate-200/50 dark:border-slate-800/50 flex flex-col gap-4 text-left"
+                className="p-8 rounded-[2rem] glass-card glass-card-hover text-left group relative overflow-hidden"
               >
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center border border-blue-100/30 dark:border-blue-900/30">
-                  {feat.icon}
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white font-display mb-1.5">
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feat.accent} opacity-5 blur-[50px] group-hover:opacity-20 transition-opacity duration-500`} />
+                <div className="relative z-10">
+                  <div className={`inline-flex mb-6 p-4 rounded-2xl bg-[var(--bg-elevated)] shadow-sm text-transparent bg-clip-text bg-gradient-to-br ${feat.accent}`}>
+                    {React.cloneElement(feat.icon, { className: "w-8 h-8 text-[var(--text-primary)] group-hover:scale-110 transition-transform duration-500" })}
+                  </div>
+                  <h3 className="text-xl font-bold text-[var(--text-primary)] font-display mb-3">
                     {feat.title}
                   </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed font-medium">
                     {feat.desc}
                   </p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
-
         </div>
       </section>
 
-      {/* 4. COMPARISON TABLE */}
-      <section className="py-20 bg-slate-50/50 dark:bg-slate-950/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
-              Sharing It vs Traditional Cloud Storage
-            </h2>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
-              See why modern teams choose Sharing It over Google Drive, Dropbox, and WeTransfer.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800">
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900 dark:text-white">Feature</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-500 dark:text-slate-400">Google Drive</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-500 dark:text-slate-400">Dropbox</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30">Sharing It</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { feature: "Account Required", drive: "Yes", dropbox: "Yes", sharing: "No" },
-                  { feature: "File Size Limit", drive: "5GB", dropbox: "2GB", sharing: "5GB (Free)" },
-                  { feature: "Auto-Expiration", drive: "Manual", dropbox: "Manual", sharing: "Automatic" },
-                  { feature: "End-to-End Encryption", drive: "Optional", dropbox: "Optional", sharing: "Default" },
-                  { feature: "Password Protection", drive: "No", dropbox: "No", sharing: "Yes" },
-                  { feature: "QR Code Sharing", drive: "No", dropbox: "No", sharing: "Yes" },
-                  { feature: "File Previews", drive: "Limited", dropbox: "Limited", sharing: "Full" },
-                  { feature: "Privacy Tracking", drive: "Yes", dropbox: "Yes", sharing: "None" },
-                ].map((row, index) => (
-                  <tr key={index} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
-                    <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{row.feature}</td>
-                    <td className="px-6 py-4 text-center text-sm text-slate-500 dark:text-slate-400">{row.drive}</td>
-                    <td className="px-6 py-4 text-center text-sm text-slate-500 dark:text-slate-400">{row.dropbox}</td>
-                    <td className="px-6 py-4 text-center text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20">{row.sharing}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. SECURITY HIGHLIGHTS */}
-      <section className="py-20 bg-white/70 dark:bg-[#071327]/90 text-slate-900 dark:text-white rounded-[32px] max-w-7xl mx-auto px-6 sm:px-12 my-12 border border-blue-100/60 dark:border-blue-900/40 relative overflow-hidden shadow-premium dark:shadow-premium-dark">
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(37,99,235,0.08),transparent_42%,rgba(14,165,233,0.08))] z-0" />
+      {/* FINAL CTA */}
+      <section className="py-24 sm:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-elevated)] to-[var(--bg-base)] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-[var(--accent)] rounded-full blur-[120px] opacity-[0.05] pointer-events-none" />
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-          <div className="lg:col-span-6 space-y-6 text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-              <Shield className="w-3.5 h-3.5" />
-              <span>Hardened Storage Core</span>
-            </div>
-            
-            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight font-display">
-              Your Files, Your Control. Locked Forever.
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center space-y-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <h2 className="text-5xl sm:text-6xl md:text-7xl font-extrabold font-display text-[var(--text-primary)] tracking-tight leading-tight mb-8">
+              Stop fighting <br/>
+              <span className="text-[var(--text-muted)] italic font-light">with file sharing.</span>
             </h2>
-            
-            <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
-              We encrypt file names in storage and grant download permissions using signed tokens. Expired files are scrubbed from servers to protect confidentiality.
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 pt-2">
-              {[
-                "Optional SHA-256 download passkeys",
-                "Temporary access link signatures",
-                "Full automated cron cleanup",
-                "100% compliant data control policies"
-              ].map((bullet) => (
-                <div key={bullet} className="flex items-center gap-2.5 text-slate-700 dark:text-slate-300 text-sm font-medium">
-                  <CheckCircle className="w-4 h-4 text-blue-500 dark:text-blue-400 flex-shrink-0" />
-                  <span>{bullet}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="lg:col-span-6 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-sm aspect-square bg-white dark:bg-slate-950/60 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between shadow-premium dark:shadow-premium-dark">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-900 pb-4">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Storage Node Active</span>
-                </div>
-                <Shield className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-              </div>
-
-              <div className="font-mono text-[11px] text-slate-600 dark:text-slate-400 space-y-1.5 text-left py-4 flex-grow">
-                <p className="text-blue-600 dark:text-blue-400"># encrypting file_hash</p>
-                <p className="text-slate-400 dark:text-slate-600">&gt; generating security signature...</p>
-                <p><span className="text-emerald-600 dark:text-emerald-400">passphrase:</span> "sha256-verified-key"</p>
-                <p><span className="text-emerald-600 dark:text-emerald-400">expiry_node:</span> "self_destruct_active"</p>
-                <p className="text-slate-400 dark:text-slate-600">&gt; credentials matching successful</p>
-              </div>
-
-              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-900 text-center">
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Security Level</p>
-                <p className="text-lg font-bold text-slate-900 dark:text-white font-display">100% Secure Storage</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* TESTIMONIALS SLIDESHOW */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10 space-y-3">
-            <span className="section-badge mx-auto"><MessageSquare className="w-3.5 h-3.5" /> Loved by teams</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
-              What people are saying
-            </h2>
-          </div>
-          <Slideshow slides={testimonialSlides} interval={7000} showCounter={false} />
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-20 border-t transition-colors" style={{ background: 'color-mix(in srgb, var(--bg-muted) 50%, transparent)', borderColor: 'var(--border)' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
-              Got questions? We have compiled answers to help you get the most out of Sharing It.
-            </p>
-          </div>
-
-          <div className="space-y-3 text-left">
-            {faqs.map((faq, idx) => {
-              const isOpen = activeFaq === idx;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.05 }}
-                  className={`rounded-2xl border overflow-hidden transition-all duration-200 ${
-                    isOpen
-                      ? 'border-blue-500/50 dark:border-blue-500/30 bg-white dark:bg-slate-900/60 shadow-lg shadow-blue-500/10'
-                      : 'border-slate-200/40 dark:border-slate-800/40 bg-white dark:bg-slate-900/40 hover:border-blue-300 dark:hover:border-blue-700'
-                  }`}
-                >
-                  <button
-                    onClick={() => setActiveFaq(isOpen ? null : idx)}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left font-semibold text-slate-800 dark:text-slate-100 hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer select-none"
-                  >
-                    <span>{faq.q}</span>
-                    <motion.div
-                      animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown className="w-5 h-5 text-slate-400" />
-                    </motion.div>
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="px-6 pb-5 pt-1 text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-900/50">
-                          {faq.a}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* 7. BOTTOM CTA */}
-      <section className="py-20 sm:py-28 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
-            Ready to share files beautifully?
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-            Upload files as a guest instantly or sign up to preserve histories and unlock storage extensions.
-          </p>
-          <div className="pt-2">
-            <Link to="/upload" className="btn-primary text-base !px-10 !py-4">
-              <span>Launch Share Panel</span>
-              <ArrowRight className="w-4 h-4" />
+            <Link to="/upload" className="btn-primary !rounded-full !px-12 !py-5 text-xl shadow-[0_20px_50px_-10px_var(--accent-glow)] hover:shadow-[0_30px_60px_-15px_var(--accent-glow)]">
+              Start sharing now
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 

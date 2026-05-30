@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, QrCode, Clock, Smartphone, Minimize2 } from 'lucide-react';
+import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, QrCode, Clock, Minimize2, ArrowRight } from 'lucide-react';
 import AnimatedDropZone from '../components/ui/AnimatedDropZone';
 import FilePreview, { canPreviewType } from '../components/ui/FilePreview';
 import { compressFile, formatCompressionNote } from '../lib/compressFile';
@@ -15,12 +15,11 @@ import { FileUploadLoader, ButtonLoader } from '../components/ui/Loader';
 export default function UploadPage() {
   const { showToast } = useToast();
 
-  // App states
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [expiry, setExpiry] = useState('24h'); // 1h, 24h, 7d, never
+  const [expiry, setExpiry] = useState('24h'); 
   const [passwordProtect, setPasswordProtect] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -46,7 +45,6 @@ export default function UploadPage() {
     if (isGuest) setCompressEnabled(true);
   }, [isGuest]);
 
-  // Drag & Drop handlers
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -74,10 +72,9 @@ export default function UploadPage() {
   };
 
   const processFile = (selectedFile) => {
-    // Size restrictions: Guest 50MB, User 1GB
     const limit = userId ? 1000 * 1024 * 1024 : 50 * 1024 * 1024;
     if (selectedFile.size > limit) {
-      showToast(`File is too large. Limit is ${userId ? '1GB' : '50MB'} for ${userId ? 'registered users' : 'anonymous guest uploads'}.`, 'error');
+      showToast(`File exceeds limit of ${userId ? '1GB' : '50MB'}.`, 'error');
       return;
     }
 
@@ -97,28 +94,26 @@ export default function UploadPage() {
     setOriginalFileMeta(null);
   };
 
-  // Convert human expiry key to timestamp
   const calculateExpiryTimestamp = () => {
     if (expiry === 'never') return null;
     const now = Date.now();
-    let gap = 3600000 * 24; // Default 24 hours
+    let gap = 3600000 * 24;
     if (expiry === '1h') gap = 3600000;
     if (expiry === '7d') gap = 3600000 * 24 * 7;
     return new Date(now + gap).toISOString();
   };
 
-  // Upload simulation or live Supabase submission
   const handleUpload = async () => {
     if (!file) return;
     setUploading(true);
-    setProgress(8);
+    setProgress(5);
     setCompressNote('');
 
     try {
       let uploadFile = file;
 
       if (compressEnabled) {
-        setProgress(20);
+        setProgress(15);
         const result = await compressFile(file);
         uploadFile = result.file;
         const note = formatCompressionNote(result);
@@ -126,7 +121,7 @@ export default function UploadPage() {
           setCompressNote(note);
           showToast(note, 'success');
         }
-        setProgress(40);
+        setProgress(35);
       } else {
         setProgress(25);
       }
@@ -135,19 +130,19 @@ export default function UploadPage() {
       const expiresAt = calculateExpiryTimestamp();
       const storagePath = `uploads/${slug}/${uploadFile.name}`;
 
-      setProgress(55);
+      setProgress(50);
       const { error: uploadError } = await supabase.storage
         .from(STORAGE_BUCKET)
         .upload(storagePath, uploadFile);
+        
       if (uploadError) {
         if (uploadError.message?.toLowerCase().includes('bucket not found')) {
-          throw new Error(`Storage bucket "${STORAGE_BUCKET}" was not found. Run supabase_schema.sql in Supabase SQL Editor, then retry the upload.`);
+          throw new Error(`Storage bucket "${STORAGE_BUCKET}" was not found. Contact administrator.`);
         }
         throw uploadError;
       }
 
-      // 3. Register Database Record inside files table
-      setProgress(85);
+      setProgress(80);
       const newFileData = {
         user_id: userId,
         name: uploadFile.name,
@@ -165,7 +160,6 @@ export default function UploadPage() {
 
       if (dbError) throw dbError;
 
-      // 4. Wrap uploads in success triggers
       setProgress(100);
       setUploading(false);
 
@@ -180,21 +174,20 @@ export default function UploadPage() {
         compressed: compressEnabled && uploadFile.size < (originalFileMeta?.size || uploadFile.size),
       });
 
-      // Trigger canvas confetti celebration!
       confetti({
-        particleCount: 120,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#2563eb', '#3b82f6', '#4f46e5', '#10b981']
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.5 },
+        colors: ['#3b82f6', '#8b5cf6', '#0ea5e9']
       });
 
-      showToast('File shared successfully!', 'success');
+      showToast('File secured and linked.', 'success');
 
     } catch (e) {
       console.error(e);
       setUploading(false);
       setProgress(0);
-      showToast(e.message || 'File upload failed.', 'error');
+      showToast(e.message || 'Transmission failed.', 'error');
     }
   };
 
@@ -203,11 +196,10 @@ export default function UploadPage() {
     if (!shareData) return;
     navigator.clipboard.writeText(shareData.link);
     setCopied(true);
-    showToast('Link copied to clipboard!', 'success');
+    showToast('Secure link copied.', 'success');
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Helper formatting filesize
   const formatBytes = (bytes, decimals = 2) => {
     if (!bytes) return '0 Bytes';
     const k = 1024;
@@ -219,349 +211,333 @@ export default function UploadPage() {
 
   return (
     <LayoutContainer
-      title="Upload & Share Files Free - Anobyte Software for Transfer Files Online"
-      description="Upload and share files free with Anobyte software. Transfer files online, set password locks, and create secure links for shared files in seconds."
+      title="Upload Stage - Sharing It"
+      description="Securely stage and broadcast your files to the world."
     >
-      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-3 sm:px-4 py-6 sm:py-8 w-full max-w-[100vw] overflow-x-hidden">
+      <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-12 w-full max-w-[100vw] overflow-x-hidden relative">
+        
+        {/* Ambient background enhancements */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent)] opacity-[0.04] blur-[100px] rounded-full pointer-events-none" />
 
-        <div className="w-full max-w-6xl glass-card border rounded-2xl p-4 sm:p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 md:gap-8 shadow-premium" style={{ borderColor: 'var(--border)' }}>
-          {/* Title - moved inside container */}
-          <div className="col-span-1 md:col-span-12 text-center space-y-2 mb-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white font-display">
-              Share Your Files
+        <div className="w-full max-w-5xl relative z-10">
+          <div className="text-center mb-10 space-y-4">
+            <span className="section-badge tracking-widest"><Upload className="w-3 h-3" /> Staging Area</span>
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
+              Prepare Transmission
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm max-w-md mx-auto">
-              Choose files to securely upload. Configure password controls or expiry timelines as required.
-            </p>
           </div>
 
-          {/* Main Upload Box Card (Lefthand Column) */}
-          <div className="col-span-1 md:col-span-7 space-y-4">
-            <div className="p-4 sm:p-6 rounded-2xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 text-center relative overflow-hidden">
+          <div className="glass-card rounded-[2rem] p-2 bg-[var(--bg-muted)]/30 backdrop-blur-3xl shadow-premium-hover">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 bg-[var(--bg-elevated)] rounded-[1.8rem] overflow-hidden border border-[var(--border)]">
+              
+              {/* Main Upload Box */}
+              <div className="col-span-1 lg:col-span-7 p-6 sm:p-10 border-b lg:border-b-0 lg:border-r border-[var(--border)] relative bg-[var(--bg-base)]/50">
+                <AnimatePresence mode="wait">
+                  {!shareData ? (
+                    <motion.div
+                      key="upload-form"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.4 }}
+                      className="space-y-8"
+                    >
+                      <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
 
-              <AnimatePresence mode="wait">
-                {!shareData ? (
-                  <motion.div
-                    key="upload-form"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-4"
-                  >
-                    {/* Drag-drop zone */}
-                    <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
-
-                    {!file ? (
-                      <AnimatedDropZone
-                        dragActive={dragActive}
-                        onDragEnter={handleDrag}
-                        onDragLeave={handleDrag}
-                        onDragOver={handleDrag}
-                        onDrop={handleDrop}
-                        onClick={triggerFileInput}
-                        onFileChange={handleFileChange}
-                        inputRef={fileInputRef}
-                        disabled={uploading}
-                        maxLabel={`Max ${userId ? '1GB' : '50MB'}`}
-                      >
-                        {!userId && (
-                          <p className="text-[10px] font-medium mt-1" style={{ color: 'var(--accent)' }}>
-                            <Link to="/auth?tab=register" className="hover:underline">
-                              Sign up for 1GB uploads
-                            </Link>
-                          </p>
-                        )}
-                      </AnimatedDropZone>
-                    ) : (
-                      <div className="space-y-4 text-left">
-                        <div className="border p-3 sm:p-4 rounded-2xl flex items-center justify-between gap-3" style={{ borderColor: 'var(--border)', background: 'var(--bg-muted)' }}>
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-                              <File className="w-5 h-5 text-white" />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{file.name}</p>
-                              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                                {formatBytes(file.size)} · {file.type || 'Binary'}
-                              </p>
-                            </div>
-                          </div>
-                          <button type="button" onClick={removeFile} disabled={uploading} className="p-2 rounded-lg border shrink-0" style={{ borderColor: 'var(--border)' }} aria-label="Remove file">
-                            <X className="w-4 h-4 text-rose-500" />
-                          </button>
-                        </div>
-
-                        {canPreviewType(file.type) && (
-                          <FilePreview file={file} type={file.type} name={file.name} maxHeight={240} className="w-full" />
-                        )}
-                      </div>
-                    )}
-
-                    {/* Expiry and Password properties */}
-                    <div className="space-y-3 pt-2">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-
-                        {/* Expiry Option */}
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>Link Expiry</span>
-                          </label>
-                          <select
-                            value={expiry}
-                            onChange={(e) => setExpiry(e.target.value)}
+                      {!file ? (
+                        <div className="h-[300px]">
+                          <AnimatedDropZone
+                            dragActive={dragActive}
+                            onDragEnter={handleDrag}
+                            onDragLeave={handleDrag}
+                            onDragOver={handleDrag}
+                            onDrop={handleDrop}
+                            onClick={triggerFileInput}
+                            onFileChange={handleFileChange}
+                            inputRef={fileInputRef}
                             disabled={uploading}
-                            className="form-input text-sm cursor-pointer py-2.5 min-h-[44px]"
-                          >
-                            <option value="1h">1 Hour</option>
-                            <option value="24h">24 Hours (1 Day)</option>
-                            <option value="7d">7 Days</option>
-                            <option value="never">Never Expire</option>
-                          </select>
+                            maxLabel={`Max ${userId ? '1GB' : '50MB'}`}
+                          />
                         </div>
-
-                        {/* Password Toggle Card */}
-                        <div className="space-y-1.5 text-left">
-                          <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                            <Shield className="w-3.5 h-3.5" />
-                            <span>Access Gate</span>
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => !uploading && setPasswordProtect(!passwordProtect)}
-                            className={`w-full min-h-[44px] flex items-center justify-between px-4 border rounded-xl transition-all text-sm font-semibold ${passwordProtect
-                                ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-500/50 text-blue-600 dark:text-blue-400'
-                                : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
-                              }`}
-                          >
-                            <span>Password Lock</span>
-                            <Lock className={`w-4 h-4 ${passwordProtect ? 'text-blue-500' : 'text-slate-400'}`} />
-                          </button>
-                        </div>
-
-                      </div>
-
-                      {/* Sliding Password Form Field */}
-                      <AnimatePresence>
-                        {passwordProtect && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.15 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="space-y-1.5 text-left pt-1">
-                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Set Share Passkey</label>
-                              <div className="relative">
-                                <input
-                                  type={showPassword ? "text" : "password"}
-                                  value={password}
-                                  onChange={(e) => setPassword(e.target.value)}
-                                  disabled={uploading}
-                                  placeholder="Enter secure passcode..."
-                                  className="form-input text-sm py-2.5 pr-10"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => setShowPassword(!showPassword)}
-                                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
-                                >
-                                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
+                      ) : (
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 text-left">
+                          <div className="p-4 rounded-2xl flex items-center justify-between gap-4 glass-card bg-[var(--bg-elevated)] shadow-sm">
+                            <div className="flex items-center gap-4 min-w-0">
+                              <div className="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center shrink-0 shadow-glow">
+                                <File className="w-6 h-6 text-white" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-base font-bold truncate text-[var(--text-primary)]">{file.name}</p>
+                                <p className="text-xs font-semibold mt-0.5 text-[var(--text-muted)] uppercase tracking-wider">
+                                  {formatBytes(file.size)} &bull; {file.type || 'BINARY'}
+                                </p>
                               </div>
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                            <button type="button" onClick={removeFile} disabled={uploading} className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] hover:bg-rose-500/10 hover:border-rose-500/30 transition-colors shrink-0 group">
+                              <X className="w-5 h-5 text-[var(--text-secondary)] group-hover:text-rose-500 transition-colors" />
+                            </button>
+                          </div>
 
-                      <label
-                        className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-opacity ${
-                          compressLocked ? 'opacity-90 cursor-default' : ''
-                        }`}
-                        style={{ borderColor: 'var(--border)', background: 'var(--bg-elevated)' }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={compressEnabled}
-                          disabled={compressLocked || uploading || !file}
-                          onChange={(e) => setCompressEnabled(e.target.checked)}
-                          className="mt-1 w-4 h-4 rounded accent-blue-600 shrink-0"
-                        />
-                        <div className="text-left min-w-0">
-                          <span className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                            <Minimize2 className="w-4 h-4" style={{ color: 'var(--accent)' }} />
-                            Compress images before upload
-                          </span>
-                          <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                            {compressLocked
-                              ? 'Required for guest uploads — optimizes photos automatically.'
-                              : 'Recommended for photos (JPEG/PNG/WebP). Videos and documents upload as-is.'}
-                          </p>
-                          {compressNote && (
-                            <p className="text-xs mt-2 font-medium text-emerald-600 dark:text-emerald-400">{compressNote}</p>
+                          {canPreviewType(file.type) && (
+                            <div className="rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm bg-black/5">
+                              <FilePreview file={file} type={file.type} name={file.name} maxHeight={280} className="w-full" />
+                            </div>
                           )}
+                        </motion.div>
+                      )}
+
+                      {/* Configurations */}
+                      <div className="space-y-5 pt-4 border-t border-[var(--border)]">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                          {/* Expiry */}
+                          <div className="space-y-2 text-left">
+                            <label className="text-[11px] font-extrabold text-[var(--text-muted)] uppercase tracking-[0.2em] flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-[var(--accent)]" />
+                              Auto-Destruct
+                            </label>
+                            <select
+                              value={expiry}
+                              onChange={(e) => setExpiry(e.target.value)}
+                              disabled={uploading}
+                              className="form-input text-sm cursor-pointer shadow-sm"
+                            >
+                              <option value="1h">T+ 1 Hour</option>
+                              <option value="24h">T+ 24 Hours</option>
+                              <option value="7d">T+ 7 Days</option>
+                              <option value="never">Persist (Never)</option>
+                            </select>
+                          </div>
+
+                          {/* Password Toggle */}
+                          <div className="space-y-2 text-left">
+                            <label className="text-[11px] font-extrabold text-[var(--text-muted)] uppercase tracking-[0.2em] flex items-center gap-2">
+                              <Shield className="w-4 h-4 text-[var(--accent)]" />
+                              Encryption Gate
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => !uploading && setPasswordProtect(!passwordProtect)}
+                              className={`w-full py-3.5 px-4 rounded-xl transition-all duration-300 text-sm font-bold flex items-center justify-between border ${
+                                passwordProtect
+                                  ? 'bg-[var(--accent)]/10 border-[var(--accent)]/50 text-[var(--accent)]'
+                                  : 'bg-[var(--bg-muted)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
+                              }`}
+                            >
+                              <span>Require Passkey</span>
+                              <Lock className={`w-4 h-4 ${passwordProtect ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'}`} />
+                            </button>
+                          </div>
                         </div>
-                      </label>
 
-                    </div>
+                        <AnimatePresence>
+                          {passwordProtect && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                              className="overflow-hidden"
+                            >
+                              <div className="space-y-2 text-left pt-2">
+                                <label className="text-[11px] font-extrabold text-[var(--text-muted)] uppercase tracking-[0.2em]">Define Passkey</label>
+                                <div className="relative">
+                                  <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    disabled={uploading}
+                                    placeholder="Enter secure cryptographic key..."
+                                    className="form-input text-sm py-3.5 pr-12 shadow-sm font-mono"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-4 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                                  >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                  </button>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
 
-                    {uploading && (
-                      <div className="pt-4">
-                        <FileUploadLoader progress={progress} fileName={file?.name} />
-                      </div>
-                    )}
-
-                    {/* Upload CTA Button */}
-                    <div className="pt-2">
-                      <button
-                        onClick={handleUpload}
-                        disabled={!file || uploading}
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 hover:from-blue-700 hover:via-indigo-600 hover:to-sky-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/25 transition-all min-h-[48px]"
-                      >
-                        {uploading ? (
-                          <>
-                            <ButtonLoader size="sm" />
-                            <span>Streaming to storage...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="w-4 h-4" />
-                            <span>Generate Share Link</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                  </motion.div>
-                ) : (
-
-                  /* 3. POST-UPLOAD SHARE SUCCESS OVERLAY (Glassmorphic Slide Card) */
-                  <motion.div
-                    key="upload-success"
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-4 text-center py-3"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center mx-auto border border-emerald-100 dark:border-emerald-900/30 text-emerald-500">
-                      <Check className="w-7 h-7" />
-                    </div>
-
-                    <div className="space-y-1">
-                      <h3 className="text-lg sm:text-xl font-bold font-display text-slate-900 dark:text-white">Share Node Generated!</h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-sm mx-auto">
-                        Your file {shareData.name} is uploaded.
-                      </p>
-                    </div>
-
-                    {/* Copy Link field block */}
-                    <div className="space-y-1.5 text-left max-w-md mx-auto">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Shareable URL</label>
-                      <div className="relative flex items-center">
-                        <input
-                          type="text"
-                          readOnly
-                          value={shareData.link}
-                          className="form-input text-xs pr-12 font-mono truncate"
-                        />
-                        <button
-                          onClick={handleCopyLink}
-                          className="absolute right-2 px-3 py-1.5 rounded-lg text-white bg-blue-600 hover:bg-blue-700 text-[10px] font-bold transition-all flex items-center gap-1"
+                        <label
+                          className={`flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 ${
+                            compressLocked ? 'opacity-80 cursor-not-allowed bg-[var(--bg-muted)]' : 'cursor-pointer bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] shadow-sm'
+                          }`}
+                          style={{ borderColor: 'var(--border)' }}
                         >
-                          {copied ? <Check className="w-3.5 h-3.5" /> : <Clipboard className="w-3.5 h-3.5" />}
-                          <span>{copied ? 'Copied' : 'Copy'}</span>
+                          <div className={`w-5 h-5 rounded flex items-center justify-center border mt-0.5 shrink-0 transition-colors ${compressEnabled ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'border-[var(--border-strong)] bg-[var(--bg-muted)] text-transparent'}`}>
+                            <Check className="w-3.5 h-3.5" />
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={compressEnabled}
+                            disabled={compressLocked || uploading || !file}
+                            onChange={(e) => setCompressEnabled(e.target.checked)}
+                            className="hidden"
+                          />
+                          <div className="text-left min-w-0 flex-1">
+                            <span className="text-sm font-bold flex items-center gap-2 text-[var(--text-primary)]">
+                              <Minimize2 className="w-4 h-4 text-[var(--accent)]" />
+                              Payload Compression
+                            </span>
+                            <p className="text-xs mt-1.5 leading-relaxed font-medium text-[var(--text-secondary)]">
+                              {compressLocked
+                                ? 'Enforced for unauthenticated payloads. Optimizes assets automatically.'
+                                : 'Highly recommended for raw image assets. Binaries and videos transmit unaltered.'}
+                            </p>
+                            {compressNote && (
+                              <p className="text-xs mt-2 font-bold text-emerald-500">{compressNote}</p>
+                            )}
+                          </div>
+                        </label>
+                      </div>
+
+                      {uploading && (
+                        <div className="pt-4">
+                          <FileUploadLoader progress={progress} fileName={file?.name} />
+                        </div>
+                      )}
+
+                      <div className="pt-4">
+                        <button
+                          onClick={handleUpload}
+                          disabled={!file || uploading}
+                          className="btn-primary w-full !py-4.5 !rounded-2xl text-base tracking-wide"
+                        >
+                          {uploading ? (
+                            <>
+                              <ButtonLoader size="md" />
+                              <span>Transmitting Payload...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="w-5 h-5" />
+                              <span>Initialize Broadcast</span>
+                            </>
+                          )}
                         </button>
                       </div>
-                    </div>
-
-                    {/* QR Code and Actions grid */}
-                    <div className="p-4 border border-slate-200/50 dark:border-slate-800/50 rounded-2xl bg-slate-50 dark:bg-slate-900/40 max-w-xs mx-auto flex flex-col items-center gap-3">
-                      <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
-                        <QRCodeSVG value={shareData.link} size={110} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="upload-success"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                      className="space-y-8 text-center py-6 h-full flex flex-col justify-center"
+                    >
+                      <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+                        <Check className="w-10 h-10 text-white" strokeWidth={3} />
                       </div>
-                      <div className="text-center">
-                        <p className="text-[10px] font-bold text-slate-500 flex items-center gap-1 justify-center uppercase tracking-wider">
-                          <QrCode className="w-3.5 h-3.5" />
-                          <span>Mobile Share QR Ready</span>
+
+                      <div className="space-y-2">
+                        <h3 className="text-3xl font-extrabold font-display text-[var(--text-primary)] tracking-tight">Transmission Secured.</h3>
+                        <p className="text-base text-[var(--text-secondary)] truncate max-w-sm mx-auto font-medium">
+                          {shareData.name} is now accessible globally.
                         </p>
-                        <p className="text-[9px] text-slate-400 mt-0.5">Scan to instantly preview or download on phone.</p>
                       </div>
-                    </div>
 
-                    <div className="flex items-center justify-center gap-2 pt-1">
-                      <button
-                        onClick={() => { setShareData(null); removeFile(); }}
-                        className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
-                      >
-                        Share Another File
-                      </button>
-                    </div>
-
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-            </div>
-          </div>
-
-          {/* Guidelines Sidebar Panel (Righthand Column) */}
-          <div className="col-span-1 md:col-span-5 space-y-4 text-left">
-            <div className="p-4 sm:p-6 rounded-2xl border space-y-4 h-full hidden md:block" style={{ borderColor: 'var(--border)', background: 'var(--bg-elevated)' }}>
-              <h3 className="text-lg font-bold font-display text-slate-900 dark:text-white">Sharing Paradigms</h3>
-
-              <ul className="space-y-3">
-                {[
-                  {
-                    title: "Access Gate Locking",
-                    desc: "Apply passkeys to protect links. Receivers must input correct password signatures to verify download streams.",
-                    icon: <Lock className="w-4 h-4" />,
-                    active: passwordProtect
-                  },
-                  {
-                    title: "Auto-expiring Lifespans",
-                    desc: "Specify timeline nodes (1 hour, 1 day, 7 days). Reaching limits automatically renders files entirely inaccessible.",
-                    icon: <Clock className="w-4 h-4" />,
-                    active: expiry !== 'never'
-                  },
-                  {
-                    title: "Mobile Friendly Previews",
-                    desc: "Instantly preview PDFs, code snippets, visual images, or play audio and video directly in mobile browsers using QR codes.",
-                    icon: <Smartphone className="w-4 h-4" />,
-                    active: true
-                  }
-                ].map((rule) => (
-                  <li key={rule.title} className={`space-y-1 transition-all ${rule.active ? 'opacity-100' : 'opacity-60'}`}>
-                    <h4 className={`font-bold text-sm font-display flex items-center gap-2 ${rule.active ? 'text-blue-600 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>
-                      <div className={`p-1.5 rounded-lg ${rule.active ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                        {rule.icon}
+                      <div className="space-y-2.5 text-left max-w-md mx-auto w-full">
+                        <label className="text-[11px] font-extrabold text-[var(--text-muted)] uppercase tracking-[0.2em] px-1">Global Node URL</label>
+                        <div className="relative flex items-center p-1.5 bg-[var(--bg-muted)] border border-[var(--border)] rounded-2xl">
+                          <input
+                            type="text"
+                            readOnly
+                            value={shareData.link}
+                            className="w-full bg-transparent text-sm pl-4 pr-32 font-mono font-medium text-[var(--text-primary)] outline-none"
+                          />
+                          <button
+                            onClick={handleCopyLink}
+                            className={`absolute right-1.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                              copied ? 'bg-emerald-500 text-white' : 'bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm border border-[var(--border)] hover:border-[var(--border-strong)]'
+                            }`}
+                          >
+                            {copied ? <Check className="w-4 h-4" /> : <Clipboard className="w-4 h-4" />}
+                            <span>{copied ? 'Copied' : 'Copy'}</span>
+                          </button>
+                        </div>
                       </div>
-                      <span>{rule.title}</span>
-                      {rule.active && (
-                        <Check className="w-3.5 h-3.5 text-blue-500" />
-                      )}
-                    </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed pl-3.5">
-                      {rule.desc}
-                    </p>
+
+                      <div className="p-6 border border-[var(--border-strong)] rounded-3xl bg-[var(--bg-elevated)] max-w-[240px] mx-auto flex flex-col items-center gap-4 shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-400" />
+                        <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+                          <QRCodeSVG value={shareData.link} size={140} />
+                        </div>
+                        <div className="text-center w-full">
+                          <p className="text-xs font-extrabold text-[var(--text-secondary)] flex items-center gap-1.5 justify-center uppercase tracking-widest">
+                            <QrCode className="w-4 h-4 text-[var(--accent)]" />
+                            Optical Scan
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="pt-4">
+                        <button
+                          onClick={() => { setShareData(null); removeFile(); }}
+                          className="btn-ghost !rounded-full !px-8"
+                        >
+                          Stage New Payload
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Info Sidebar */}
+              <div className="col-span-1 lg:col-span-5 bg-[var(--bg-elevated)] p-8 sm:p-10 flex flex-col justify-center border-t lg:border-t-0 border-[var(--border)] relative overflow-hidden">
+                <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none" />
+                
+                <h3 className="text-sm font-extrabold uppercase tracking-[0.2em] text-[var(--text-muted)] mb-8">Architectural Directives</h3>
+                
+                <ul className="space-y-8 relative z-10">
+                  <li className="flex items-start gap-4 group">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--bg-muted)] border border-[var(--border-strong)] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[var(--accent)]/10 group-hover:border-[var(--accent)]/30 transition-all duration-300">
+                      <Shield className="w-5 h-5 text-[var(--text-secondary)] group-hover:text-[var(--accent)] transition-colors" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-[var(--text-primary)] text-sm mb-1">Zero-Knowledge Fabric</p>
+                      <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">Data resides inert in secure buckets. We extract no telemetry from your payload contents.</p>
+                    </div>
                   </li>
-                ))}
-              </ul>
+                  <li className="flex items-start gap-4 group">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--bg-muted)] border border-[var(--border-strong)] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[var(--accent)]/10 group-hover:border-[var(--accent)]/30 transition-all duration-300">
+                      <Clock className="w-5 h-5 text-[var(--text-secondary)] group-hover:text-[var(--accent)] transition-colors" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-[var(--text-primary)] text-sm mb-1">Ephemeral Storage</p>
+                      <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">When timers trigger, nodes are purged aggressively. No archived backups remain.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-4 group">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--bg-muted)] border border-[var(--border-strong)] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[var(--accent)]/10 group-hover:border-[var(--accent)]/30 transition-all duration-300">
+                      <Zap className="w-5 h-5 text-[var(--text-secondary)] group-hover:text-[var(--accent)] transition-colors" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-[var(--text-primary)] text-sm mb-1">Edge Delivered</p>
+                      <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">Downloads stream via distributed global edge caches, minimizing latency regardless of origin.</p>
+                    </div>
+                  </li>
+                </ul>
+
+                {!userId && (
+                  <div className="mt-10 p-5 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-[var(--border-strong)]">
+                    <p className="text-xs font-bold text-[var(--text-primary)] mb-3">Require expanded capacities?</p>
+                    <Link to="/auth?tab=register" className="flex items-center text-xs font-extrabold text-[var(--accent)] hover:underline group">
+                      Initialize authenticated node
+                      <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                )}
+              </div>
+              
             </div>
           </div>
-
         </div>
-
       </div>
     </LayoutContainer>
   );
 }
-
-// Internal circular spin loader
-const Loader2 = ({ className }) => (
-  <svg className={`animate-spin ${className}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-  </svg>
-);

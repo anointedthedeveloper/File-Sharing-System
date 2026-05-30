@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, HelpCircle, Sparkles, Radio } from 'lucide-react';
+import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, Sparkles, Radio, Zap } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
@@ -39,7 +39,7 @@ export default function Navbar() {
   }, [location.pathname]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -47,7 +47,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      showToast('Logged out successfully', 'success');
+      showToast('Logged out securely.', 'success');
       navigate('/');
     } catch (e) {
       showToast(e.message, 'error');
@@ -56,52 +56,61 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Upload', path: '/upload', icon: <UploadCloud className="w-4 h-4" /> },
-    { name: 'Quick Share', path: '/quick-share', icon: <Radio className="w-4 h-4" /> },
+    { name: 'P2P Transfer', path: '/quick-share', icon: <Radio className="w-4 h-4" /> },
     ...(user ? [{ name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> }] : []),
-    { name: 'FAQ', path: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
   ];
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        scrolled
-          ? 'border-b shadow-premium backdrop-blur-xl'
-          : 'border-b border-transparent'
-      }`}
-      style={{
-        borderColor: scrolled ? 'var(--border)' : 'transparent',
-        background: scrolled ? 'var(--glass)' : 'transparent',
-      }}
+    <motion.header
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-500 pt-4 px-4 sm:px-6 lg:px-8`}
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-            <motion.img
-              whileHover={{ scale: 1.03 }}
-              src={logoImg}
-              alt="Sharing It"
-              className="h-9 sm:h-10 w-auto object-contain"
-            />
+      <div 
+        className={`max-w-7xl mx-auto rounded-full transition-all duration-500 border ${
+          scrolled 
+            ? 'bg-[var(--glass)] shadow-premium backdrop-blur-2xl border-[var(--border-strong)] py-2 px-4' 
+            : 'bg-transparent border-transparent py-4 px-2'
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 group shrink-0 relative z-20">
+            <div className="relative">
+              <motion.img
+                whileHover={{ scale: 1.05, rotate: -2 }}
+                src={logoImg}
+                alt="Sharing It"
+                className="h-8 sm:h-9 w-auto object-contain relative z-10"
+              />
+              <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </div>
+            <span className="font-display font-extrabold text-lg tracking-tight hidden sm:block">
+              Sharing<span className="gradient-text">It</span>
+            </span>
           </Link>
 
-          <nav className="hidden md:flex items-center p-1 rounded-2xl gap-0.5" style={{ background: 'color-mix(in srgb, var(--bg-muted) 60%, transparent)', border: '1px solid var(--border)' }}>
+          <nav className="hidden md:flex items-center gap-1 p-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] shadow-sm">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive(link.path) ? '' : 'hover:opacity-80'
+                className={`relative px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
+                  isActive(link.path) 
+                    ? 'text-white shadow-glow' 
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]'
                 }`}
-                style={{
-                  color: isActive(link.path) ? 'var(--accent)' : 'var(--text-secondary)',
-                  background: isActive(link.path) ? 'var(--glass)' : 'transparent',
-                }}
               >
-                <span className="flex items-center gap-1.5">
+                {isActive(link.path) && (
+                  <motion.div 
+                    layoutId="nav-pill" 
+                    className="absolute inset-0 rounded-full gradient-bg z-0" 
+                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
                   {link.icon}
                   {link.name}
                 </span>
@@ -109,33 +118,34 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-2 lg:gap-3">
+          <div className="hidden md:flex items-center gap-3">
             <motion.button
-              whileTap={{ scale: 0.94 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl transition-all duration-200"
-              style={{ border: '1px solid var(--border)', background: 'var(--glass)', color: 'var(--text-secondary)' }}
+              className="p-2.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-all shadow-sm"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </motion.button>
 
             {user ? (
               <div className="relative">
                 <motion.button
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 p-1.5 pr-3 rounded-full gradient-bg shadow-glow text-white"
+                  className="flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] transition-all shadow-sm group"
                 >
                   <img
                     src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`}
                     alt="Avatar"
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-white/30"
+                    className="w-8 h-8 rounded-full object-cover border-2 border-[var(--bg-base)] shadow-sm"
                   />
-                  <span className="text-xs font-semibold max-w-[90px] truncate hidden xl:block">
+                  <span className="text-sm font-bold text-[var(--text-primary)] max-w-[120px] truncate">
                     {profile?.full_name || 'Account'}
                   </span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-[var(--text-muted)] transition-transform duration-300 group-hover:text-[var(--text-primary)] ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </motion.button>
 
                 <AnimatePresence>
@@ -143,24 +153,26 @@ export default function Navbar() {
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} aria-hidden />
                       <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                        className="absolute right-0 mt-2 w-56 z-20 rounded-2xl p-2 shadow-premium-hover glass-card"
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                        className="absolute right-0 mt-3 w-64 z-20 rounded-2xl p-2 glass-card border-[var(--border-strong)] shadow-premium-hover backdrop-blur-3xl"
                       >
-                        <div className="px-3 py-2 border-b mb-1" style={{ borderColor: 'var(--border)' }}>
-                          <p className="text-[10px] uppercase tracking-wider font-bold" style={{ color: 'var(--text-muted)' }}>Signed in</p>
-                          <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{user.email}</p>
+                        <div className="px-4 py-3 mb-2 rounded-xl bg-[var(--bg-muted)]/50">
+                          <p className="text-[10px] uppercase tracking-widest font-extrabold text-[var(--text-muted)] mb-1">Authenticated as</p>
+                          <p className="text-sm font-bold text-[var(--text-primary)] truncate">{user.email}</p>
                         </div>
-                        <Link to="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl hover:opacity-80 transition-opacity" style={{ color: 'var(--text-secondary)' }}>
-                          <LayoutDashboard className="w-4 h-4" /> Dashboard
-                        </Link>
-                        <Link to="/upload" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl hover:opacity-80 transition-opacity" style={{ color: 'var(--text-secondary)' }}>
-                          <UploadCloud className="w-4 h-4" /> Upload
-                        </Link>
-                        <button onClick={handleLogout} className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors text-left">
-                          <LogOut className="w-4 h-4" /> Sign Out
-                        </button>
+                        <div className="space-y-1">
+                          <Link to="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl hover:bg-[var(--bg-muted)] text-[var(--text-primary)] transition-colors">
+                            <LayoutDashboard className="w-4 h-4 text-[var(--accent)]" /> 
+                            Workspace
+                          </Link>
+                          <button onClick={handleLogout} className="flex w-full items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors text-left group">
+                            <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" /> 
+                            Disconnect
+                          </button>
+                        </div>
                       </motion.div>
                     </>
                   )}
@@ -168,80 +180,93 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link to="/auth" className="px-4 py-2 text-sm font-semibold rounded-xl transition-opacity hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
-                  Log In
+                <Link to="/auth" className="px-5 py-2.5 text-sm font-bold rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-all">
+                  Sign In
                 </Link>
-                <Link to="/auth?tab=register" className="btn-primary text-sm !py-2.5 !px-5 !rounded-xl">
-                  <Sparkles className="w-4 h-4" />
-                  Get Started
+                <Link to="/auth?tab=register" className="btn-primary text-sm !py-2.5 !px-6 !rounded-full group">
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    Deploy Now
+                  </span>
                 </Link>
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
-            <button onClick={toggleTheme} className="p-2.5 rounded-xl" style={{ border: '1px solid var(--border)', color: 'var(--text-secondary)' }} aria-label="Toggle theme">
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          <div className="flex items-center gap-2 md:hidden relative z-20">
+            <button onClick={toggleTheme} className="p-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]" aria-label="Toggle theme">
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-            <button onClick={() => setIsOpen(!isOpen)} className="p-2.5 rounded-xl" style={{ border: '1px solid var(--border)', color: 'var(--text-secondary)' }} aria-label="Menu">
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm" aria-label="Menu">
+              <motion.div animate={{ rotate: isOpen ? 90 : 0 }}>
+                {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </motion.div>
             </button>
           </div>
         </div>
       </div>
 
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden overflow-hidden border-t"
-            style={{ borderColor: 'var(--border)', background: 'var(--glass)' }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="md:hidden absolute top-[calc(100%+10px)] left-4 right-4 z-40 rounded-3xl glass-card border-[var(--border-strong)] shadow-premium-hover p-3"
           >
-            <div className="px-4 pt-2 pb-6 space-y-1">
+            <div className="space-y-1 mb-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold"
-                  style={{
-                    color: isActive(link.path) ? 'var(--accent)' : 'var(--text-secondary)',
-                    background: isActive(link.path) ? 'color-mix(in srgb, var(--accent) 10%, transparent)' : 'transparent',
-                  }}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-bold transition-colors ${
+                    isActive(link.path) 
+                      ? 'bg-[var(--accent)]/10 text-[var(--accent)]' 
+                      : 'text-[var(--text-primary)] hover:bg-[var(--bg-muted)]'
+                  }`}
                 >
                   {link.icon}
                   {link.name}
                 </Link>
               ))}
-              <div className="pt-4 border-t mt-2" style={{ borderColor: 'var(--border)' }}>
-                {user ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3 px-4 py-2">
-                      <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`} alt="" className="w-10 h-10 rounded-xl" />
-                      <div className="truncate">
-                        <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{profile?.full_name || 'User'}</p>
-                        <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{user.email}</p>
-                      </div>
+            </div>
+            
+            <div className="pt-4 border-t border-[var(--border)] px-2">
+              {user ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 px-3">
+                    <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`} alt="" className="w-12 h-12 rounded-full border-2 border-[var(--border)]" />
+                    <div className="truncate">
+                      <p className="font-bold text-[var(--text-primary)] text-lg">{profile?.full_name || 'Authorized User'}</p>
+                      <p className="text-xs font-semibold text-[var(--text-muted)] truncate">{user.email}</p>
                     </div>
-                    <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ color: 'var(--text-secondary)' }}>
-                      <LayoutDashboard className="w-5 h-5" /> Dashboard
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link to="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--bg-muted)] font-bold text-sm text-[var(--text-primary)]">
+                      Workspace
                     </Link>
-                    <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-rose-500 text-left">
-                      <LogOut className="w-5 h-5" /> Sign Out
+                    <button onClick={handleLogout} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-500/10 text-rose-500 font-bold text-sm">
+                      Disconnect
                     </button>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-2 px-1">
-                    <Link to="/auth" className="flex justify-center py-3 rounded-xl text-sm font-semibold border" style={{ borderColor: 'var(--border)', color: 'var(--text-primary)' }}>Log In</Link>
-                    <Link to="/auth?tab=register" className="btn-primary text-sm justify-center !rounded-xl">Get Started</Link>
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <Link to="/auth" onClick={() => setIsOpen(false)} className="flex justify-center py-3.5 rounded-2xl text-sm font-bold border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm">
+                    Sign In
+                  </Link>
+                  <Link to="/auth?tab=register" onClick={() => setIsOpen(false)} className="btn-primary text-sm justify-center !py-3.5 !rounded-2xl flex-1">
+                    Deploy
+                  </Link>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

@@ -6,7 +6,7 @@ import LayoutContainer from '../components/layout/LayoutContainer';
 export default function Unsubscribe() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState('loading');
-  const [message, setMessage] = useState('Updating your email preference...');
+  const [message, setMessage] = useState('Executing network sever protocol...');
 
   useEffect(() => {
     const email = searchParams.get('email');
@@ -22,14 +22,14 @@ export default function Unsubscribe() {
         const body = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-          throw new Error(body?.error || 'This unsubscribe link is invalid or expired.');
+          throw new Error(body?.error || 'Invalid cryptographic token.');
         }
 
         setStatus('success');
-        setMessage('You are unsubscribed from non-essential welcome emails.');
+        setMessage('Your address has been purged from the broadcast list.');
       } catch (error) {
         setStatus('error');
-        setMessage(error.message || 'This unsubscribe link could not be processed.');
+        setMessage(error.message || 'Operation failed. Token may be expired.');
       }
     };
 
@@ -37,31 +37,32 @@ export default function Unsubscribe() {
   }, [searchParams]);
 
   return (
-    <LayoutContainer
-      title="Unsubscribe - Sharing It"
-      description="Manage Sharing It email preferences."
-    >
-      <div className="max-w-md mx-auto px-4 py-20 min-h-[70vh] flex items-center">
-        <div className="w-full p-8 rounded-[2rem] glass-card border border-blue-100/70 dark:border-blue-900/40 text-center space-y-5">
-          <div className="w-16 h-16 rounded-full bg-blue-600 shadow-glow flex items-center justify-center mx-auto text-white">
+    <LayoutContainer title="Sever Comms - Sharing It">
+      <div className="max-w-xl mx-auto px-6 py-32 min-h-[80vh] flex items-center justify-center relative">
+        <div className="absolute inset-0 bg-[var(--accent)] opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="w-full p-10 sm:p-14 rounded-[2.5rem] glass-card border-[var(--border-strong)] text-center relative z-10 shadow-2xl bg-gradient-to-b from-[var(--bg-elevated)] to-[var(--bg-base)]">
+          <div className={`w-20 h-20 rounded-[1.5rem] flex items-center justify-center mx-auto mb-8 shadow-sm border ${
+            status === 'loading' ? 'bg-[var(--bg-muted)] border-[var(--border-strong)] text-[var(--accent)]' :
+            status === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' :
+            'bg-rose-500/10 border-rose-500/20 text-rose-500'
+          }`}>
             {status === 'loading' && <Loader2 className="w-8 h-8 animate-spin" />}
             {status === 'success' && <CheckCircle2 className="w-8 h-8" />}
             {status === 'error' && <MailX className="w-8 h-8" />}
           </div>
-          <div className="space-y-2">
-            <h1 className="text-2xl font-extrabold font-display text-slate-900 dark:text-white">
-              {status === 'success' ? 'Preference Updated' : status === 'error' ? 'Link Not Verified' : 'One Moment'}
+
+          <div className="space-y-3 mb-10">
+            <h1 className="text-3xl font-extrabold font-display text-[var(--text-primary)]">
+              {status === 'success' ? 'Comms Severed' : status === 'error' ? 'Validation Failure' : 'Standby'}
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-base text-[var(--text-secondary)] font-medium max-w-sm mx-auto">
               {message}
             </p>
           </div>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-glow transition-all"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Sharing It</span>
+
+          <Link to="/" className="btn-ghost !rounded-full !px-8">
+            <ArrowLeft className="w-4 h-4" /> Return to Base
           </Link>
         </div>
       </div>

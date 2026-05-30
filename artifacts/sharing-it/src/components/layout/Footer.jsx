@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Globe, Cpu, ArrowUpRight } from 'lucide-react';
+import { Globe, ArrowUpRight, Github, Twitter, Layers } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 
 const GITHUB_URL = 'https://github.com/anointedthedeveloper';
@@ -10,105 +10,108 @@ export default function Footer() {
 
   const links = {
     product: [
-      { name: 'Upload Files', path: '/upload' },
-      { name: 'Quick Share', path: '/quick-share' },
-      { name: 'Dashboard', path: '/dashboard' },
-      { name: 'Security', path: '/about#security' },
+      { name: 'Upload Bay', path: '/upload' },
+      { name: 'P2P Transfer', path: '/quick-share' },
+      { name: 'Workspace', path: '/dashboard' },
+      { name: 'Architecture', path: '/about#security' },
     ],
     company: [
-      { name: 'About Us', path: '/about' },
+      { name: 'Manifesto', path: '/about' },
       { name: 'Contact', path: '/contact' },
-      { name: 'Anobyte', href: ANOBYTE_URL },
+      { name: 'Anobyte OS', href: ANOBYTE_URL },
     ],
     legal: [
-      { name: 'Privacy', path: '/privacy' },
-      { name: 'Terms', path: '/terms' },
+      { name: 'Privacy Protocol', path: '/privacy' },
+      { name: 'Terms of Service', path: '/terms' },
     ],
   };
 
   return (
-    <footer className="relative w-full mt-auto border-t" style={{ borderColor: 'var(--border)' }}>
-      <div className="absolute inset-x-0 -top-px h-px opacity-60" style={{ background: 'var(--gradient-brand)' }} />
+    <footer className="relative w-full mt-auto bg-[var(--bg-base)] overflow-hidden">
+      {/* Decorative top border glow */}
+      <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-50" />
+      
+      {/* Ambient background glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[800px] h-[400px] bg-[var(--accent)] opacity-[0.03] rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-12 border-b" style={{ borderColor: 'var(--border)' }}>
-          <div className="lg:col-span-2 space-y-5">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <img src={logoImg} alt="Sharing It" className="h-9 w-auto" />
+      <div className="max-w-7xl mx-auto px-6 py-16 sm:py-24 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-[var(--border-strong)]">
+          <div className="lg:col-span-5 space-y-8">
+            <Link to="/" className="inline-flex items-center gap-3 group">
+              <div className="relative">
+                <img src={logoImg} alt="Sharing It" className="h-10 w-auto relative z-10" />
+                <div className="absolute inset-0 bg-[var(--accent)] blur-xl rounded-full scale-150 opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+              </div>
+              <span className="font-display font-extrabold text-xl tracking-tight text-[var(--text-primary)]">
+                Sharing<span className="text-[var(--accent)]">It</span>
+              </span>
             </Link>
-            <p className="text-sm max-w-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Secure, fast, auto-expiring file sharing — transfer online free with password gates, QR codes, and zero friction.
+            
+            <p className="text-base max-w-sm leading-relaxed text-[var(--text-secondary)] font-medium">
+              High-performance, cinematic file delivery. Designed for creators who demand speed, security, and uncompromising aesthetics.
             </p>
-            <div className="flex gap-2">
-              <a
-                href={GITHUB_URL}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub"
-                className="p-2.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
-                style={{ background: 'var(--bg-muted)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                  <path d="M9 18c-4.51 2-5-2-7-2" />
-                </svg>
+            
+            <div className="flex gap-3">
+              <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:shadow-glow transition-all duration-300">
+                <Github className="w-5 h-5" />
               </a>
-              <a
-                href={ANOBYTE_URL}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Anobyte website"
-                className="p-2.5 rounded-xl transition-all hover:-translate-y-0.5"
-                style={{ background: 'var(--bg-muted)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
-              >
+              <a href="#" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] flex items-center justify-center text-[var(--text-muted)] hover:text-[#1DA1F2] hover:border-[#1DA1F2]/30 hover:shadow-[0_0_20px_rgba(29,161,242,0.2)] transition-all duration-300">
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a href={ANOBYTE_URL} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:shadow-glow transition-all duration-300">
                 <Globe className="w-5 h-5" />
               </a>
             </div>
           </div>
 
-          {[
-            { title: 'Product', items: links.product },
-            { title: 'Company', items: links.company },
-            { title: 'Legal', items: links.legal },
-          ].map((col) => (
-            <div key={col.title}>
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: 'var(--text-muted)' }}>
-                {col.title}
-              </h3>
-              <ul className="space-y-2.5">
-                {col.items.map((link) => (
-                  <li key={link.name}>
-                    {link.href ? (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group inline-flex items-center gap-1 text-sm font-medium transition-colors hover:opacity-80"
-                        style={{ color: 'var(--text-secondary)' }}
-                      >
-                        {link.name}
-                        <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </a>
-                    ) : (
-                      <Link to={link.path} className="text-sm font-medium transition-colors hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
-                        {link.name}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            {[
+              { title: 'Platform', items: links.product },
+              { title: 'Ecosystem', items: links.company },
+              { title: 'Protocols', items: links.legal },
+            ].map((col) => (
+              <div key={col.title}>
+                <h3 className="text-xs font-extrabold uppercase tracking-[0.25em] mb-6 text-[var(--text-primary)]">
+                  {col.title}
+                </h3>
+                <ul className="space-y-4">
+                  {col.items.map((link) => (
+                    <li key={link.name}>
+                      {link.href ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group inline-flex items-center gap-1.5 text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+                        >
+                          {link.name}
+                          <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300" />
+                        </a>
+                      ) : (
+                        <Link 
+                          to={link.path} 
+                          className="text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors relative inline-block group"
+                        >
+                          <span>{link.name}</span>
+                          <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--accent)] transition-all duration-300 group-hover:w-full" />
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8">
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            &copy; {currentYear} Anobyte Software · Sharing It
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10">
+          <p className="text-sm font-bold text-[var(--text-muted)]">
+            &copy; {currentYear} Anobyte Software. All rights reserved.
           </p>
-          <div className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
-            <Cpu className="w-3.5 h-3.5" />
-            <span>Powered by</span>
-            <a href={ANOBYTE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold gradient-text hover:underline">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] shadow-sm">
+            <Layers className="w-4 h-4 text-[var(--text-muted)]" />
+            <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Engineered by</span>
+            <a href={ANOBYTE_URL} target="_blank" rel="noopener noreferrer" className="text-sm font-extrabold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors">
               Anobyte
             </a>
           </div>

@@ -2,16 +2,19 @@ import React, { useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import AmbientBackground from './AmbientBackground';
+import { useLocation } from 'react-router-dom';
 
 export default function LayoutContainer({
   children,
-  title = 'Sharing It - Secure File Sharing, Instantly',
-  description = 'Sharing It by Anobyte software helps you transfer files online free, share files securely, and enjoy an Airdrop-style experience for documents, photos, and media.',
-  keywords = 'Anobyte, Anobyte software, transfer files online, transfer files free, airdrop alternative, share files free, sharing files free, save files online free, shared files, how to share file',
+  title = 'Sharing It - Cinematic Secure File Sharing',
+  description = 'Share files with unprecedented speed and privacy. No ads, no bloat. Experience cinematic file transfers with Anobyte.',
+  keywords = 'file sharing, secure transfer, private sharing, anobyte, large files, drop files',
   ogType = 'website',
   ogImage = 'https://sharingit.anobyte.online/og-image.svg',
   ambient = true,
 }) {
+  const location = useLocation();
+
   useEffect(() => {
     const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://sharingit.anobyte.online';
 
@@ -48,14 +51,14 @@ export default function LayoutContainer({
     }
     canonical.href = `${siteUrl}${window.location.pathname}`;
 
-  }, [title, description, keywords, ogImage, ogType]);
+  }, [title, description, keywords, ogImage, ogType, location.pathname]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-grid-pattern transition-colors duration-500">
+    <div className="flex flex-col min-h-screen transition-colors duration-700 w-full relative">
       {ambient && <AmbientBackground />}
       <Navbar />
 
-      <main className="flex-grow z-10 w-full relative animate-fade-in">
+      <main className="flex-grow z-10 w-full relative">
         {children}
       </main>
 

@@ -2,23 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  File,
-  Trash2,
-  Download,
-  Copy,
-  Search,
-  Filter,
-  Loader2,
-  Plus,
-  Clock,
-  Lock,
-  Eye,
-  EyeOff,
-  CheckCircle2,
-  FolderOpen,
-  HardDrive,
-  User,
-  Link2,
+  File, Trash2, Download, Copy, Search, Filter, Loader2, Plus, Clock, Lock,
+  Eye, EyeOff, CheckCircle2, FolderOpen, HardDrive, User, Link2, Command
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
@@ -30,7 +15,6 @@ export default function Dashboard() {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  // Auth & data states
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
   const [user, setUser] = useState(null);
@@ -41,14 +25,14 @@ export default function Dashboard() {
   const [showPassword, setShowPassword] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
   
-  // Filtering & Search
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all'); // all, image, document, media, other
+  const [category, setCategory] = useState('all');
+
   useEffect(() => {
     const initSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        showToast('Please sign in to access your dashboard.', 'info');
+        showToast('Authentication required for workspace access.', 'info');
         navigate('/auth');
         return;
       }
@@ -72,56 +56,48 @@ export default function Dashboard() {
       if (error) throw error;
       setFiles(data || []);
     } catch (e) {
-      console.error('[Dashboard] fetchUserFiles', { message: e?.message, code: e?.code }, e);
-      showToast('Error loading shared files history.', 'error');
+      console.error(e);
+      showToast('Telemetry sync failed.', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete handler
   const handleDelete = async (fid) => {
-    if (!window.confirm('Are you absolute certain you want to delete this share link and file permanently? This action is irreversible.')) {
+    if (!window.confirm('Executing irreversible purge protocol. Proceed?')) {
       return;
     }
     
     setDeletingId(fid);
     try {
-      const { error } = await supabase
-        .from('files')
-        .delete()
-        .eq('id', fid);
-
+      const { error } = await supabase.from('files').delete().eq('id', fid);
       if (error) throw error;
       
-      // Optimistically update list
       setFiles(prev => prev.filter(f => f.id !== fid));
-      showToast('File share purged successfully.', 'success');
+      showToast('Node purged securely.', 'success');
     } catch (e) {
-      console.error(e);
-      showToast(e.message || 'Error deleting file share.', 'error');
+      showToast(e.message || 'Purge failed.', 'error');
     } finally {
       setDeletingId(null);
     }
   };
 
-  // Clipboard copies
   const handleCopyLink = (slug) => {
     const link = `${window.location.origin}/share/${slug}`;
     navigator.clipboard.writeText(link);
-    showToast('Share link copied!', 'success');
+    showToast('Secure coordinates copied.', 'success');
   };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
 
     if (newPassword.length < 8) {
-      showToast('Use at least 8 characters for your new password.', 'warning');
+      showToast('Key must contain at least 8 elements.', 'warning');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      showToast('Password confirmation does not match.', 'error');
+      showToast('Key signature mismatch.', 'error');
       return;
     }
 
@@ -132,453 +108,301 @@ export default function Dashboard() {
 
       setNewPassword('');
       setConfirmPassword('');
-      showToast('Password updated successfully.', 'success');
+      showToast('Cryptographic keys updated.', 'success');
     } catch (e) {
-      showToast(e.message || 'Could not update password.', 'error');
+      showToast(e.message || 'Key cycle failed.', 'error');
     } finally {
       setUpdatingPassword(false);
     }
   };
 
-  // Metrics calculators
   const totalFiles = files.length;
   const totalDownloads = files.reduce((acc, curr) => acc + (curr.downloads_count || 0), 0);
   const usedStorageBytes = files.reduce((acc, curr) => acc + (curr.size || 0), 0);
-  
-  // Total limits: 1GB = 1073741824 Bytes for logged-in accounts
   const storageLimitBytes = 1000 * 1024 * 1024; 
   const storagePercentage = Math.min((usedStorageBytes / storageLimitBytes) * 100, 100);
 
-  // Formatting helpers
   const formatBytes = (bytes, decimals = 2) => {
     if (!bytes) return '0 Bytes';
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   };
 
   const getRemainingTime = (isoString) => {
-    if (!isoString) return 'Never';
+    if (!isoString) return 'Persistent';
     const now = Date.now();
     const expiry = new Date(isoString).getTime();
     const gap = expiry - now;
-    if (gap <= 0) return 'Expired';
+    if (gap <= 0) return 'Purged';
 
     const hours = Math.floor(gap / 3600000);
-    if (hours > 24) return `${Math.floor(hours / 24)}d left`;
-    return `${hours}h left`;
+    if (hours > 24) return `${Math.floor(hours / 24)}d TTL`;
+    return `${hours}h TTL`;
   };
 
-  // Match search & filtering categories
   const filteredFiles = files.filter(f => {
     const matchesSearch = f.name.toLowerCase().includes(search.toLowerCase());
-    
     if (category === 'all') return matchesSearch;
     if (category === 'image') return matchesSearch && f.type.startsWith('image/');
     if (category === 'media') return matchesSearch && (f.type.startsWith('audio/') || f.type.startsWith('video/'));
-    if (category === 'document') {
-      return matchesSearch && (f.type.startsWith('text/') || f.type === 'application/pdf' || f.type === 'application/json');
-    }
-    // 'other' includes zip, archives, unknown
+    if (category === 'document') return matchesSearch && (f.type.startsWith('text/') || f.type === 'application/pdf' || f.type === 'application/json');
     return matchesSearch && !f.type.startsWith('image/') && !f.type.startsWith('audio/') && !f.type.startsWith('video/') && !f.type.startsWith('text/') && f.type !== 'application/pdf';
   });
 
   return (
     <LayoutContainer 
-      title="User Dashboard - Manage Shared Files & Free File Sharing with Anobyte Software"
-      description="Track shared files, manage download links, and monitor secure file sharing activity for transfer files online and share files free workflows."
+      title="Workspace - Sharing It"
+      description="Manage your secure file nodes and telemetry data."
     >
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2rem] glass-card p-6 sm:p-8 mb-10 border" style={{ borderColor: 'var(--border)' }}>
-          <div
-            className="pointer-events-none absolute inset-0 opacity-70"
-            style={{ background: 'radial-gradient(ellipse 60% 80% at 100% 0%, var(--mesh-1), transparent 50%)' }}
-          />
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-left">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center shadow-glow shrink-0">
-                <User className="w-6 h-6 text-white" />
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:py-16 sm:px-6 lg:px-8">
+        
+        {/* Cinematic Header Card */}
+        <div className="relative overflow-hidden rounded-[2.5rem] glass-card p-8 sm:p-12 mb-12 shadow-premium-hover border-[var(--border-strong)]">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-indigo-500/5 to-transparent pointer-events-none" />
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-[var(--accent)] rounded-full blur-[100px] opacity-10 pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-left">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center shadow-glow shrink-0 border border-white/20">
+                <Command className="w-8 h-8 text-white" />
               </div>
               <div>
-                <span className="section-badge mb-2">Your workspace</span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold font-display leading-tight" style={{ color: 'var(--text-primary)' }}>
-                  Dashboard
+                <span className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-[var(--accent)] mb-1 block">Command Center</span>
+                <h1 className="text-3xl sm:text-4xl font-extrabold font-display tracking-tight text-[var(--text-primary)]">
+                  Workspace
                 </h1>
-                <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-                  Welcome back,{' '}
-                  <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-                    {profile?.full_name || user?.email}
-                  </span>
+                <p className="text-sm mt-2 text-[var(--text-secondary)] font-medium">
+                  Authenticated as <span className="text-[var(--text-primary)] font-bold">{profile?.full_name || user?.email}</span>
                 </p>
               </div>
             </div>
-            <Link to="/upload" className="btn-primary text-sm !rounded-xl shrink-0">
-              <Plus className="w-4 h-4" />
-              <span>Upload new file</span>
+            <Link to="/upload" className="btn-primary !rounded-full !px-8 shrink-0 shadow-[0_10px_30px_-10px_var(--accent-glow)]">
+              <Plus className="w-5 h-5" />
+              <span>Deploy Payload</span>
             </Link>
           </div>
         </div>
 
         <AnimatePresence mode="wait">
           {loading ? (
-            
-            /* Skeletons */
-            <motion.div key="dashboard-loading" className="space-y-4 py-4">
-              <p className="text-xs text-center font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                Syncing your shares...
-              </p>
-              <SkeletonTable rows={6} />
+            <motion.div key="loading" className="space-y-6">
+              <div className="flex justify-center mb-8">
+                <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass-card border border-[var(--border-strong)] shadow-sm">
+                  <Loader2 className="w-4 h-4 animate-spin text-[var(--accent)]" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Synchronizing Telemetry...</span>
+                </div>
+              </div>
+              <SkeletonTable rows={4} />
             </motion.div>
           ) : (
-            
             <motion.div
-              key="dashboard-content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-8"
+              key="content"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-12"
             >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {/* Telemetry Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                  {
-                    icon: Link2,
-                    label: 'Active shares',
-                    value: totalFiles,
-                    hint: 'Live share links on your account',
-                  },
-                  {
-                    icon: Download,
-                    label: 'Total downloads',
-                    value: totalDownloads,
-                    hint: 'All-time download count',
-                  },
-                  {
-                    icon: HardDrive,
-                    label: 'Storage used',
-                    value: formatBytes(usedStorageBytes),
-                    hint: `${formatBytes(storageLimitBytes, 0)} limit · ${Math.round(storagePercentage)}% full`,
-                    progress: storagePercentage,
-                  },
-                ].map((card) => {
-                  const Icon = card.icon;
-                  return (
-                    <div
-                      key={card.label}
-                      className="p-6 rounded-2xl glass-card border text-left flex flex-col gap-3"
-                      style={{ borderColor: 'var(--border)' }}
-                    >
+                  { icon: Link2, label: 'Active Nodes', value: totalFiles, hint: 'Deployed live links' },
+                  { icon: Download, label: 'Global Fetches', value: totalDownloads, hint: 'Total successful extractions' },
+                  { icon: HardDrive, label: 'Capacity Used', value: formatBytes(usedStorageBytes), hint: `${formatBytes(storageLimitBytes, 0)} total · ${Math.round(storagePercentage)}% utilized`, progress: storagePercentage },
+                ].map((card) => (
+                  <div key={card.label} className="p-8 rounded-[2rem] glass-card glass-card-hover border border-[var(--border)] text-left relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)] opacity-0 group-hover:opacity-5 blur-[50px] transition-opacity duration-500 rounded-full" />
+                    <div className="relative z-10 flex flex-col gap-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[var(--text-muted)]">
                           {card.label}
                         </p>
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'color-mix(in srgb, var(--accent) 12%, transparent)' }}>
-                          <Icon className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+                        <div className="w-10 h-10 rounded-[1rem] bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center shadow-sm">
+                          <card.icon className="w-4 h-4 text-[var(--accent)]" />
                         </div>
                       </div>
-                      <p className="text-3xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
+                      <p className="text-4xl font-extrabold font-display text-[var(--text-primary)] tracking-tight">
                         {card.value}
                       </p>
                       {card.progress !== undefined && (
-                        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--bg-muted)' }}>
-                          <div className="h-full rounded-full transition-all" style={{ width: `${card.progress}%`, background: 'var(--gradient-brand)' }} />
+                        <div className="w-full h-1.5 rounded-full bg-[var(--bg-muted)] overflow-hidden">
+                          <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" style={{ width: `${card.progress}%` }} />
                         </div>
                       )}
-                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{card.hint}</p>
+                      <p className="text-xs font-semibold text-[var(--text-secondary)]">{card.hint}</p>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div className="lg:col-span-5 p-6 rounded-2xl glass-card border text-left" style={{ borderColor: 'var(--border)' }}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>Account</p>
-                      <h2 className="text-xl font-extrabold font-display mt-2" style={{ color: 'var(--text-primary)' }}>Security</h2>
-                      <p className="text-xs mt-2 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                        Signed in as <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{user?.email}</span>
-                      </p>
-                    </div>
-                    <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center shadow-glow">
-                      <Lock className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
-                </div>
-
-                <form
-                  onSubmit={handlePasswordChange}
-                  className="lg:col-span-7 p-6 rounded-2xl glass-card border text-left space-y-4"
-                  style={{ borderColor: 'var(--border)' }}
-                >
-                  <div className="flex items-center gap-2 text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
-                    <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--accent)' }} />
-                    <span>Change password</span>
+              {/* Data Grid & Filters */}
+              <div className="space-y-6">
+                <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-4 rounded-[1.5rem] glass-card border border-[var(--border)] relative z-20">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-4 top-3.5 w-4 h-4 text-[var(--text-muted)]" />
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Query nodes by signature..."
+                      className="w-full bg-[var(--bg-elevated)] border border-[var(--border-strong)] text-[var(--text-primary)] text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all font-medium"
+                    />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">New Password</label>
-                      <div className="relative">
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          placeholder="Minimum 8 characters"
-                          disabled={updatingPassword}
-                          className="form-input text-sm py-3 pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-3.5 text-slate-400 hover:text-blue-500"
-                          aria-label={showPassword ? 'Hide password' : 'Show password'}
-                        >
-                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Confirm Password</label>
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Repeat new password"
-                        disabled={updatingPassword}
-                        className="form-input text-sm py-3"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-                    <p className="text-[10px] text-slate-400 leading-relaxed max-w-md">
-                      Password changes apply to your Supabase account immediately. Use a unique password you do not use elsewhere.
-                    </p>
-                    <button
-                      type="submit"
-                      disabled={updatingPassword || !newPassword || !confirmPassword}
-                      className="btn-primary !text-xs !py-3 !px-5 !rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {updatingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
-                      <span>Update Password</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl glass-card border text-left" style={{ borderColor: 'var(--border)' }}>
-                
-                {/* Search field */}
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search by filename..."
-                    className="form-input text-xs pl-9 py-2.5 max-w-sm"
-                  />
-                </div>
-
-                {/* Filters grid */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-                  <span className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5 flex-shrink-0">
-                    <Filter className="w-3.5 h-3.5" />
-                    <span>Filter:</span>
-                  </span>
-                  
-                  {['all', 'image', 'document', 'media', 'other'].map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setCategory(cat)}
-                      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all select-none cursor-pointer ${
-                        category === cat
-                          ? 'bg-blue-600 text-white shadow-sm'
-                          : 'bg-slate-100 dark:bg-slate-900 text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-
-              </div>
-
-              {/* 3. HISTORY FILES LISTING */}
-              {filteredFiles.length === 0 ? (
-                
-                /* Empty state dashboard visual */
-                <div className="p-8 sm:p-16 border border-dashed rounded-3xl text-center space-y-4" style={{ borderColor: 'var(--border)' }}>
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto" style={{ background: 'var(--bg-muted)' }}>
-                    <FolderOpen className="w-7 h-7" style={{ color: 'var(--text-muted)' }} />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-bold font-display" style={{ color: 'var(--text-primary)' }}>No shared files found</h3>
-                    <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--text-muted)' }}>
-                      {search || category !== 'all' 
-                        ? 'No files matching chosen search filters.' 
-                        : 'You haven\'t uploaded any file shares yet.'}
-                    </p>
-                  </div>
-
-                  {(!search && category === 'all') && (
-                    <div className="pt-2">
-                      <Link to="/upload" className="btn-primary !text-xs !py-2.5 !px-5 !rounded-xl inline-flex">
-                        <Plus className="w-4 h-4" />
-                        <span>Upload First File</span>
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                
-                /* List of shared files - Card layout for mobile, Table for desktop */
-                <>
-                  {/* Mobile Card Layout */}
-                  <div className="md:hidden space-y-4">
-                    {filteredFiles.map((file) => (
-                      <div
-                        key={file.id}
-                        className="p-5 rounded-2xl glass-card border border-slate-200/40 dark:border-slate-800/40 space-y-4"
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
+                    {['all', 'image', 'document', 'media', 'other'].map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setCategory(cat)}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+                          category === cat
+                            ? 'bg-[var(--text-primary)] text-[var(--bg-base)] shadow-md'
+                            : 'bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]'
+                        }`}
                       >
-                        {/* File name and icon */}
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center flex-shrink-0">
-                            <File className="w-5 h-5 text-blue-500" />
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Node Listing */}
+                {filteredFiles.length === 0 ? (
+                  <div className="p-16 border border-dashed border-[var(--border-strong)] rounded-[2.5rem] text-center bg-[var(--bg-base)]/30 backdrop-blur-sm">
+                    <div className="w-20 h-20 rounded-full bg-[var(--bg-muted)] flex items-center justify-center mx-auto mb-6">
+                      <FolderOpen className="w-8 h-8 text-[var(--text-muted)]" />
+                    </div>
+                    <h3 className="text-xl font-bold font-display text-[var(--text-primary)] mb-2">No nodes located</h3>
+                    <p className="text-sm text-[var(--text-secondary)] font-medium max-w-sm mx-auto mb-8">
+                      {search || category !== 'all' 
+                        ? 'Adjust query parameters to expand search scope.' 
+                        : 'Your workspace is empty. Deploy a payload to initialize tracking.'}
+                    </p>
+                    {(!search && category === 'all') && (
+                      <Link to="/upload" className="btn-primary !rounded-full px-8 py-3.5 text-sm">
+                        <Plus className="w-4 h-4" />
+                        <span>Deploy First Payload</span>
+                      </Link>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {filteredFiles.map((file) => (
+                      <motion.div
+                        key={file.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="p-6 rounded-[2rem] glass-card border border-[var(--border-strong)] flex flex-col gap-5 hover:border-[var(--accent)]/50 transition-colors bg-[var(--bg-base)]/80 relative overflow-hidden group"
+                      >
+                        {file.password && <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 rounded-bl-full blur-xl pointer-events-none" />}
+                        
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-[1rem] bg-[var(--bg-elevated)] border border-[var(--border)] flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[var(--accent)]/5 transition-colors">
+                            <File className="w-5 h-5 text-[var(--text-secondary)] group-hover:text-[var(--accent)] transition-colors" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate" title={file.name}>
+                          <div className="min-w-0 flex-1 pt-0.5">
+                            <p className="text-sm font-bold text-[var(--text-primary)] truncate" title={file.name}>
                               {file.name}
                             </p>
-                            <p className="text-xs text-slate-400 mt-0.5">
-                              {file.type.split('/')[1] || 'binary'} • {formatBytes(file.size)}
+                            <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mt-1">
+                              {file.type.split('/')[1] || 'BIN'} &bull; {formatBytes(file.size)}
                             </p>
                           </div>
                         </div>
 
-                        {/* Stats row */}
-                        <div className="flex items-center gap-4 text-xs">
-                          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                            <Download className="w-3.5 h-3.5" />
-                            <span className="font-semibold">{file.downloads_count} downloads</span>
+                        <div className="flex items-center gap-4 py-4 border-y border-[var(--border)]">
+                          <div className="flex-1 flex flex-col gap-1">
+                            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--text-muted)]">Fetches</span>
+                            <span className="text-sm font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+                              <Download className="w-3.5 h-3.5 text-[var(--accent)]" /> {file.downloads_count}
+                            </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span className="font-semibold">{getRemainingTime(file.expires_at)}</span>
+                          <div className="w-px h-8 bg-[var(--border)]" />
+                          <div className="flex-1 flex flex-col gap-1">
+                            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--text-muted)]">Status</span>
+                            <span className="text-sm font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5 text-emerald-500" /> {getRemainingTime(file.expires_at)}
+                            </span>
                           </div>
                         </div>
 
-                        {/* Action buttons */}
-                        <div className="flex items-center gap-2 pt-2">
+                        <div className="flex items-center gap-2 pt-1">
                           <button
                             onClick={() => handleCopyLink(file.slug)}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500/50 transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] hover:border-[var(--border-strong)] text-xs font-bold text-[var(--text-primary)] transition-all shadow-sm"
                           >
-                            <Copy className="w-3.5 h-3.5" />
-                            <span>Copy Link</span>
+                            <Copy className="w-3.5 h-3.5" /> Copy Link
                           </button>
                           <button
                             onClick={() => handleDelete(file.id)}
                             disabled={deletingId === file.id}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-500/50 transition-colors"
+                            className="flex items-center justify-center p-3 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-all shrink-0"
+                            aria-label="Delete file"
                           >
-                            {deletingId === file.id ? (
-                              <>
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                <span>Deleting...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Trash2 className="w-3.5 h-3.5" />
-                                <span>Delete</span>
-                              </>
-                            )}
+                            {deletingId === file.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                           </button>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
+                )}
+              </div>
 
-                  {/* Desktop Table Layout */}
-                  <div className="hidden md:block overflow-x-auto rounded-3xl border border-slate-200/40 dark:border-slate-800/40 bg-white/70 dark:bg-slate-950/20 backdrop-blur-md">
-                    <table className="w-full text-left border-collapse min-w-[600px]">
-                      <thead>
-                        <tr className="border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/30">
-                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filename</th>
-                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filesize</th>
-                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type</th>
-                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Downloads</th>
-                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expiry</th>
-                          <th className="px-6 py-4.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-900/60">
-                        {filteredFiles.map((file) => (
-                          <tr 
-                            key={file.id}
-                            className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors"
-                          >
-                            <td className="px-6 py-4.5 truncate max-w-[200px]">
-                              <div className="flex items-center gap-3">
-                                <File className="w-4.5 h-4.5 text-blue-500 flex-shrink-0" />
-                                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate" title={file.name}>
-                                  {file.name}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
-                              {formatBytes(file.size)}
-                            </td>
-                            <td className="px-6 py-4.5 text-xs text-slate-400 font-semibold truncate max-w-[120px]">
-                              {file.type.split('/')[1] || 'binary'}
-                            </td>
-                            <td className="px-6 py-4.5 text-xs text-slate-600 dark:text-slate-300 font-bold">
-                              {file.downloads_count}
-                            </td>
-                            <td className="px-6 py-4.5">
-                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded-md uppercase bg-slate-50 dark:bg-slate-900/40">
-                                <Clock className="w-3.5 h-3.5" />
-                                <span>{getRemainingTime(file.expires_at)}</span>
-                              </span>
-                            </td>
-                            <td className="px-6 py-4.5 text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <button
-                                  onClick={() => handleCopyLink(file.slug)}
-                                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-400 hover:text-blue-500 hover:border-blue-500/50 transition-colors"
-                                  title="Copy Share Link"
-                                >
-                                  <Copy className="w-3.5 h-3.5" />
-                                </button>
-                                
-                                <button
-                                  onClick={() => handleDelete(file.id)}
-                                  disabled={deletingId === file.id}
-                                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-400 hover:text-rose-500 hover:border-rose-500/50 transition-colors"
-                                  title="Delete Share Link"
-                                >
-                                  {deletingId === file.id ? (
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  )}
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+              {/* Security Block */}
+              <div className="mt-16 p-8 sm:p-10 rounded-[2.5rem] border border-[var(--border-strong)] bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-base)] shadow-xl max-w-3xl mx-auto">
+                <div className="text-center mb-8">
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border-strong)] flex items-center justify-center mx-auto mb-4">
+                    <Lock className="w-6 h-6 text-[var(--text-primary)]" />
                   </div>
-                </>
-              )}
+                  <h3 className="text-2xl font-extrabold font-display text-[var(--text-primary)]">Key Rotation</h3>
+                  <p className="text-sm text-[var(--text-secondary)] font-medium mt-2">Cycle your master cryptographic signature.</p>
+                </div>
+
+                <form onSubmit={handlePasswordChange} className="space-y-5">
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="New Signature (Min 8 chars)"
+                        disabled={updatingPassword}
+                        className="w-full bg-[var(--bg-muted)] border border-[var(--border)] text-[var(--text-primary)] text-sm rounded-xl pl-4 pr-12 py-3.5 focus:border-[var(--accent)] transition-colors font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-4 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm Signature"
+                      disabled={updatingPassword}
+                      className="w-full bg-[var(--bg-muted)] border border-[var(--border)] text-[var(--text-primary)] text-sm rounded-xl px-4 py-3.5 focus:border-[var(--accent)] transition-colors font-mono"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={updatingPassword || !newPassword || !confirmPassword}
+                    className="w-full btn-ghost !py-4 !rounded-xl !bg-[var(--text-primary)] !text-[var(--bg-base)] hover:scale-[1.02] border-none"
+                  >
+                    {updatingPassword ? <Loader2 className="w-5 h-5 animate-spin" /> : <span>Commit Rotation</span>}
+                  </button>
+                </form>
+              </div>
 
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
     </LayoutContainer>
   );

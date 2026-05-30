@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { File, Download, Lock, ShieldAlert, Key, Eye, EyeOff, Loader2, ArrowLeft, Calendar } from 'lucide-react';
+import { File, Download, Lock, ShieldAlert, Key, Eye, EyeOff, Loader2, ArrowLeft, Calendar, ShieldCheck, Zap } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { STORAGE_BUCKET, supabase } from '../lib/supabase';
 import LayoutContainer from '../components/layout/LayoutContainer';
@@ -16,7 +16,6 @@ export default function Share() {
   const [fileData, setFileData] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   
-  // Security parameters
   const [passwordGate, setPasswordGate] = useState(false);
   const [passwordAttempt, setPasswordAttempt] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -45,13 +44,11 @@ export default function Share() {
         if (error) throw error;
         if (!cancelled && data?.signedUrl) setPreviewUrl(data.signedUrl);
       } catch (e) {
-        console.error('[Share] preview URL', e);
+        console.error(e);
       }
     })();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [unlocked, fileData]);
 
   const fetchFileDetails = async () => {
@@ -64,21 +61,17 @@ export default function Share() {
         .eq('slug', slug);
 
       if (error || !data?.length) {
-        throw new Error(error?.message || 'File share link does not exist or has expired.');
+        throw new Error('Node invalid or auto-destructed.');
       }
 
       const file = Array.isArray(data) ? data[0] : data;
       setFileData(file);
       
-      // Determine password lock requirements
-      if (file.password || file.password_hash) {
-        setPasswordGate(true);
-      } else {
-        setUnlocked(true);
-      }
+      if (file.password || file.password_hash) setPasswordGate(true);
+      else setUnlocked(true);
+
     } catch (e) {
-      console.error(e);
-      setErrorMsg(e.message || 'Error pulling file details.');
+      setErrorMsg(e.message || 'Decryption failed.');
     } finally {
       setLoading(false);
     }
@@ -87,42 +80,31 @@ export default function Share() {
   const handleVerifyPassword = async (e) => {
     e.preventDefault();
     if (!passwordAttempt) {
-      toast.showToast('Please type password gate credentials.', 'warning');
+      toast.showToast('Submit passkey.', 'warning');
       return;
     }
     
     setVerifying(true);
-    await new Promise(r => setTimeout(r, 700));
+    await new Promise(r => setTimeout(r, 800));
     setVerifying(false);
 
     const correctPassword = fileData.password || fileData.password_hash;
     if (correctPassword === passwordAttempt) {
       setUnlocked(true);
       setPasswordGate(false);
-      toast.showToast('Access gate successfully unlocked!', 'success');
     } else {
-      toast.showToast('Invalid access key password.', 'error');
+      toast.showToast('Invalid cryptographic key.', 'error');
     }
   };
 
-  // Secure download loop and metrics tracker
   const handleDownload = async () => {
     if (!fileData) return;
     setDownloading(true);
     try {
-      // 1. Increment database download count metrics
-      await supabase
-        .from('files')
-        .update({ downloads_count: (fileData.downloads_count || 0) + 1 })
-        .eq('id', fileData.id);
-      
-      // 2. Fetch secure signed URL from storage bucket
-      const { data, error } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .createSignedUrl(fileData.storage_path, 60);
+      await supabase.from('files').update({ downloads_count: (fileData.downloads_count || 0) + 1 }).eq('id', fileData.id);
+      const { data, error } = await supabase.storage.from(STORAGE_BUCKET).createSignedUrl(fileData.storage_path, 60);
       
       if (error) throw error;
-      
       if (data?.signedUrl) {
         const link = document.createElement('a');
         link.href = data.signedUrl;
@@ -132,213 +114,126 @@ export default function Share() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.showToast('Download started in the background.', 'success');
       } else {
-        throw new Error('Could not generate download URL');
+        throw new Error('URL generation failed');
       }
     } catch (e) {
-      toast.showToast(e.message || 'Failed to trigger download file stream.', 'error');
+      toast.showToast(e.message || 'Stream initialization failed.', 'error');
     } finally {
       setDownloading(false);
     }
   };
 
-  // Formatting helpers
-  const formatBytes = (bytes, decimals = 2) => {
-    if (!bytes) return '0 Bytes';
+  const formatBytes = (bytes) => {
+    if (!bytes) return '0 B';
     const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const getRemainingTime = (isoString) => {
-    if (!isoString) return 'Never Expires';
-    const now = Date.now();
-    const expiry = new Date(isoString).getTime();
-    const gap = expiry - now;
-    if (gap <= 0) return 'Expired';
-
+    if (!isoString) return 'Persistent Node';
+    const gap = new Date(isoString).getTime() - Date.now();
+    if (gap <= 0) return 'Purged';
     const hours = Math.floor(gap / 3600000);
-    if (hours > 24) {
-      return `Expires in ${Math.floor(hours / 24)} days`;
-    }
-    if (hours < 1) {
-      const minutes = Math.floor(gap / 60000);
-      return `Expires in ${minutes} minutes`;
-    }
-    return `Expires in ${hours} hours`;
+    if (hours > 24) return `${Math.floor(hours / 24)}d TTL`;
+    if (hours < 1) return `${Math.floor(gap / 60000)}m TTL`;
+    return `${hours}h TTL`;
   };
 
-
   return (
-    <LayoutContainer 
-      title="Secure Shared File - Anobyte Software Transfer Files Online"
-      description="Access and download secure shared files with Anobyte software, designed for transfer files online, share files free, and safe file delivery."
-    >
-      <div className="max-w-lg sm:max-w-xl mx-auto px-4 py-12 sm:py-20 flex flex-col justify-center min-h-[60vh] w-full">
-        
-        <AnimatePresence mode="wait">
-          
-          {/* 1. Loading indicators */}
-          {loading && (
-            <motion.div
-              key="share-loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center space-y-4"
-            >
-              <FeatureLoader />
-              <p className="text-sm font-semibold" style={{ color: 'var(--text-muted)' }}>Decrypting share signature...</p>
-            </motion.div>
-          )}
+    <LayoutContainer title="Extraction Node - Sharing It" ambient={true}>
+      <div className="min-h-screen flex items-center justify-center px-4 relative">
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay pointer-events-none" />
 
-          {/* 2. Error displays */}
-          {errorMsg && !loading && (
-            <motion.div
-              key="share-error"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="p-8 rounded-3xl glass-card border border-rose-200/50 dark:border-rose-900/50 text-center space-y-6 bg-rose-50/10"
-            >
-              <div className="w-14 h-14 rounded-full bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center mx-auto border border-rose-100 dark:border-rose-900/30 text-rose-500">
-                <ShieldAlert className="w-8 h-8" />
-              </div>
-              
-              <div className="space-y-1.5">
-                <h3 className="text-xl font-bold font-display text-slate-900 dark:text-white">Share Node Unavailable</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed px-4">
-                  {errorMsg}
-                </p>
-              </div>
+        <div className="w-full max-w-lg relative z-10">
+          <AnimatePresence mode="wait">
+            
+            {loading && (
+              <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card rounded-[2.5rem] p-12 text-center flex flex-col items-center">
+                <FeatureLoader />
+                <p className="text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] mt-6">Establishing Connection...</p>
+              </motion.div>
+            )}
 
-              <div className="pt-2">
-                <Link to="/" className="inline-flex items-center gap-1 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700">
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Go to Sharing It Home</span>
-                </Link>
-              </div>
-            </motion.div>
-          )}
+            {errorMsg && !loading && (
+              <motion.div key="error" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card border-rose-500/30 bg-rose-500/5 rounded-[2.5rem] p-10 text-center space-y-8">
+                <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto border border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.2)]">
+                  <ShieldAlert className="w-10 h-10 text-rose-500" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-extrabold font-display text-[var(--text-primary)]">Node Offline</h3>
+                  <p className="text-sm font-medium text-[var(--text-secondary)] mt-2">{errorMsg}</p>
+                </div>
+                <Link to="/" className="btn-ghost !rounded-full !px-8">Return to Base</Link>
+              </motion.div>
+            )}
 
-          {/* 3. Password locked page gate card */}
-          {passwordGate && !unlocked && !loading && (
-            <motion.div
-              key="share-password"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              className="p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center space-y-6"
-            >
-              <div className="w-14 h-14 rounded-full bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center mx-auto border border-blue-100/30 dark:border-blue-900/30 text-blue-500">
-                <Lock className="w-7 h-7" />
-              </div>
-
-              <div className="space-y-1">
-                <h3 className="text-xl font-bold font-display text-slate-900 dark:text-white">Passkey Locked</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">This secure share requires password locks verification.</p>
-              </div>
-
-              <form onSubmit={handleVerifyPassword} className="space-y-4">
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={passwordAttempt}
-                    onChange={(e) => setPasswordAttempt(e.target.value)}
-                    placeholder="Type password passcode..."
-                    className="form-input text-xs pr-10"
-                    disabled={verifying}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {passwordGate && !unlocked && !loading && (
+              <motion.div key="auth" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="glass-card rounded-[2.5rem] p-10 text-center shadow-premium-hover relative overflow-hidden">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-400 to-orange-500" />
+                <div className="w-20 h-20 rounded-[1.5rem] bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center mx-auto mb-8 shadow-sm">
+                  <Lock className="w-8 h-8 text-[var(--text-primary)]" />
+                </div>
+                <h3 className="text-2xl font-extrabold font-display text-[var(--text-primary)] mb-2">Encrypted Payload</h3>
+                <p className="text-sm text-[var(--text-secondary)] font-medium mb-8">This node requires cryptographic clearance.</p>
+                <form onSubmit={handleVerifyPassword} className="space-y-4">
+                  <div className="relative">
+                    <input type={showPassword ? "text" : "password"} value={passwordAttempt} onChange={(e) => setPasswordAttempt(e.target.value)} placeholder="Passkey" className="w-full bg-[var(--bg-muted)] border border-[var(--border)] text-[var(--text-primary)] text-center text-lg tracking-widest rounded-2xl py-4 focus:border-[var(--accent)] font-mono" disabled={verifying} />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-5 text-[var(--text-muted)] hover:text-[var(--text-primary)]">
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  <button type="submit" disabled={verifying} className="btn-primary w-full !py-4.5 !rounded-2xl">
+                    {verifying ? <Loader2 className="w-5 h-5 animate-spin" /> : <span>Decrypt</span>}
                   </button>
-                </div>
+                </form>
+              </motion.div>
+            )}
 
-                <button
-                  type="submit"
-                  disabled={verifying}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 min-h-[48px]"
-                >
-                  {verifying ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Verifying passkey...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Key className="w-3.5 h-3.5" />
-                      <span>Unlock Share Node</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            </motion.div>
-          )}
-
-          {/* 4. Verified Download Share Panel */}
-          {unlocked && !loading && !errorMsg && (
-            <motion.div
-              key="share-details"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200/40 dark:border-slate-800/40 text-center space-y-6"
-            >
-              {/* File visual badge */}
-              <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center mx-auto text-blue-500 border border-blue-500/20">
-                <File className="w-7 h-7" />
-              </div>
-
-              {/* Meta details */}
-              <div className="space-y-1 pr-2">
-                <h3 className="text-lg font-bold font-display text-slate-800 dark:text-white truncate max-w-[300px] mx-auto leading-relaxed">
-                  {fileData.name}
-                </h3>
-                <div className="flex items-center justify-center gap-2.5 text-xs text-slate-400 font-semibold">
-                  <span>{formatBytes(fileData.size)}</span>
-                  <span>&bull;</span>
-                  <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400 uppercase">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>{getRemainingTime(fileData.expires_at)}</span>
-                  </span>
-                </div>
-              </div>
-
-              {previewUrl && canPreviewType(fileData?.type) && (
-                <FilePreview url={previewUrl} type={fileData.type} name={fileData.name} maxHeight={320} className="w-full" />
-              )}
-
-              {/* Download trigger CTA */}
-              <div className="space-y-3.5">
-                <button
-                  onClick={handleDownload}
-                  disabled={downloading}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow transition-all min-h-[52px]"
-                >
-                  {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                  <span>{downloading ? 'Starting Download...' : 'Download Secure File'}</span>
-                </button>
+            {unlocked && !loading && !errorMsg && (
+              <motion.div key="file" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card rounded-[2.5rem] p-8 sm:p-10 shadow-premium-hover border-[var(--border-strong)] relative overflow-hidden">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400" />
                 
-                <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed max-w-xs mx-auto">
-                  Downloads use encrypted temporary link tokens. Powered by{' '}
-                  <a href="https://anobyte.online" target="_blank" rel="noreferrer" className="underline font-semibold gradient-text">
-                    Anobyte
-                  </a>
-                  .
-                </p>
-              </div>
+                <div className="flex flex-col items-center text-center space-y-6">
+                  <div className="w-20 h-20 rounded-[1.5rem] gradient-bg flex items-center justify-center shadow-glow border border-white/20">
+                    <File className="w-10 h-10 text-white" />
+                  </div>
+                  
+                  <div className="w-full">
+                    <h3 className="text-2xl font-extrabold font-display text-[var(--text-primary)] truncate px-4">{fileData.name}</h3>
+                    <div className="flex items-center justify-center gap-3 mt-3 text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">
+                      <span>{formatBytes(fileData.size)}</span>
+                      <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]" />
+                      <span>{fileData.type.split('/')[1] || 'BIN'}</span>
+                      <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]" />
+                      <span className="text-emerald-500 flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5"/> Safe</span>
+                    </div>
+                  </div>
 
-            </motion.div>
-          )}
+                  {previewUrl && canPreviewType(fileData?.type) && (
+                    <div className="w-full rounded-2xl overflow-hidden border border-[var(--border)] bg-black/5 p-1 mt-2">
+                      <FilePreview url={previewUrl} type={fileData.type} name={fileData.name} maxHeight={250} className="w-full rounded-xl overflow-hidden" />
+                    </div>
+                  )}
 
-        </AnimatePresence>
+                  <div className="w-full pt-4 space-y-4">
+                    <button onClick={handleDownload} disabled={downloading} className="btn-primary w-full !py-5 !rounded-2xl text-lg tracking-wide shadow-[0_15px_40px_-10px_var(--accent-glow)]">
+                      {downloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Download className="w-5 h-5" /> Extract Payload</>}
+                    </button>
+                    
+                    <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-muted)] rounded-xl border border-[var(--border)]">
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-1.5"><Clock className="w-3.5 h-3.5"/> Node Status</span>
+                      <span className="text-xs font-bold text-[var(--text-primary)]">{getRemainingTime(fileData.expires_at)}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
+          </AnimatePresence>
+        </div>
       </div>
     </LayoutContainer>
   );

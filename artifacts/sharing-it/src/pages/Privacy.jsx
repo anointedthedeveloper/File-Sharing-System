@@ -1,41 +1,50 @@
 import React from 'react';
 import LayoutContainer from '../components/layout/LayoutContainer';
+import { Shield } from 'lucide-react';
 
 export default function Privacy() {
   return (
-    <LayoutContainer 
-      title="Privacy Policy - Anobyte Software File Sharing & Transfer Files Online"
-      description="Review how Anobyte software protects shared files, secure links, transfer files online, and free file sharing data with clear privacy practices."
-    >
-      <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24 text-left">
-        <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900 dark:text-white mb-4">
-          Privacy Policy
-        </h1>
-        <p className="text-xs text-slate-400 mb-8 uppercase tracking-widest font-semibold">Last Updated: May 2026</p>
+    <LayoutContainer title="Privacy Protocol - Sharing It">
+      <div className="max-w-4xl mx-auto px-6 py-24 sm:py-32 relative">
+        <div className="absolute top-40 right-20 w-96 h-96 bg-[var(--accent)] opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
         
-        <div className="prose prose-slate dark:prose-invert max-w-none space-y-6 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-          <p>
-            Welcome to Sharing It. We are highly committed to protecting your privacy. This policy outlines how we manage and protect the items and files you upload to our storage nodes.
+        <div className="mb-16 relative z-10">
+          <div className="w-16 h-16 rounded-[1.5rem] bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center mb-8 shadow-sm">
+            <Shield className="w-8 h-8 text-[var(--accent)]" />
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-[var(--text-primary)] tracking-tight mb-4">
+            Privacy Protocol
+          </h1>
+          <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+            <span>Effective Date: Initial Deployment</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+            <span>Revision: 1.0.0</span>
+          </div>
+        </div>
+
+        <div className="glass-card rounded-[2.5rem] p-8 sm:p-12 border-[var(--border-strong)] prose prose-slate dark:prose-invert max-w-none relative z-10">
+          <p className="text-lg text-[var(--text-secondary)] font-medium leading-relaxed">
+            This document outlines the strict parameters governing how Sharing It processes and annihilates your data. We operate under a zero-surveillance mandate.
           </p>
 
-          <h2 className="text-xl font-bold font-display text-slate-900 dark:text-white pt-4">1. Information We Collect</h2>
-          <p>
-            When utilizing Sharing It as a guest, we do not require you to supply an email address or username. We solely record file metadata necessary to generate sharing tokens, including file name, size, mime type, and chosen expiry timer limits. For registered users, we save credentials (email, hashed password, and full name) to facilitate access control.
+          <h2 className="text-2xl font-bold font-display text-[var(--text-primary)] mt-12 mb-4 border-b border-[var(--border)] pb-2">01. Telemetry & Data Collection</h2>
+          <p className="text-[var(--text-secondary)] font-medium leading-relaxed">
+            Guest operations require zero personal identification. We log solely the metadata necessary for mechanical delivery (filesize, MIME type, cryptographic hashes). Authenticated operators provide an email and secure alias solely to maintain dashboard states.
           </p>
 
-          <h2 className="text-xl font-bold font-display text-slate-900 dark:text-white pt-4">2. File Storage and Expiry</h2>
-          <p>
-            Uploaded files are stored within secure Supabase Storage buckets. File shares can be optionally configured to expire automatically. Once a share link expires or is deleted by the creator, the database record and corresponding file are permanently purged from our cloud servers and cannot be recovered.
+          <h2 className="text-2xl font-bold font-display text-[var(--text-primary)] mt-10 mb-4 border-b border-[var(--border)] pb-2">02. The Ephemeral Promise</h2>
+          <p className="text-[var(--text-secondary)] font-medium leading-relaxed">
+            All nodes are subject to hard limits. Upon reaching the user-defined chronological threshold, the node is purged. The database record is dropped, and the underlying binary asset is physically deleted from the storage bucket. No backups are retained.
           </p>
 
-          <h2 className="text-xl font-bold font-display text-slate-900 dark:text-white pt-4">3. Security Metrics</h2>
-          <p>
-            We implement industry-standard encryption protocols. For file shares with password locks, download access is restricted until users submit valid passkeys. We strongly advise using unique passphrase signatures.
+          <h2 className="text-2xl font-bold font-display text-[var(--text-primary)] mt-10 mb-4 border-b border-[var(--border)] pb-2">03. Cryptographic Framework</h2>
+          <p className="text-[var(--text-secondary)] font-medium leading-relaxed">
+            Transit occurs exclusively over TLS. Payloads are encrypted at rest. Password-gated nodes rely on SHA-256 derivation; the raw keys are never stored nor accessible by administrators.
           </p>
 
-          <h2 className="text-xl font-bold font-display text-slate-900 dark:text-white pt-4">4. Cookies and Logs</h2>
-          <p>
-            We solely use essential cookies to maintain logged-in user sessions. We do not engage in third-party tracking or targeted advertisements.
+          <h2 className="text-2xl font-bold font-display text-[var(--text-primary)] mt-10 mb-4 border-b border-[var(--border)] pb-2">04. Tracking Prohibition</h2>
+          <p className="text-[var(--text-secondary)] font-medium leading-relaxed">
+            We do not execute third-party analytics pixels. We do not inject advertising code. Cookies are restricted to JWT authentication tokens for logged-in sessions. Your traversal through the system is yours alone.
           </p>
         </div>
       </div>
