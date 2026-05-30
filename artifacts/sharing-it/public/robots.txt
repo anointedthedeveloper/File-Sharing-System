@@ -1,0 +1,15 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /upload
+Allow: /auth
+
+# Keep temporary shares private, but allow the public landing pages to be indexed.
+Disallow: /share/
+Disallow: /dashboard
+
+Sitemap: https://sharingit.anobyte.online/sitemap.xml
