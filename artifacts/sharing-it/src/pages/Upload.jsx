@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, QrCode, Clock, Minimize2, ArrowRight } from 'lucide-react';
+import { Upload, File, X, Shield, Lock, Eye, EyeOff, Calendar, Clipboard, Check, QrCode, Clock, Minimize2, ArrowRight, Zap } from 'lucide-react';
 import AnimatedDropZone from '../components/ui/AnimatedDropZone';
 import FilePreview, { canPreviewType } from '../components/ui/FilePreview';
 import { compressFile, formatCompressionNote } from '../lib/compressFile';

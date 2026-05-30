@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, Sparkles, Radio, Zap } from 'lucide-react';
+import { Sun, Moon, Menu, X, LogOut, LayoutDashboard, UploadCloud, ChevronDown, Wifi, HelpCircle, Info, UserPlus } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
@@ -47,7 +47,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      showToast('Logged out securely.', 'success');
+      showToast('Logged out successfully.', 'success');
       navigate('/');
     } catch (e) {
       showToast(e.message, 'error');
@@ -56,8 +56,10 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Upload', path: '/upload', icon: <UploadCloud className="w-4 h-4" /> },
-    { name: 'P2P Transfer', path: '/quick-share', icon: <Radio className="w-4 h-4" /> },
+    { name: 'Quick Share', path: '/quick-share', icon: <Wifi className="w-4 h-4" /> },
     ...(user ? [{ name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> }] : []),
+    { name: 'How It Works', path: '/about', icon: <Info className="w-4 h-4" /> },
+    { name: 'FAQ', path: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -69,15 +71,15 @@ export default function Navbar() {
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-500 pt-4 px-4 sm:px-6 lg:px-8`}
     >
-      <div 
+      <div
         className={`max-w-7xl mx-auto rounded-full transition-all duration-500 border ${
-          scrolled 
-            ? 'bg-[var(--glass)] shadow-premium backdrop-blur-2xl border-[var(--border-strong)] py-2 px-4' 
+          scrolled
+            ? 'bg-[var(--glass)] shadow-premium backdrop-blur-2xl border-[var(--border-strong)] py-2 px-4'
             : 'bg-transparent border-transparent py-4 px-2'
         }`}
       >
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group shrink-0 relative z-20">
+          <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-20">
             <div className="relative">
               <motion.img
                 whileHover={{ scale: 1.05, rotate: -2 }}
@@ -87,9 +89,6 @@ export default function Navbar() {
               />
               <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
-            <span className="font-display font-extrabold text-lg tracking-tight hidden sm:block">
-              Sharing<span className="gradient-text">It</span>
-            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 p-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] shadow-sm">
@@ -97,17 +96,17 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
-                  isActive(link.path) 
-                    ? 'text-white shadow-glow' 
+                className={`relative px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
+                  isActive(link.path)
+                    ? 'text-white shadow-glow'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]'
                 }`}
               >
                 {isActive(link.path) && (
-                  <motion.div 
-                    layoutId="nav-pill" 
-                    className="absolute inset-0 rounded-full gradient-bg z-0" 
-                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                  <motion.div
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-full gradient-bg z-0"
+                    transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-2">
@@ -143,7 +142,7 @@ export default function Navbar() {
                     className="w-8 h-8 rounded-full object-cover border-2 border-[var(--bg-base)] shadow-sm"
                   />
                   <span className="text-sm font-bold text-[var(--text-primary)] max-w-[120px] truncate">
-                    {profile?.full_name || 'Account'}
+                    {profile?.full_name || 'My Account'}
                   </span>
                   <ChevronDown className={`w-4 h-4 text-[var(--text-muted)] transition-transform duration-300 group-hover:text-[var(--text-primary)] ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </motion.button>
@@ -156,21 +155,21 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: 15, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                         className="absolute right-0 mt-3 w-64 z-20 rounded-2xl p-2 glass-card border-[var(--border-strong)] shadow-premium-hover backdrop-blur-3xl"
                       >
                         <div className="px-4 py-3 mb-2 rounded-xl bg-[var(--bg-muted)]/50">
-                          <p className="text-[10px] uppercase tracking-widest font-extrabold text-[var(--text-muted)] mb-1">Authenticated as</p>
+                          <p className="text-[10px] uppercase tracking-widest font-extrabold text-[var(--text-muted)] mb-1">Signed in as</p>
                           <p className="text-sm font-bold text-[var(--text-primary)] truncate">{user.email}</p>
                         </div>
                         <div className="space-y-1">
                           <Link to="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl hover:bg-[var(--bg-muted)] text-[var(--text-primary)] transition-colors">
-                            <LayoutDashboard className="w-4 h-4 text-[var(--accent)]" /> 
-                            Workspace
+                            <LayoutDashboard className="w-4 h-4 text-[var(--accent)]" />
+                            Dashboard
                           </Link>
                           <button onClick={handleLogout} className="flex w-full items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors text-left group">
-                            <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" /> 
-                            Disconnect
+                            <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            Log Out
                           </button>
                         </div>
                       </motion.div>
@@ -181,12 +180,12 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-2">
                 <Link to="/auth" className="px-5 py-2.5 text-sm font-bold rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-all">
-                  Sign In
+                  Log In
                 </Link>
                 <Link to="/auth?tab=register" className="btn-primary text-sm !py-2.5 !px-6 !rounded-full group">
                   <span className="relative z-10 flex items-center gap-2">
-                    <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    Deploy Now
+                    <UserPlus className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    Sign Up
                   </span>
                 </Link>
               </div>
@@ -206,14 +205,13 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="md:hidden absolute top-[calc(100%+10px)] left-4 right-4 z-40 rounded-3xl glass-card border-[var(--border-strong)] shadow-premium-hover p-3"
           >
             <div className="space-y-1 mb-4">
@@ -223,8 +221,8 @@ export default function Navbar() {
                   to={link.path}
                   onClick={() => setIsOpen(false)}
                   className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-bold transition-colors ${
-                    isActive(link.path) 
-                      ? 'bg-[var(--accent)]/10 text-[var(--accent)]' 
+                    isActive(link.path)
+                      ? 'bg-[var(--accent)]/10 text-[var(--accent)]'
                       : 'text-[var(--text-primary)] hover:bg-[var(--bg-muted)]'
                   }`}
                 >
@@ -233,33 +231,33 @@ export default function Navbar() {
                 </Link>
               ))}
             </div>
-            
+
             <div className="pt-4 border-t border-[var(--border)] px-2">
               {user ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 px-3">
                     <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`} alt="" className="w-12 h-12 rounded-full border-2 border-[var(--border)]" />
                     <div className="truncate">
-                      <p className="font-bold text-[var(--text-primary)] text-lg">{profile?.full_name || 'Authorized User'}</p>
+                      <p className="font-bold text-[var(--text-primary)] text-lg">{profile?.full_name || 'My Account'}</p>
                       <p className="text-xs font-semibold text-[var(--text-muted)] truncate">{user.email}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <Link to="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--bg-muted)] font-bold text-sm text-[var(--text-primary)]">
-                      Workspace
+                      Dashboard
                     </Link>
                     <button onClick={handleLogout} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-500/10 text-rose-500 font-bold text-sm">
-                      Disconnect
+                      Log Out
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   <Link to="/auth" onClick={() => setIsOpen(false)} className="flex justify-center py-3.5 rounded-2xl text-sm font-bold border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm">
-                    Sign In
+                    Log In
                   </Link>
                   <Link to="/auth?tab=register" onClick={() => setIsOpen(false)} className="btn-primary text-sm justify-center !py-3.5 !rounded-2xl flex-1">
-                    Deploy
+                    Sign Up
                   </Link>
                 </div>
               )}

@@ -10,28 +10,25 @@ export default function Footer() {
 
   const links = {
     product: [
-      { name: 'Upload Bay', path: '/upload' },
-      { name: 'P2P Transfer', path: '/quick-share' },
-      { name: 'Workspace', path: '/dashboard' },
-      { name: 'Architecture', path: '/about#security' },
+      { name: 'Upload Files', path: '/upload' },
+      { name: 'Quick Share', path: '/quick-share' },
+      { name: 'Dashboard', path: '/dashboard' },
     ],
     company: [
-      { name: 'Manifesto', path: '/about' },
+      { name: 'About Us', path: '/about' },
       { name: 'Contact', path: '/contact' },
-      { name: 'Anobyte OS', href: ANOBYTE_URL },
+      { name: 'FAQ', path: '/faq' },
+      { name: 'Anobyte Technologies', href: ANOBYTE_URL },
     ],
     legal: [
-      { name: 'Privacy Protocol', path: '/privacy' },
+      { name: 'Privacy Policy', path: '/privacy' },
       { name: 'Terms of Service', path: '/terms' },
     ],
   };
 
   return (
     <footer className="relative w-full mt-auto bg-[var(--bg-base)] overflow-hidden">
-      {/* Decorative top border glow */}
       <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-50" />
-      
-      {/* Ambient background glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[800px] h-[400px] bg-[var(--accent)] opacity-[0.03] rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 py-16 sm:py-24 relative z-10">
@@ -42,15 +39,12 @@ export default function Footer() {
                 <img src={logoImg} alt="Sharing It" className="h-10 w-auto relative z-10" />
                 <div className="absolute inset-0 bg-[var(--accent)] blur-xl rounded-full scale-150 opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
               </div>
-              <span className="font-display font-extrabold text-xl tracking-tight text-[var(--text-primary)]">
-                Sharing<span className="text-[var(--accent)]">It</span>
-              </span>
             </Link>
-            
+
             <p className="text-base max-w-sm leading-relaxed text-[var(--text-secondary)] font-medium">
-              High-performance, cinematic file delivery. Designed for creators who demand speed, security, and uncompromising aesthetics.
+              The fastest way to share files with anyone. Upload, set an expiry, and send a link — no sign-up needed.
             </p>
-            
+
             <div className="flex gap-3">
               <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:shadow-glow transition-all duration-300">
                 <Github className="w-5 h-5" />
@@ -66,9 +60,9 @@ export default function Footer() {
 
           <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
             {[
-              { title: 'Platform', items: links.product },
-              { title: 'Ecosystem', items: links.company },
-              { title: 'Protocols', items: links.legal },
+              { title: 'Product', items: links.product },
+              { title: 'Company', items: links.company },
+              { title: 'Legal', items: links.legal },
             ].map((col) => (
               <div key={col.title}>
                 <h3 className="text-xs font-extrabold uppercase tracking-[0.25em] mb-6 text-[var(--text-primary)]">
@@ -88,8 +82,8 @@ export default function Footer() {
                           <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300" />
                         </a>
                       ) : (
-                        <Link 
-                          to={link.path} 
+                        <Link
+                          to={link.path}
                           className="text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors relative inline-block group"
                         >
                           <span>{link.name}</span>
@@ -106,13 +100,13 @@ export default function Footer() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10">
           <p className="text-sm font-bold text-[var(--text-muted)]">
-            &copy; {currentYear} Anobyte Software. All rights reserved.
+            &copy; {currentYear} Anobyte Technologies. All rights reserved.
           </p>
           <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] shadow-sm">
             <Layers className="w-4 h-4 text-[var(--text-muted)]" />
-            <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Engineered by</span>
+            <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Built by</span>
             <a href={ANOBYTE_URL} target="_blank" rel="noopener noreferrer" className="text-sm font-extrabold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors">
-              Anobyte
+              Anobyte Technologies
             </a>
           </div>
         </div>
